@@ -1,0 +1,21 @@
+{
+  "name": "miralsoft/docbee-api",
+  "description": "The api functions from docbee in php.",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Michael Tosch",
+      "email": "m.tosch@miralsoft.com",
+      "role" : "Softwareengineer"
+    }
+  ],
+  "autoload" : {
+    "psr-4" : {
+      "miralsoft\\docbee\\api\\" : "src"
+    }
+  },
+  "require": {
+    "php": ">=7.4.0"
+  }
+}
