@@ -101,7 +101,7 @@ class CustomerContact extends DocbeeAPICall
         elseif (isset($data['name']) && $data['name'] != '') $contact = $this->searchContact($data['name']);
 
         if (is_array($contact) && count($contact) > 0 && isset($contact['id']) && $contact['id'] > 0) {
-            return ['error' => 'Contact already exists'];
+            return ['error' => 'Contact already exists', 'errorCode' => 401];
         }
 
         // Create the contact
@@ -126,7 +126,7 @@ class CustomerContact extends DocbeeAPICall
             return $this->editContact($contact['id'], $data);
         }
 
-        return ['error' => 'Contact not found'];
+        return ['error' => 'Contact not found', 'errorCode' => 405];
     }
 
     /**
@@ -143,7 +143,7 @@ class CustomerContact extends DocbeeAPICall
         // Search existing contact
         $contact = $this->getContact($id);
         if (!is_array($contact) || count($contact) <= 0) {
-            return ['error' => 'Contact not exists'];
+            return ['error' => 'Contact not exists', 'errorCode' => 405];
         }
 
         // Create the contact
