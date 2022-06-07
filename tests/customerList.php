@@ -4,7 +4,6 @@ require_once '../vendor/autoload.php';
 require_once 'testConfig.php';
 
 use miralsoft\docbee\api\Config;
-use miralsoft\docbee\api\APICall;
 use miralsoft\docbee\api\Customer;
 use miralsoft\docbee\api\CustomerStatus;
 

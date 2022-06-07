@@ -6,19 +6,39 @@ You can download the Package over composer with following line in composer File:
 
 ```
 "require": {
-    "php": ">=7.4.0",<br>
+    "php": ">=8.0.0",<br>
     "miralsoft/docbee-api": ">=v1"
 }
 ```
 
 # Configuration
-The configuration have to been set in your PHP-Project. You must define 2 constants like this:
+To use the API you have to make a Config Object with the Options you need for docbee:
 
 ```
 use miralsoft\docbee\api\Config;
 
-Config::$URI = 'https://xxx.weclapp.com/webapp/api/v1/';
-Config::$TOKEN = 'xxx';
+// Generate conig with token
+$config = new Config(APITOKEN);
 ```
 
-Replace the xxx with your own data.
+Replace the APITOKEN with your own Token from docbee.
+
+# Example
+Here a little example to use the docbee api:
+
+```
+require_once '../vendor/autoload.php';
+
+use miralsoft\docbee\api\Config;
+use miralsoft\docbee\api\Customer;
+
+// Generate conig with token
+$config = new Config(APITOKEN);
+
+// Generate the customer object
+$customer = new Customer($config);
+
+$result = $customer->get(); // Get all customers
+```
+
+For more examples you can look in the test-scripts.
