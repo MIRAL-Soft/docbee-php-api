@@ -41,13 +41,13 @@ abstract class DocbeeAPICall
      * Do the API Call
      *
      * @param array $data The data for this call
-     * @param string $token The token for the valid connection
-     * @param bool $post true = POST | false = GET
+     * @param string $requestType The request type of this call
+     * @param bool $formateResult should the result be formated
      * @return array The return value of the api call
      */
-    protected function call(array $data = array(), bool $post = false, bool $formateResult = true)
+    protected function call(array $data = array(), string $requestType = RequestType::GET, bool $formateResult = true)
     {
-        $result = APICall::call($this->config, $this->mainFunction . $this->subFunction, $data, $post);
+        $result = APICall::call($this->config, $this->mainFunction . $this->subFunction, $data, $requestType);
 
         if ($formateResult) {
             // If the result is a json encode it

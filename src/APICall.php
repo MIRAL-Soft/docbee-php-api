@@ -10,15 +10,15 @@ class APICall
     /**
      * Do a API Call
      *
+     * @param Config $config The configuration of this call
      * @param string $function The function to call
-     * @param string $token The token for the call
      * @param array $data The data for this call
-     * @param bool $post Is this call a post call
+     * @param string $requestType The request type of dis call (GET, POST, PUT)
      * @return string The result of the call
      */
-    public static function call(Config $config, string $function, array $data = array(), bool $post = false): string
+    public static function call(Config $config, string $function, array $data = array(), string $requestType = RequestType::GET): string
     {
-        self::prepareCall($config, $function, $data, $post);
+        self::prepareCall($config, $function, $data, $requestType);
 
         // Get the result of curl
         $result = curl_exec(self::$curl);
@@ -68,16 +68,21 @@ class APICall
 
     /**
      * Prepare the API Call
+     *
+     * @param Config $config The configuration for this call
+     * @param $function The function from this call
+     * @param array $data The data for this call
+     * @param string $requestType The request type for this call (GET, POST, PUT)
      */
-    protected static function prepareCall(Config $config, $function, array $data = array(), $post = false)
+    protected static function prepareCall(Config $config, $function, array $data = array(), string $requestType = RequestType::GET)
     {
-        $url = $config->getUri() . $function . (!$post && count($data) > 0 ? ('?' . http_build_query($data)) : '');
+        $url = $config->getUri() . $function . ($requestType == RequestType::GET && count($data) > 0 ? ('?' . http_build_query($data)) : '');
         self::$curl = curl_init($url);
-        curl_setopt(self::$curl, CURLOPT_CUSTOMREQUEST, ($post ? "POST" : 'GET'));
+        curl_setopt(self::$curl, CURLOPT_CUSTOMREQUEST, $requestType);
         curl_setopt(self::$curl, CURLOPT_RETURNTRANSFER, true);
 
         // Set Data to curl call
-        if ($post) curl_setopt(self::$curl, CURLOPT_POSTFIELDS, json_encode($data));
+        if ($requestType != RequestType::GET) curl_setopt(self::$curl, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt(self::$curl, CURLOPT_HTTPHEADER, array(
                 "Authorization: Bearer " . $config->getToken(),
                 'Content-Type: application/json')

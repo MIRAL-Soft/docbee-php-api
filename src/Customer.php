@@ -36,20 +36,6 @@ class Customer extends DocbeeAPICall
     }
 
     /**
-     * Gives all Customers
-     *
-     * @return array The result
-     */
-    public function getAll(): array
-    {
-        // Only 1000 users per request are possible
-        //$customersPerPage = 900;
-        //$count = $this->count();
-
-        return $this->get();
-    }
-
-    /**
      * Get the Customer with this ID
      *
      * @param string $id The ID from the customer
@@ -70,7 +56,7 @@ class Customer extends DocbeeAPICall
     public function getCustomerFromCustomerId(string $customerId): array
     {
         $this->subFunction = 'guess';
-        $result = $this->call([['eid' => $customerId, 'data' => ['customerId' => $customerId]]], true);
+        $result = $this->call([['eid' => $customerId, 'data' => ['customerId' => $customerId]]], RequestType::POST);
 
         if (is_array($result) && count($result) == 1 && isset($result[0]['id'])) {
             return $this->getCustomer($result[0]['id']);
@@ -82,41 +68,21 @@ class Customer extends DocbeeAPICall
     /**
      * Creates a customer with the given fields
      *
-     * @param string $customerId Unique customer id for a customer. Mostly definied by ERP
-     * @param int $customerStatus The status for the customer
-     * @param string $name Display name of customer
-     * @param string $shortName Customer short name
-     * @param string $info
-     * @param string $wildcardAddress Wildcard email address. For Example "docbee.com" to automaticly assign tickets to customer
-     * @param bool $inhouse If these customer is an inhouse customer
-     * @param int $companyData companyData identifier
-     * @param array $customFields Additional information about the customer
-     * @return bool
+     * @param array $data The data for the new customer (see https://pcs.docbee.com/restApi/v1/documentation#/customer)
+     * @return array
      */
-    public function createCustomer(string $customerId, int $customerStatus, string $name = '', string $shortName = '',
-                                   string $info = '', string $wildcardAddress = '', bool $inhouse = false, int $companyData = 0,
-                                   array  $customFields = []): array
+    public function create(array $data): array
     {
         $this->subFunction = '';
 
-        // Search if the customer exists and skip it if exists
-        $customer = $this->getCustomerFromCustomerId($customerId);
-        if (is_array($customer) && count($customer) > 0) return [];
+        if (isset($data['customerId'])) {
+            // Search if the customer exists and skip it if exists
+            $customer = $this->getCustomerFromCustomerId($data['customerId']);
+            if (is_array($customer) && count($customer) > 0) return ['error' => 'Customer allready exists'];
 
-        $data = [
-            'customerId' => $customerId,
-            'customerStatus' => $customerStatus
-        ];
+            return $this->call($data, RequestType::POST);
+        }
 
-        // Sets optional data if set
-        if ($name != '') $data['name'] = $name;
-        if ($shortName != '') $data['$shortName'] = $shortName;
-        if ($info != '') $data['info'] = $info;
-        if ($wildcardAddress != '') $data['wildcardAddress'] = $wildcardAddress;
-        if ($inhouse != false) $data['inhouse'] = $inhouse;
-        if ($companyData > 0) $data['companyData'] = $companyData;
-        if (is_array($customFields) && count($customFields) > 0) $data['customFields'] = $customFields;
-
-        return $this->call($data, true);
+        return ['error' => 'Parameter error'];
     }
 }
