@@ -101,7 +101,7 @@ class CustomerContact extends DocbeeAPICall
         elseif (isset($data['name']) && $data['name'] != '') $contact = $this->searchContact($data['name']);
 
         if (is_array($contact) && count($contact) > 0 && isset($contact['id']) && $contact['id'] > 0) {
-            return ['error' => 'Contact already exists', 'errorCode' => 401];
+            return ['error' => 'Contact already exists', 'errorCode' => 401, 'contact' => $contact];
         }
 
         // Create the contact
