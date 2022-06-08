@@ -78,7 +78,7 @@ class Customer extends DocbeeAPICall
         if (isset($data['customerId'])) {
             // Search if the customer exists and skip it if exists
             $customer = $this->getCustomerFromCustomerId($data['customerId']);
-            if (is_array($customer) && count($customer) > 0) return ['error' => 'Customer allready exists', 'errorCode' => 401];
+            if (is_array($customer) && count($customer) > 0) return ['error' => 'Customer allready exists', 'errorCode' => 401, 'customer' => $customer];
 
             return $this->call($data, RequestType::POST);
         }
