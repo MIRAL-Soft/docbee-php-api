@@ -97,9 +97,14 @@ class CustomerContact extends DocbeeAPICall
 
         // Search existing contact
         $contact = null;
-        if (isset($data['email']) && $data['email'] != '') $contact = $this->searchContact('', $data['email']);
-        elseif (isset($data['name']) && $data['name'] != '') $contact = $this->searchContact($data['name']);
 
+        // first try with email
+        if (isset($data['email']) && $data['email'] != '') $contact = $this->searchContact('', $data['email']);
+
+        // if no contact found, next try with name
+        if (!is_array($contact) || (count($contact) <= 0 && isset($data['name']) && $data['name'] != '')) $contact = $this->searchContact($data['name']);
+
+        // if contact is found, no creation necessary
         if (is_array($contact) && count($contact) > 0 && isset($contact['id']) && $contact['id'] > 0) {
             return ['error' => 'Contact already exists', 'errorCode' => 401, 'contact' => $contact];
         }
@@ -117,7 +122,8 @@ class CustomerContact extends DocbeeAPICall
      * @param string $actMail The actual mail from this contact
      * @return array The changed contact
      */
-    public function edit(array $data, string $actName = '', string $actMail = ''): array
+    public
+    function edit(array $data, string $actName = '', string $actMail = ''): array
     {
         // Search the contact
         $contact = $this->searchContact($actName, $actMail);
@@ -136,7 +142,8 @@ class CustomerContact extends DocbeeAPICall
      * @param array $data the data to change
      * @return array The changed contact
      */
-    public function editContact(int $id, array $data): array
+    public
+    function editContact(int $id, array $data): array
     {
         $this->subFunction = $id;
 
