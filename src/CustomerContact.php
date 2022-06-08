@@ -73,32 +73,15 @@ class CustomerContact extends DocbeeAPICall
 
         // makes the parameters
         $data = ['customer' => $this->customerId];
+        if (isset($name) && $name != '') $data['name'] = $name;
+        if (isset($mail) && $mail != '') $data['email'] = $mail;
 
-        // first search about the mail
-        if (isset($mail) && $mail != ''){
-            $data['email'] = $mail;
-            $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
+        $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
 
-            if (is_array($result) && count($result) > 0 && isset($result[0]['id'])) {
-                return $this->getContact($result[0]['id']);
-            }
-
-            unset($data['email']);
+        if (is_array($result) && count($result) > 0 && isset($result[0]['id'])) {
+            return $this->getContact($result[0]['id']);
         }
 
-        // if nothing found, search about name
-        if (isset($name) && $name != '') {
-            $data['name'] = $name;
-            $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
-
-            if (is_array($result) && count($result) > 0 && isset($result[0]['id'])) {
-                return $this->getContact($result[0]['id']);
-            }
-
-            unset($data['name']);
-        }
-
-        // nothing found
         return [];
     }
 
