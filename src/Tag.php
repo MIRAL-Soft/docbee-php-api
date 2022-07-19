@@ -36,6 +36,8 @@ class Tag extends DocbeeAPICall
     }
 
     /**
+     * TODO: Should be correct, but the function does not work correctly
+     *
      * Get the data from the tag
      *
      * @param string $name The name from the tag
@@ -43,12 +45,22 @@ class Tag extends DocbeeAPICall
      */
     public function getTagFromName(string $name): array
     {
-
+        /* This is the correct version for getting the correct data from tag, but still not work correctly
         $this->subFunction = 'guess';
         $result = $this->call([['eid' => $name, 'data' => ['name' => $name]]], RequestType::POST);
 
         if (is_array($result) && count($result) == 1 && isset($result[0]['id'])) {
             return $this->getTag($result[0]['id']);
+        }
+        */
+
+        $this->subFunction = '';
+        $tags = $this->get();
+
+        if (is_array($tags) && count($tags) > 0) {
+            foreach ($tags as $tag) {
+                if (isset($tag['name']) && $tag['name'] == $name && isset($tag['name']) && $tag['id'] > 0) return $tag;
+            }
         }
 
         return [];
