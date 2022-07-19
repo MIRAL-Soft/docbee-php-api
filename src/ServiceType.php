@@ -122,12 +122,15 @@ class ServiceType extends DocbeeAPICall
      */
     public function create(array $data): array
     {
+        $this->subFunction = '';
+
         // The name must be given and if it not exists already
-        if (isset($data['name']) && $data['name'] != '' && !$this->exists($data)) {
-            $this->subFunction = '';
+        if (isset($data['name']) && $data['name'] != '') {
+            if($this->exists($data))  return ['error' => 'ServiceType allready exists', 'errorCode' => 401, 'serviceType' => $data];
+
             return $this->call($data, RequestType::POST);
         }
 
-        return [];
+        return ['error' => 'Parameter error', 'errorCode' => 400];
     }
 }
