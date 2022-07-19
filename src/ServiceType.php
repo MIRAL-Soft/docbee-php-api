@@ -126,7 +126,7 @@ class ServiceType extends DocbeeAPICall
 
         // The name must be given and if it not exists already
         if (isset($data['name']) && $data['name'] != '') {
-            if($this->exists($data))  return ['error' => 'ServiceType allready exists', 'errorCode' => 401, 'serviceType' => $data];
+            if($this->exists($data))  return ['error' => 'ServiceType allready exists', 'errorCode' => 401, 'serviceType' => $this->getServiceTypeFromName($data)];
 
             return $this->call($data, RequestType::POST);
         }
