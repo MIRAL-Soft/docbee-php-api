@@ -24,6 +24,7 @@ class DocBeeDocumentTask extends DocbeeAPICall
      * Gives the count of all tasks
      *
      * @return int The json result
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function count(): int
     {
@@ -41,6 +42,7 @@ class DocBeeDocumentTask extends DocbeeAPICall
      * @param int $offset Pagesize
      * @param string $fields The fields, which should be loaded from the ticket (all fields = * | seperate fields seperate with , (f.e. 'created,Ticket')
      * @return array The result
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function get(int $limit = 0, int $offset = 0, string $fields = ''): array
     {
@@ -59,6 +61,7 @@ class DocBeeDocumentTask extends DocbeeAPICall
      *
      * @param string $id The ID from the task
      * @return array The Ticket
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function getTask(string $id): array
     {
@@ -73,6 +76,7 @@ class DocBeeDocumentTask extends DocbeeAPICall
      *
      * @param int $customerId
      * @return array the tasks
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function getTasksFromCustomer(int $customerId): array
     {
@@ -89,6 +93,7 @@ class DocBeeDocumentTask extends DocbeeAPICall
      *
      * @param string $customerNumber The customer number from erp
      * @return array the tasks
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function getTasksFromCustomerNumber(string $customerNumber): array
     {
@@ -111,10 +116,11 @@ class DocBeeDocumentTask extends DocbeeAPICall
      *
      * @param array $data the filter
      * @return array the tasks
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function filterTasks(array $data): array
     {
-        $this->checkCall();
+        $this->checkCall($data);
 
         $this->subFunction = '';
         $result = $this->call($data);
@@ -131,10 +137,11 @@ class DocBeeDocumentTask extends DocbeeAPICall
      *
      * @param array $data The data for the new Ticket (see https://pcs.docbee.com/restApi/v1/documentation#!/docBeeDocumentTask/addDocBeeDocumentTask)
      * @return array
+     * @throws \InvalidArgumentException When the documentId is not set
      */
     public function create(array $data): array
     {
-        $this->checkCall();
+        $this->checkCall($data);
 
         $this->subFunction = '';
         return $this->call($data, RequestType::POST);
@@ -146,8 +153,14 @@ class DocBeeDocumentTask extends DocbeeAPICall
      * @return bool true = the call can be run
      * @throws \InvalidArgumentException When the documentId is not set
      */
-    public function checkCall(): bool
+    public function checkCall(array $data = []): bool
     {
+        // If the document Id is set, add it before check
+        if(isset($data['documentId'])){
+            $this->setDocumentId($data['documentId']);
+            unset($data['documentId']);
+        }
+
         if ($this->getDocumentId() != null && $this->getDocumentId() != '') {
             return true;
         }
