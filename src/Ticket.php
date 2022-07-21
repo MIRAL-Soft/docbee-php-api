@@ -159,7 +159,7 @@ class Ticket extends DocbeeAPICall
         if (isset($data['customer']) && isset($data['erpReferenceNumber'])) {
             // Search if the Ticket exists and skip it if exists
             $ticket = $this->getTicketsFromOrderId($data['customer'], $data['erpReferenceNumber']);
-            if (is_array($ticket) && count($ticket) > 0) return ['error' => 'ticket allready exists', 'errorCode' => 401, 'ticket' => $ticket];
+            if (count($ticket) > 0) return ['error' => 'ticket allready exists', 'errorCode' => 401, 'ticket' => $ticket[0]];
 
             return $this->create($data);
         }
