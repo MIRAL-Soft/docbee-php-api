@@ -82,7 +82,7 @@ class CustomerContact extends DocbeeAPICall
         }
 
         // search mail
-        if (!(is_array($result) && count($result) > 0 && isset($result[0]['id'])) && isset($mail) && $mail != '') {
+        if ((!is_array($result) || count($result) <= 0 || !isset($result[0]['id'])) && isset($mail) && $mail != '') {
             unset($data['name']);
             $data['email'] = $mail;
             $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
