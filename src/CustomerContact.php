@@ -73,10 +73,20 @@ class CustomerContact extends DocbeeAPICall
 
         // makes the parameters
         $data = ['customer' => $this->customerId];
-        if (isset($name) && $name != '') $data['name'] = $name;
-        if (isset($mail) && $mail != '') $data['email'] = $mail;
+        $result = [];
 
-        $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
+        // Search name
+        if (isset($name) && $name != '') {
+            $data['name'] = $name;
+            $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
+        }
+
+        // search mail
+        if (!(is_array($result) && count($result) > 0 && isset($result[0]['id'])) && isset($mail) && $mail != '') {
+            unset($data['name']);
+            $data['email'] = $mail;
+            $result = $this->call([['eid' => $this->customerId, 'data' => $data]], RequestType::POST);
+        }
 
         if (is_array($result) && count($result) > 0 && isset($result[0]['id'])) {
             return $this->getContact($result[0]['id']);
@@ -122,8 +132,7 @@ class CustomerContact extends DocbeeAPICall
      * @param string $actMail The actual mail from this contact
      * @return array The changed contact
      */
-    public
-    function edit(array $data, string $actName = '', string $actMail = ''): array
+    public function edit(array $data, string $actName = '', string $actMail = ''): array
     {
         // Search the contact
         $contact = $this->searchContact($actName, $actMail);
@@ -142,8 +151,7 @@ class CustomerContact extends DocbeeAPICall
      * @param array $data the data to change
      * @return array The changed contact
      */
-    public
-    function editContact(int $id, array $data): array
+    public function editContact(int $id, array $data): array
     {
         $this->subFunction = $id;
 
