@@ -42,7 +42,7 @@ class CustomerContact extends DocbeeAPICall
     public function get(int $limit = -1, int $offset = -1, string $fields = '', string $changedSince = '', string $sortings = ''): array
     {
         $this->subFunction = '';
-        $data = array('customer' => $this->customerId, 'changedSince' => $changedSince);
+        $data = array('customer' => $this->customerId);
 
         // Only if the fields are set, take them in the request
         if($limit != -1)    $data['limit'] = $limit;
