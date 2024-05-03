@@ -13,10 +13,16 @@ class CustomerStatus extends DocbeeAPICall
      * @param string $changedSince load all entries after given date
      * @return array The result
      */
-    public function get(int $limit = 0, int $offset = 0, string $fields = ''): array
+    public function get(int $limit = -1, int $offset = -1, string $fields = ''): array
     {
         $this->subFunction = '';
-        $data = array('limit' => $limit, 'offset' => $offset, 'fields' => $fields);
+        $data = array();
+
+        // Only if the fields are set, take them in the request
+        if($limit != -1)    $data['limit'] = $limit;
+        if($offset != -1)    $data['offset'] = $offset;
+        if($fields != '')    $data['fields'] = $fields;
+
         $result = $this->call($data);
 
         // Gets only the customers without other fields

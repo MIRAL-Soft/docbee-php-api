@@ -31,7 +31,7 @@ class DocBeeDocumentTask extends DocbeeAPICall
         $this->checkCall();
 
         // Get only one entry because we need only the total count data
-        $result = $this->call(['limit' => 1]);
+        $result = $this->call(['limit' => 0]);
         return is_array($result) && isset($result['totalCount']) ? $result['totalCount'] : 0;
     }
 
@@ -44,12 +44,18 @@ class DocBeeDocumentTask extends DocbeeAPICall
      * @return array The result
      * @throws \InvalidArgumentException When the documentId is not set
      */
-    public function get(int $limit = 0, int $offset = 0, string $fields = ''): array
+    public function get(int $limit = -1, int $offset = -1, string $fields = ''): array
     {
         $this->checkCall();
 
         $this->subFunction = '';
-        $data = array('limit' => $limit, 'offset' => $offset, 'fields' => $fields);
+        $data = array();
+
+        // Only if the fields are set, take them in the request
+        if($limit != -1)    $data['limit'] = $limit;
+        if($offset != -1)    $data['offset'] = $offset;
+        if($fields != '')    $data['fields'] = $fields;
+
         $result = $this->call($data);
 
         // Gets only the Tickets without other fields

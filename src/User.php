@@ -13,10 +13,16 @@ class User extends DocbeeAPICall
      * @param bool $deactivated deactivated user?
      * @return array The result
      */
-    public function get(int $limit = 0, int $offset = 0, string $fields = '', bool $deactivated = false): array
+    public function get(int $limit = -1, int $offset = -1, string $fields = '', bool $deactivated = false): array
     {
         $this->subFunction = '';
-        $data = array('limit' => $limit, 'offset' => $offset, 'fields' => $fields, 'deactivated' => $deactivated);
+        $data = array('deactivated' => $deactivated);
+
+        // Only if the fields are set, take them in the request
+        if($limit != -1)    $data['limit'] = $limit;
+        if($offset != -1)    $data['offset'] = $offset;
+        if($fields != '')    $data['fields'] = $fields;
+
         $result = $this->call($data);
 
         // Gets only the user without other fields
@@ -45,7 +51,7 @@ class User extends DocbeeAPICall
     public function getUserFromName(string $name = '', string $mail = ''): array
     {
         $this->subFunction = '';
-        $users = $this->get(0,0,'*');
+        $users = $this->get(-1,-1,'*');
 
         if (is_array($users) && count($users) > 0) {
             foreach ($users as $user) {
