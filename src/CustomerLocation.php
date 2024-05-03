@@ -54,7 +54,7 @@ class CustomerLocation extends DocbeeAPICall
         $result = $this->call($data);
 
         // Gets only the customers without other fields
-        return is_array($result) && isset($result['customerContact']) && is_array($result['customerContact']) ? $result['customerContact'] : [];
+        return is_array($result) && isset($result['customerLocation']) && is_array($result['customerLocation']) ? $result['customerLocation'] : [];
     }
 
     /**

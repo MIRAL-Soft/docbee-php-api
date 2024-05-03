@@ -29,7 +29,7 @@ class Customer extends DocbeeAPICall
     public function get(int $limit = -1, int $offset = -1, string $fields = '', string $changedSince = '', string $sortings = ''): array
     {
         $this->subFunction = '';
-        $data = array('changedSince' => $changedSince);
+        $data = array();
 
         // Only if the fields are set, take them in the request
         if ($limit != -1) $data['limit'] = $limit;
@@ -93,5 +93,26 @@ class Customer extends DocbeeAPICall
         }
 
         return ['error' => 'Parameter error', 'errorCode' => 400];
+    }
+
+    /**
+     * Edits the given contact
+     *
+     * @param int $id The id from contact
+     * @param array $data the data to change
+     * @return array The changed contact
+     */
+    public function edit(int $id, array $data): array
+    {
+        $this->subFunction = $id;
+
+        // Search existing contact
+        $contact = $this->getCustomer($id);
+        if (!is_array($contact) || count($contact) <= 0) {
+            return ['error' => 'Contact not exists', 'errorCode' => 405];
+        }
+
+        // Create the contact
+        return $this->call($data, RequestType::PUT);
     }
 }
