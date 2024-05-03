@@ -23,18 +23,20 @@ class Customer extends DocbeeAPICall
      * @param int $offset Pagesize
      * @param string $fields The fields, which should be loaded from the customer (all fields = * | seperate fields seperate with , (f.e. 'created,customerId')
      * @param string $changedSince load all entries after given date
+     * @param string $sortings Sort the response by field asc or desc (Examples: id asc)
      * @return array The result
      */
-    public function get(int $limit = -1, int $offset = -1, string $fields = '', string $changedSince = ''): array
+    public function get(int $limit = -1, int $offset = -1, string $fields = '', string $changedSince = '', string $sortings = ''): array
     {
         $this->subFunction = '';
         $data = array('changedSince' => $changedSince);
 
         // Only if the fields are set, take them in the request
-        if($limit != -1)    $data['limit'] = $limit;
-        if($offset != -1)    $data['offset'] = $offset;
-        if($fields != '')    $data['fields'] = $fields;
-        if($changedSince != '') $data['changedSince'] = $changedSince;
+        if ($limit != -1) $data['limit'] = $limit;
+        if ($offset != -1) $data['offset'] = $offset;
+        if ($fields != '') $data['fields'] = $fields;
+        if ($changedSince != '') $data['changedSince'] = $changedSince;
+        if ($sortings != '') $data['sortings'] = $sortings;
 
         $result = $this->call($data);
 
