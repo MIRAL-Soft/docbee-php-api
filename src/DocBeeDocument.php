@@ -23,7 +23,7 @@ class DocBeeDocument extends DocbeeAPICall
     public function count(): int
     {
         // Get only one entry because we need only the total count data
-        $result = $this->call(['limit' => 1]);
+        $result = $this->call(['limit' => 0]);
         return is_array($result) && isset($result['totalCount']) ? $result['totalCount'] : 0;
     }
 
@@ -36,10 +36,17 @@ class DocBeeDocument extends DocbeeAPICall
      * @param string $changedSince load all entries after given date
      * @return array The result
      */
-    public function get(int $limit = 0, int $offset = 0, string $fields = '', string $changedSince = ''): array
+    public function get(int $limit = -1, int $offset = -1, string $fields = '', string $changedSince = ''): array
     {
         $this->subFunction = '';
-        $data = array('limit' => $limit, 'offset' => $offset, 'fields' => $fields, 'changedSince' => $changedSince);
+        $data = array();
+
+        // Only if the fields are set, take them in the request
+        if($limit != -1)    $data['limit'] = $limit;
+        if($offset != -1)    $data['offset'] = $offset;
+        if($fields != '')    $data['fields'] = $fields;
+        if($changedSince != '') $data['changedSince'] = $changedSince;
+
         $result = $this->call($data);
 
         // Gets only the Tickets without other fields
