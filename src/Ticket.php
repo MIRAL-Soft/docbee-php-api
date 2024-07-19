@@ -20,10 +20,10 @@ class Ticket extends DocbeeAPICall
      *
      * @return int The json result
      */
-    public function count(): int
+    public function count(array $data = ['limit' => 0]): int
     {
         // Get only one entry because we need only the total count data
-        $result = $this->call(['limit' => 0]);
+        $result = $this->call($data);
         return is_array($result) && isset($result['totalCount']) ? $result['totalCount'] : 0;
     }
 
@@ -42,10 +42,10 @@ class Ticket extends DocbeeAPICall
         $data = array();
 
         // Only if the fields are set, take them in the request
-        if($limit != -1)    $data['limit'] = $limit;
-        if($offset != -1)    $data['offset'] = $offset;
-        if($fields != '')    $data['fields'] = $fields;
-        if($changedSince != '') $data['changedSince'] = $changedSince;
+        if ($limit != -1) $data['limit'] = $limit;
+        if ($offset != -1) $data['offset'] = $offset;
+        if ($fields != '') $data['fields'] = $fields;
+        if ($changedSince != '') $data['changedSince'] = $changedSince;
 
         $result = $this->call($data);
 
@@ -71,10 +71,48 @@ class Ticket extends DocbeeAPICall
      * @param int $customerId
      * @return array the tickets
      */
-    public function getTicketsFromCustomer(int $customerId): array
+    public function getTicketsFromCustomer(int $customerId, int $offset = -1, int $limit = -1, string $sort = ''): array
     {
         $this->subFunction = '';
-        $tickets = $this->call(['customer' => $customerId, 'fields' => '*']);
+        $count = -1;
+        $data = ['customer' => $customerId, 'fields' => '*'];
+        $tickets = [];
+
+        if ($sort != '') $data['sortings'] = $sort;
+
+        if ($offset > 0 || $limit > 0) {
+            // Load only given data
+            if ($offset > 0) $data['offset'] = $offset;
+            if ($limit > 0) $data['limit'] = $limit;
+        } else {
+            // Load all Data from customer
+            $count = $this->count(['customer' => $customerId, 'limit' => 0]);
+        }
+
+        if ($count > 0) {
+            $data['limit'] = $this->config->getTicketMaximumLimit();
+            // Get over all tickets
+            for ($loop = 0; $loop < $count; $loop += $data['limit']) {
+                $data['offset'] = $loop;
+
+                // Get the tickets
+                $result = $this->call($data);
+
+                // Only if some value is loaded
+                if (is_array($result) && count($result) > 0 && isset($result['ticket']) && count($result['ticket']) > 0) {
+                    if (is_array($tickets) && count($tickets) > 0 && isset($tickets['ticket']) && is_array($tickets['ticket'])) {
+                        $tickets['ticket'] += [...$tickets['ticket'], ...$result['ticket']];
+                    } else {
+                        // If no ticket is set now
+                        $tickets = $result;
+                    }
+
+                }
+            }
+        } else {
+            // If a offset or limit get only this data
+            $tickets = $this->call($data);
+        }
 
         return is_array($tickets) && count($tickets) > 0 && isset($tickets['ticket']) ? $tickets['ticket'] : [];
     }
@@ -85,18 +123,18 @@ class Ticket extends DocbeeAPICall
      * @param string $customerNumber The customer number from erp
      * @return array the tickets
      */
-    public function getTicketsFromCustomerNumber(string $customerNumber): array
+    public function getTicketsFromCustomerNumber(string $customerNumber, int $offset = -1, int $limit = -1, string $sort = ''): array
     {
         // Get the customer
         $customer = $this->customerC->getCustomerFromCustomerId($customerNumber);
 
         // If customer is found
         if (is_array($customer) && count($customer) > 0 && isset($customer['id'])) {
-            return $this->getTicketsFromCustomer($customer['id']);
+            return $this->getTicketsFromCustomer($customer['id'], $offset, $limit, $sort);
         }
 
         // otherwise try if the number is the id
-        return $this->getTicketsFromCustomer($customerNumber);
+        return $this->getTicketsFromCustomer($customerNumber, $offset, $limit, $sort);
     }
 
     /**
@@ -121,12 +159,19 @@ class Ticket extends DocbeeAPICall
      * Gets the ticket from the orderID from erp
      *
      * @param string $orderId The id from erp
+     * @param string $customerNumber The number from the customer
+     * @param bool $checkExistingOrder If this is true, it ends if one order is found
      * @return array The ticket data if exists
      */
-    public function getTicketsFromOrderId(string $customerNumber, string $orderId): array
+    public function getTicketsFromOrderId(string $customerNumber, string $orderId, bool $checkExistingOrder = false): array
     {
         $orderTickets = [];
-        $tickets = $this->getTicketsFromCustomerNumber($customerNumber);
+
+        if ($checkExistingOrder) {
+            $tickets = $this->getTicketsFromCustomerNumber($customerNumber, -1, -1, 'id desc');
+        } else {
+            $tickets = $this->getTicketsFromCustomerNumber($customerNumber);
+        }
 
         // If tickets from customer exists
         if (is_array($tickets) && count($tickets) > 0) {
@@ -135,6 +180,8 @@ class Ticket extends DocbeeAPICall
                 if ((isset($ticket['referenceNumber']) && $ticket['referenceNumber'] == $orderId) ||
                     (isset($ticket['erpReferenceNumber']) && $ticket['erpReferenceNumber'] == $orderId)) {
                     $orderTickets[] = $ticket;
+
+                    if ($checkExistingOrder) break;
                 }
             }
 

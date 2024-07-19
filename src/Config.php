@@ -28,6 +28,9 @@ class Config
     /** @var bool true = Lifetime have to refreshed */
     protected bool $lifetimeRefresh = true;
 
+    /** @var int The maximum limit for queries */
+    protected int $ticketMaximumLimit = 50;
+
     /** @var bool Should only use Token without login */
     protected bool $onlyUseToken = false;
 
@@ -189,6 +192,14 @@ class Config
     protected function setOnlyUseToken(bool $onlyUseToken): void
     {
         $this->onlyUseToken = $onlyUseToken;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTicketMaximumLimit(): int
+    {
+        return $this->ticketMaximumLimit;
     }
 
 }
