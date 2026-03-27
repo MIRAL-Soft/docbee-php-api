@@ -57,15 +57,7 @@ final class HttpClient implements HttpClientInterface
         $ms       = $this->elapsed($start);
 
         $this->logger->info("GET {$url} → {$response->getStatusCode()} ({$ms} ms)");
-
-        if ($response->getStatusCode() >= 400) {
-            ResponseParser::throw(
-                statusCode:      $response->getStatusCode(),
-                responseBody:    (string) $response->getBody(),
-                requestUrl:      $url,
-                responseHeaders: $response->getHeaders(),
-            );
-        }
+        $this->throwIfError($response, $url);
 
         return ResponseParser::parse($response, $url);
     }
@@ -87,15 +79,7 @@ final class HttpClient implements HttpClientInterface
         $ms = $this->elapsed($start);
 
         $this->logger->info("POST {$url} → {$response->getStatusCode()} ({$ms} ms)");
-
-        if ($response->getStatusCode() >= 400) {
-            ResponseParser::throw(
-                statusCode:      $response->getStatusCode(),
-                responseBody:    (string) $response->getBody(),
-                requestUrl:      $url,
-                responseHeaders: $response->getHeaders(),
-            );
-        }
+        $this->throwIfError($response, $url);
 
         return ResponseParser::parse($response, $url);
     }
@@ -117,15 +101,7 @@ final class HttpClient implements HttpClientInterface
         $ms = $this->elapsed($start);
 
         $this->logger->info("PUT {$url} → {$response->getStatusCode()} ({$ms} ms)");
-
-        if ($response->getStatusCode() >= 400) {
-            ResponseParser::throw(
-                statusCode:      $response->getStatusCode(),
-                responseBody:    (string) $response->getBody(),
-                requestUrl:      $url,
-                responseHeaders: $response->getHeaders(),
-            );
-        }
+        $this->throwIfError($response, $url);
 
         return ResponseParser::parse($response, $url);
     }
@@ -143,7 +119,22 @@ final class HttpClient implements HttpClientInterface
         $ms       = $this->elapsed($start);
 
         $this->logger->info("DELETE {$url} → {$response->getStatusCode()} ({$ms} ms)");
+        $this->throwIfError($response, $url);
+    }
 
+    // -------------------------------------------------------------------------
+    // Internal helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Throws a typed exception if the response status indicates an error.
+     *
+     * Extracted to avoid duplicating the same 6-line block across every HTTP verb.
+     *
+     * @throws DocbeeApiException
+     */
+    private function throwIfError(\Psr\Http\Message\ResponseInterface $response, string $url): void
+    {
         if ($response->getStatusCode() >= 400) {
             ResponseParser::throw(
                 statusCode:      $response->getStatusCode(),
@@ -153,10 +144,6 @@ final class HttpClient implements HttpClientInterface
             );
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Internal helpers
-    // -------------------------------------------------------------------------
 
     /** Builds the full URL from a relative path. */
     private function buildUrl(string $path): string

@@ -45,7 +45,16 @@ final class ResponseParser
             );
         }
 
-        return is_array($decoded) ? $decoded : [];
+        if (!is_array($decoded)) {
+            throw new DocbeeApiException(
+                message:      'Docbee API returned an unexpected response type (expected JSON object).',
+                statusCode:   $response->getStatusCode(),
+                requestUrl:   $requestUrl,
+                responseBody: $body,
+            );
+        }
+
+        return $decoded;
     }
 
     /**

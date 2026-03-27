@@ -72,18 +72,17 @@ final class RateLimiter
     /**
      * Determines the delay in milliseconds before the next retry.
      *
-     * Uses the server-supplied `Retry-After` value (in seconds) if present,
-     * otherwise applies exponential backoff.
+     * When the server provides a `Retry-After` header (in seconds), that value
+     * is used directly (capped at MAX_DELAY_MS) as per RFC 7231. Without the
+     * header, pure exponential backoff is applied: 1 s → 2 s → 4 s …
      */
     private function resolveDelay(ResponseInterface $response, int $attempt): int
     {
         $retryAfter = $response->getHeaderLine('Retry-After');
 
         if ($retryAfter !== '' && is_numeric($retryAfter)) {
-            // Server-supplied delay takes precedence, but is capped.
-            $serverDelayMs = (int) $retryAfter * 1_000;
-            $backoffMs     = $this->baseDelayMs * (2 ** $attempt);
-            return min(max($serverDelayMs, $backoffMs), self::MAX_DELAY_MS);
+            // Server-supplied value takes full precedence over client-side backoff.
+            return min((int) $retryAfter * 1_000, self::MAX_DELAY_MS);
         }
 
         // Pure exponential backoff: 1 s → 2 s → 4 s …

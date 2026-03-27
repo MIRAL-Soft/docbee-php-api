@@ -109,4 +109,35 @@ final class TicketResourceTest extends TestCase
         $results = $this->resource->findByCustomer(42);
         $this->assertCount(1, $results);
     }
+
+    public function testFindByCustomerWithStatusIdFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->logicalAnd(
+                $this->stringContains('customer-eq=42'),
+                $this->stringContains('status-eq=3'),
+            ))
+            ->willReturn([
+                'totalCount' => 1,
+                'ticket'     => [['id' => 10, 'customer' => 42, 'status' => 3]],
+            ]);
+
+        $results = $this->resource->findByCustomer(42, statusId: 3);
+        $this->assertCount(1, $results);
+    }
+
+    public function testFindByStatusFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('status-eq=2'))
+            ->willReturn([
+                'totalCount' => 0,
+                'ticket'     => [],
+            ]);
+
+        $results = $this->resource->findByStatus(2);
+        $this->assertIsArray($results);
+    }
 }

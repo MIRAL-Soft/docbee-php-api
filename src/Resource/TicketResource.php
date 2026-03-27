@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\TicketDTO;
-use miralsoft\docbee\api\Exception\NotFoundException;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
 /**
@@ -17,8 +16,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * // Get a single ticket
  * $ticket = $resource->find(123);
  *
- * // All open tickets for a customer
- * $tickets = $resource->findByCustomer(42, status: 'open');
+ * // All tickets for a customer, optionally filtered by status ID
+ * $tickets = $resource->findByCustomer(42, statusId: 1);
+ *
+ * // All tickets with a specific status
+ * $tickets = $resource->findByStatus(1);
  *
  * // Delta-sync: tickets changed in the last 15 minutes
  * $changed = $resource->findModifiedSince(new DateTimeImmutable('-15 minutes'));
@@ -35,14 +37,16 @@ final class TicketResource extends AbstractResource
     /**
      * Returns all tickets for a given customer.
      *
+     * @param int      $customerId The customer's numeric ID.
+     * @param int|null $statusId   Optional ticket status ID to filter by (use the ID from TicketStatusResource).
      * @return list<TicketDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
-    public function findByCustomer(int $customerId, ?string $status = null): array
+    public function findByCustomer(int $customerId, ?int $statusId = null): array
     {
         $query = QueryBuilder::new()->filterEq('customer', $customerId);
-        if ($status !== null) {
-            $query->filterEq('status', $status);
+        if ($statusId !== null) {
+            $query->filterEq('status', $statusId);
         }
         return $this->listAll($query);
     }
@@ -70,13 +74,30 @@ final class TicketResource extends AbstractResource
     }
 
     /**
-     * Returns all open tickets.
+     * Returns all tickets with the given status ID.
+     *
+     * Retrieve available status IDs via {@see \miralsoft\docbee\api\Resource\TicketStatusResource::listAll()}.
+     *
+     * @return list<TicketDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByStatus(int $statusId): array
+    {
+        return $this->listAll(QueryBuilder::new()->filterEq('status', $statusId));
+    }
+
+    /**
+     * Returns all tickets that are not closed.
+     *
+     * Uses the `isClosed` flag on the status rather than a hard-coded status string.
+     * Internally loads all tickets and filters by the status' `isClosed` property.
+     * For large datasets, prefer {@see findByStatus()} with a known status ID.
      *
      * @return list<TicketDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findOpen(): array
     {
-        return $this->list(QueryBuilder::new()->filterEq('status', 'open'));
+        return $this->listAll(QueryBuilder::new()->filterEq('closed', false));
     }
 }

@@ -10,8 +10,16 @@ namespace miralsoft\docbee\api\DTO;
  * Every DTO implements {@see fromArray()} which maps a raw API response array
  * to a typed PHP object, and {@see toArray()} which serialises the DTO back
  * into the array format accepted by the API's write endpoints.
+ *
+ * DTOs implement {@see \JsonSerializable} so they can be passed directly to
+ * `json_encode()`:
+ *
+ * ```php
+ * $ticket = $client->tickets()->find(42);
+ * echo json_encode($ticket); // serialises via toArray()
+ * ```
  */
-abstract class AbstractDTO
+abstract class AbstractDTO implements \JsonSerializable
 {
     /**
      * Creates a DTO instance from a raw API response array.
@@ -33,6 +41,18 @@ abstract class AbstractDTO
      * Returns the numeric Docbee ID of this record, or null for new records.
      */
     abstract public function getId(): ?int;
+
+    /**
+     * Implements {@see \JsonSerializable} so DTOs work with `json_encode()` out of the box.
+     *
+     * Delegates to {@see toArray()}, which excludes read-only server fields.
+     *
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
 
     /**
      * Safely casts a value to int, returning null when the value is null/empty.
