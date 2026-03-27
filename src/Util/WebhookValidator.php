@@ -99,12 +99,11 @@ final class WebhookValidator
             throw new InvalidArgumentException('Webhook body must not be empty.');
         }
 
-        $payload = json_decode($body, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException(
-                'Webhook body is not valid JSON: ' . json_last_error_msg()
-            );
+        if (!json_validate($body)) {
+            throw new InvalidArgumentException('Webhook body is not valid JSON.');
         }
+
+        $payload = json_decode($body, true);
 
         self::validate($payload);
         return $payload;

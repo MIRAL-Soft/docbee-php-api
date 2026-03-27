@@ -45,27 +45,27 @@ final class WebhookResource extends AbstractResource
     // -------------------------------------------------------------------------
 
     /** Event fired when a new document is created. */
-    public const TYPE_CREATE_DOCUMENT = 'CREATE_DOCUMENT';
+    public const string TYPE_CREATE_DOCUMENT = 'CREATE_DOCUMENT';
 
     /** Event fired when a new ticket is created. */
-    public const TYPE_CREATE_TICKET = 'CREATE_TICKET';
+    public const string TYPE_CREATE_TICKET = 'CREATE_TICKET';
 
     /** Event fired when a protocol is edited. */
-    public const TYPE_EDIT_PROTOCOL = 'EDIT_PROTOCOL';
+    public const string TYPE_EDIT_PROTOCOL = 'EDIT_PROTOCOL';
 
     /** Event fired when a message is added to a ticket. */
-    public const TYPE_CREATE_TICKET_MESSAGE = 'CREATE_TICKET_MESSAGE';
+    public const string TYPE_CREATE_TICKET_MESSAGE = 'CREATE_TICKET_MESSAGE';
 
     /** Event fired when the rule engine is executed. */
-    public const TYPE_EXECUTE_RULE_ENGINE = 'EXECUTE_RULE_ENGINE';
+    public const string TYPE_EXECUTE_RULE_ENGINE = 'EXECUTE_RULE_ENGINE';
 
     /** Container webhook event. */
-    public const TYPE_CONTAINER = 'CONTAINER';
+    public const string TYPE_CONTAINER = 'CONTAINER';
 
     /** All allowed webhook type values.
      * @var list<string>
      */
-    public const TYPES = [
+    public const array TYPES = [
         self::TYPE_CREATE_DOCUMENT,
         self::TYPE_CREATE_TICKET,
         self::TYPE_EDIT_PROTOCOL,
