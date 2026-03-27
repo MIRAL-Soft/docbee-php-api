@@ -59,7 +59,7 @@ final class TicketResource extends AbstractResource
      */
     public function findByOrderId(string $orderId): array
     {
-        return $this->list(QueryBuilder::new()->filterEq('orderId', $orderId));
+        return $this->listAll(QueryBuilder::new()->filterEq('orderId', $orderId));
     }
 
     /**
@@ -70,7 +70,7 @@ final class TicketResource extends AbstractResource
      */
     public function findByAssignedUser(int $userId): array
     {
-        return $this->list(QueryBuilder::new()->filterEq('assignedUser', $userId));
+        return $this->listAll(QueryBuilder::new()->filterEq('assignedUser', $userId));
     }
 
     /**

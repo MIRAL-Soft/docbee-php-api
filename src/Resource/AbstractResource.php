@@ -161,6 +161,12 @@ abstract class AbstractResource
                 yield ($this->dtoClass)::fromArray($item);
             }
 
+            // Stop early if the API returns an empty page — prevents wasted
+            // additional requests when totalCount is stale or inaccurate.
+            if (empty($items)) {
+                break;
+            }
+
             $offset += $pageSize;
             $total   = (int) ($response['totalCount'] ?? 0);
         } while ($offset < $total);

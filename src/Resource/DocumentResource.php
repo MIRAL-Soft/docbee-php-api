@@ -37,6 +37,6 @@ final class DocumentResource extends AbstractResource
      */
     public function findByTemplate(int $templateId): array
     {
-        return $this->list(QueryBuilder::new()->filterEq('template', $templateId));
+        return $this->listAll(QueryBuilder::new()->filterEq('template', $templateId));
     }
 }
