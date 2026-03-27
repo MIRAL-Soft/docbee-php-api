@@ -64,6 +64,18 @@ final class WebhookResourceTest extends TestCase
         $this->resource->register(name: 'Bad', type: 'INVALID_TYPE');
     }
 
+    public function testRegisterThrowsOnEmptyName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->resource->register(name: '', type: WebhookResource::TYPE_CREATE_TICKET);
+    }
+
+    public function testRegisterThrowsOnWhitespaceOnlyName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->resource->register(name: '   ', type: WebhookResource::TYPE_CREATE_TICKET);
+    }
+
     public function testTypeConstants(): void
     {
         $this->assertSame('CREATE_DOCUMENT',       WebhookResource::TYPE_CREATE_DOCUMENT);

@@ -117,6 +117,9 @@ final class WebhookResource extends AbstractResource
         ?int    $redirectWebhook        = null,
         ?int    $ruleEngineActionId     = null,
     ): WebhookDTO {
+        if (trim($name) === '') {
+            throw new InvalidArgumentException('Webhook name must not be empty.');
+        }
         if (!in_array($type, self::TYPES, true)) {
             throw new InvalidArgumentException(
                 "Invalid webhook type '{$type}'. Allowed: " . implode(', ', self::TYPES)

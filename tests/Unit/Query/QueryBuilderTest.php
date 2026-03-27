@@ -148,4 +148,28 @@ final class QueryBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         QueryBuilder::new()->filter('   ', FilterOperator::EQ, 'value');
     }
+
+    public function testNegativeLimitClampedToOne(): void
+    {
+        $qs = QueryBuilder::new()->limit(-5)->build();
+        $this->assertStringContainsString('limit=1', $qs);
+    }
+
+    public function testZeroLimitClampedToOne(): void
+    {
+        $qs = QueryBuilder::new()->limit(0)->build();
+        $this->assertStringContainsString('limit=1', $qs);
+    }
+
+    public function testSortThrowsOnEmptyFieldName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->sort('');
+    }
+
+    public function testSortThrowsOnWhitespaceOnlyFieldName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->sort('   ');
+    }
 }

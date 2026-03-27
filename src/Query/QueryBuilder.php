@@ -163,10 +163,13 @@ final class QueryBuilder
      * Adds a sort directive.
      *
      * @param string $direction 'asc' or 'desc'
-     * @throws InvalidArgumentException on invalid direction.
+     * @throws InvalidArgumentException on empty field name or invalid direction.
      */
     public function sort(string $field, string $direction = 'asc'): self
     {
+        if (trim($field) === '') {
+            throw new InvalidArgumentException('QueryBuilder: sort field name must not be empty.');
+        }
         $dir = strtolower($direction);
         if (!in_array($dir, ['asc', 'desc'], true)) {
             throw new InvalidArgumentException("Sort direction must be 'asc' or 'desc', got '{$direction}'.");
@@ -193,11 +196,11 @@ final class QueryBuilder
 
     /**
      * Sets the maximum number of records to return per request.
-     * Capped at {@see MAX_LIMIT}.
+     * Values below 1 are clamped to 1; values above {@see MAX_LIMIT} are capped.
      */
     public function limit(int $limit): self
     {
-        $this->limit = min($limit, self::MAX_LIMIT);
+        $this->limit = max(1, min($limit, self::MAX_LIMIT));
         return $this;
     }
 

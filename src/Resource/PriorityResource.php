@@ -29,7 +29,11 @@ final class PriorityResource extends AbstractResource
     {
         $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
         if (empty($results)) {
-            throw new NotFoundException("Priority with name '{$name}' not found.", 404, $this->endpoint);
+            throw new NotFoundException(
+                message:    "Priority with name '{$name}' not found.",
+                statusCode: 404,
+                requestUrl: $this->endpoint,
+            );
         }
         return $results[0];
     }
