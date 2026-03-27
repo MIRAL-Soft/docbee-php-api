@@ -107,4 +107,33 @@ final class QueryBuilderTest extends TestCase
         $qs = QueryBuilder::new()->filterEq('active', true)->build();
         $this->assertStringContainsString('active-eq=1', $qs);
     }
+
+    public function testBoolFalseNormalisedToZero(): void
+    {
+        $qs = QueryBuilder::new()->filterEq('active', false)->build();
+        $this->assertStringContainsString('active-eq=0', $qs);
+    }
+
+    public function testFilterWithEnumOperator(): void
+    {
+        $qs = QueryBuilder::new()
+            ->filter('priority', FilterOperator::GT, 3)
+            ->build();
+        $this->assertStringContainsString('priority-gt=3', $qs);
+    }
+
+    public function testFilterWithRawStringOperatorStillWorks(): void
+    {
+        // Ensures backwards compatibility: raw strings are still accepted.
+        $qs = QueryBuilder::new()
+            ->filter('name', 'eq', 'Acme')
+            ->build();
+        $this->assertStringContainsString('name-eq=Acme', $qs);
+    }
+
+    public function testNegativeOffsetClampedToZero(): void
+    {
+        $qs = QueryBuilder::new()->offset(-10)->build();
+        $this->assertStringContainsString('offset=0', $qs);
+    }
 }

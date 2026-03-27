@@ -138,6 +138,63 @@ final class TicketResourceTest extends TestCase
             ]);
 
         $results = $this->resource->findByStatus(2);
-        $this->assertIsArray($results);
+        $this->assertSame([], $results);
+    }
+
+    public function testFindByOrderIdFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('orderId-eq=ORD-2024-001'))
+            ->willReturn([
+                'totalCount' => 1,
+                'ticket'     => [['id' => 7, 'orderId' => 'ORD-2024-001']],
+            ]);
+
+        $results = $this->resource->findByOrderId('ORD-2024-001');
+        $this->assertCount(1, $results);
+        $this->assertSame('ORD-2024-001', $results[0]->getOrderId());
+    }
+
+    public function testFindByAssignedUserFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('assignedUser-eq=5'))
+            ->willReturn([
+                'totalCount' => 2,
+                'ticket'     => [
+                    ['id' => 1, 'assignedUser' => 5],
+                    ['id' => 2, 'assignedUser' => 5],
+                ],
+            ]);
+
+        $results = $this->resource->findByAssignedUser(5);
+        $this->assertCount(2, $results);
+        $this->assertSame(5, $results[0]->getAssignedUser());
+    }
+
+    public function testDeleteCallsHttpDelete(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('delete')
+            ->with('ticket/42');
+
+        $this->resource->delete(42);
+    }
+
+    public function testUpdateCallsHttpPut(): void
+    {
+        $payload = ['title' => 'Updated Title'];
+
+        $this->http
+            ->expects($this->once())
+            ->method('put')
+            ->with('ticket/42', $payload)
+            ->willReturn(['id' => 42, 'title' => 'Updated Title']);
+
+        $dto = $this->resource->update(42, $payload);
+        $this->assertSame('Updated Title', $dto->getTitle());
     }
 }

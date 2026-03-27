@@ -6,6 +6,7 @@ namespace miralsoft\docbee\api\Resource;
 
 use DateTimeInterface;
 use Generator;
+use LogicException;
 use miralsoft\docbee\api\Client\HttpClientInterface;
 use miralsoft\docbee\api\DTO\AbstractDTO;
 use miralsoft\docbee\api\Exception\NotFoundException;
@@ -43,7 +44,19 @@ abstract class AbstractResource
 
     public function __construct(
         protected readonly HttpClientInterface $http,
-    ) {}
+    ) {
+        // Guard against subclasses that forget to define the required properties.
+        // These are caught at construction time rather than silently failing at runtime.
+        if ($this->endpoint === '') {
+            throw new LogicException(static::class . ' must define a non-empty $endpoint.');
+        }
+        if ($this->dtoClass === '') {
+            throw new LogicException(static::class . ' must define a non-empty $dtoClass.');
+        }
+        if ($this->listKey === '') {
+            throw new LogicException(static::class . ' must define a non-empty $listKey.');
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Read operations

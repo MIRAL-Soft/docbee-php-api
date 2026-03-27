@@ -90,4 +90,13 @@ final class WebhookValidatorTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         WebhookValidator::parseAndValidate('');
     }
+
+    public function testExplicitNullTypeFieldThrows(): void
+    {
+        // A payload with 'type' => null must be rejected, even though array_key_exists()
+        // would return true. The previous isset() check would have the same result here,
+        // but the explicit null check makes the contract clear.
+        $this->expectException(InvalidArgumentException::class);
+        WebhookValidator::validate(['type' => null, 'customer' => 42]);
+    }
 }

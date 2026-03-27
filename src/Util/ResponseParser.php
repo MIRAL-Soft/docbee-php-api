@@ -101,7 +101,13 @@ final class ResponseParser
         if (!is_array($decoded)) {
             return null;
         }
-        return isset($decoded['message']) ? (string) $decoded['message']
-            : (isset($decoded['error']) ? (string) $decoded['error'] : null);
+        // Only cast scalar values; avoid producing "Array" when the field is an object/array.
+        if (isset($decoded['message']) && is_scalar($decoded['message'])) {
+            return (string) $decoded['message'];
+        }
+        if (isset($decoded['error']) && is_scalar($decoded['error'])) {
+            return (string) $decoded['error'];
+        }
+        return null;
     }
 }

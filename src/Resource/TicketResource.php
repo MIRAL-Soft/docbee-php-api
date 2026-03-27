@@ -86,18 +86,4 @@ final class TicketResource extends AbstractResource
         return $this->listAll(QueryBuilder::new()->filterEq('status', $statusId));
     }
 
-    /**
-     * Returns all tickets that are not closed.
-     *
-     * Uses the `isClosed` flag on the status rather than a hard-coded status string.
-     * Internally loads all tickets and filters by the status' `isClosed` property.
-     * For large datasets, prefer {@see findByStatus()} with a known status ID.
-     *
-     * @return list<TicketDTO>
-     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
-     */
-    public function findOpen(): array
-    {
-        return $this->listAll(QueryBuilder::new()->filterEq('closed', false));
-    }
 }

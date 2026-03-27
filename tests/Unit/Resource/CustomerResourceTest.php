@@ -59,6 +59,40 @@ final class CustomerResourceTest extends TestCase
             ->willReturn(['totalCount' => 0, 'customer' => []]);
 
         $results = $this->resource->findByName('Acme');
-        $this->assertIsArray($results);
+        $this->assertSame([], $results);
+    }
+
+    public function testFindByEmailFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('email-eq=info%40acme.com'))
+            ->willReturn([
+                'totalCount' => 1,
+                'customer'   => [['id' => 3, 'email' => 'info@acme.com']],
+            ]);
+
+        $results = $this->resource->findByEmail('info@acme.com');
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(CustomerDTO::class, $results[0]);
+        $this->assertSame('info@acme.com', $results[0]->getEmail());
+    }
+
+    public function testFindActiveFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('active-eq=1'))
+            ->willReturn([
+                'totalCount' => 2,
+                'customer'   => [
+                    ['id' => 1, 'name' => 'Active Corp', 'active' => true],
+                    ['id' => 2, 'name' => 'Also Active', 'active' => true],
+                ],
+            ]);
+
+        $results = $this->resource->findActive();
+        $this->assertCount(2, $results);
+        $this->assertTrue($results[0]->isActive());
     }
 }

@@ -46,7 +46,9 @@ final class WebhookValidator
 
         $required = ['type'];
         foreach ($required as $field) {
-            if (!isset($payload[$field]) || $payload[$field] === '') {
+            // Use array_key_exists() to distinguish between a missing key and an
+            // explicit null value — isset() treats both identically.
+            if (!array_key_exists($field, $payload) || $payload[$field] === null || $payload[$field] === '') {
                 throw new InvalidArgumentException(
                     "Webhook payload is missing required field '{$field}'."
                 );

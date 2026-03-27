@@ -53,13 +53,17 @@ final class QueryBuilder
     // -------------------------------------------------------------------------
 
     /**
-     * Adds a filter with an explicit operator from {@see FilterOperator}.
+     * Adds a filter with an explicit operator.
      *
-     * @param mixed $value
+     * Accepts a {@see FilterOperator} enum case (preferred) or a raw string.
+     *
+     * @param FilterOperator|string $operator
+     * @param mixed                 $value
      */
-    public function filter(string $field, string $operator, mixed $value): self
+    public function filter(string $field, FilterOperator|string $operator, mixed $value): self
     {
-        $this->filters["{$field}-{$operator}"] = $this->normalizeValue($value);
+        $op = $operator instanceof FilterOperator ? $operator->value : $operator;
+        $this->filters["{$field}-{$op}"] = $this->normalizeValue($value);
         return $this;
     }
 
