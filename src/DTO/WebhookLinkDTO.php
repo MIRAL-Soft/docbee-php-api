@@ -15,7 +15,7 @@ final class WebhookLinkDTO extends AbstractDTO
         private readonly ?string $link,
     ) {}
 
-    /** @inheritDoc */
+    #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -23,7 +23,7 @@ final class WebhookLinkDTO extends AbstractDTO
         );
     }
 
-    /** @inheritDoc */
+    #[Override]
     public function toArray(): array
     {
         return array_filter(['link' => $this->link], fn($v) => $v !== null);

@@ -62,7 +62,9 @@ final class WebhookResource extends AbstractResource
     /** Container webhook event. */
     public const TYPE_CONTAINER = 'CONTAINER';
 
-    /** All allowed webhook type values. */
+    /** All allowed webhook type values.
+     * @var list<string>
+     */
     public const TYPES = [
         self::TYPE_CREATE_DOCUMENT,
         self::TYPE_CREATE_TICKET,

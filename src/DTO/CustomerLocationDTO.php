@@ -23,7 +23,7 @@ final class CustomerLocationDTO extends AbstractDTO
         private readonly ?string $changedAt,
     ) {}
 
-    /** @inheritDoc */
+    #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -41,7 +41,7 @@ final class CustomerLocationDTO extends AbstractDTO
         );
     }
 
-    /** @inheritDoc */
+    #[Override]
     public function toArray(): array
     {
         return array_filter([
