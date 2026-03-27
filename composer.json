@@ -1,21 +1,40 @@
 {
   "name": "miralsoft/docbee-api",
-  "description": "The api functions from docbee in php.",
-  "minimum-stability": "stable",
+  "description": "A professional PHP client library for the Docbee REST API, supporting tickets, customers, documents, webhooks, and delta-sync.",
+  "type": "library",
   "license": "proprietary",
+  "minimum-stability": "stable",
   "authors": [
     {
       "name": "Michael Tosch",
       "email": "m.tosch@miralsoft.com",
-      "role" : "Softwareengineer"
+      "role": "Software Engineer"
     }
   ],
-  "autoload" : {
-    "psr-4" : {
-      "miralsoft\\docbee\\api\\" : "src"
+  "require": {
+    "php": ">=8.1",
+    "guzzlehttp/guzzle": "^7.0",
+    "psr/log": "^2.0 || ^3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0",
+    "phpstan/phpstan": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "miralsoft\\docbee\\api\\": "src/"
     }
   },
-  "require": {
-    "php": ">=8.0.0"
+  "autoload-dev": {
+    "psr-4": {
+      "miralsoft\\docbee\\api\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit --testdox",
+    "analyse": "phpstan analyse src --level=8"
+  },
+  "config": {
+    "sort-packages": true
   }
 }
