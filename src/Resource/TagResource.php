@@ -29,7 +29,7 @@ final class TagResource extends AbstractResource
     {
         $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
         if (empty($results)) {
-            throw new NotFoundException("Tag with name '{$name}' not found.", 404);
+            throw new NotFoundException("Tag with name '{$name}' not found.", 404, $this->endpoint);
         }
         return $results[0];
     }

@@ -47,6 +47,7 @@ final class CustomerResource extends AbstractResource
             throw new NotFoundException(
                 message:    "Customer with number '{$customerNumber}' not found.",
                 statusCode: 404,
+                requestUrl: $this->endpoint,
             );
         }
 

@@ -29,7 +29,7 @@ final class UserResource extends AbstractResource
     {
         $results = $this->list(QueryBuilder::new()->filterEq('email', $email)->limit(1));
         if (empty($results)) {
-            throw new NotFoundException("User with email '{$email}' not found.", 404);
+            throw new NotFoundException("User with email '{$email}' not found.", 404, $this->endpoint);
         }
         return $results[0];
     }

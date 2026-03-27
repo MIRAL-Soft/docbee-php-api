@@ -29,7 +29,7 @@ final class ServiceTypeResource extends AbstractResource
     {
         $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
         if (empty($results)) {
-            throw new NotFoundException("ServiceType with name '{$name}' not found.", 404);
+            throw new NotFoundException("ServiceType with name '{$name}' not found.", 404, $this->endpoint);
         }
         return $results[0];
     }
@@ -44,7 +44,7 @@ final class ServiceTypeResource extends AbstractResource
     {
         $results = $this->list(QueryBuilder::new()->filterEq('number', $number)->limit(1));
         if (empty($results)) {
-            throw new NotFoundException("ServiceType with number '{$number}' not found.", 404);
+            throw new NotFoundException("ServiceType with number '{$number}' not found.", 404, $this->endpoint);
         }
         return $results[0];
     }
