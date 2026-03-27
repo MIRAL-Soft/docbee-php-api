@@ -104,6 +104,25 @@ final class DocbeeConfigTest extends TestCase
         DocbeeConfig::fromEnv();
     }
 
+    public function testFromArrayThrowsOnWhitespaceOnlyTenant(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        DocbeeConfig::fromArray(['tenant' => '   ', 'token' => 'tok']);
+    }
+
+    public function testFromArrayThrowsOnWhitespaceOnlyToken(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        DocbeeConfig::fromArray(['tenant' => 'mycompany', 'token' => '   ']);
+    }
+
+    public function testFromArrayAcceptsZeroStringAsTenant(): void
+    {
+        // '0' is a valid tenant name — empty() would incorrectly reject it
+        $config = DocbeeConfig::fromArray(['tenant' => '0', 'token' => 'tok']);
+        $this->assertSame('0', $config->getTenant());
+    }
+
     public function testDebugInfoRedactsToken(): void
     {
         $config    = new DocbeeConfig(tenant: 'mycompany', token: 'supersecret');

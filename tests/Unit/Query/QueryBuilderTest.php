@@ -136,4 +136,16 @@ final class QueryBuilderTest extends TestCase
         $qs = QueryBuilder::new()->offset(-10)->build();
         $this->assertStringContainsString('offset=0', $qs);
     }
+
+    public function testFilterThrowsOnEmptyFieldName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->filter('', FilterOperator::EQ, 'value');
+    }
+
+    public function testFilterThrowsOnWhitespaceOnlyFieldName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->filter('   ', FilterOperator::EQ, 'value');
+    }
 }

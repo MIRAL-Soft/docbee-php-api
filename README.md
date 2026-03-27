@@ -35,8 +35,9 @@ $client = new DocbeeClient(new DocbeeConfig(
     token:  'your-api-token',
 ));
 
-// List all open tickets
-$tickets = $client->tickets()->findOpen();
+// List tickets with a specific status (pass the numeric status ID from TicketStatusResource)
+$statuses = $client->ticketStatuses()->listAll();
+$tickets  = $client->tickets()->findByStatus($statuses[0]->getId());
 
 // Create a new ticket
 $ticket = $client->tickets()->create([
@@ -137,8 +138,9 @@ $tickets = $client->tickets()->list(
 ### Count records
 
 ```php
+// status is a numeric ID — retrieve available IDs via ticketStatuses()
 $total = $client->tickets()->count(
-    QueryBuilder::new()->filterEq('status', 'open')
+    QueryBuilder::new()->filterEq('status', 1)
 );
 ```
 
@@ -186,7 +188,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
 use miralsoft\docbee\api\Query\FilterOperator;
 
 $query = QueryBuilder::new()
-    ->filterEq('status', 'open')             // status == 'open'
+    ->filterEq('status', 1)                 // status == 1 (numeric ID)
     ->filterGt('priority', 2)               // priority > 2
     ->filterIlike('title', '%printer%')     // title LIKE '%printer%'
     ->filterIn('customer', [1, 2, 3])       // customer IN (1, 2, 3)
@@ -227,10 +229,10 @@ $active   = $client->customers()->findActive();
 
 ```php
 $tickets = $client->tickets()->findByCustomer(42);
-$tickets = $client->tickets()->findByCustomer(42, status: 'open');
+$tickets = $client->tickets()->findByCustomer(42, statusId: 1); // statusId is a numeric ID
+$tickets = $client->tickets()->findByStatus(1);                 // all tickets with that status
 $tickets = $client->tickets()->findByOrderId('ORD-2024-001');
 $tickets = $client->tickets()->findByAssignedUser(5);
-$tickets = $client->tickets()->findOpen();
 ```
 
 ### Users

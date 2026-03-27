@@ -62,6 +62,10 @@ final class QueryBuilder
      */
     public function filter(string $field, FilterOperator|string $operator, mixed $value): self
     {
+        if (trim($field) === '') {
+            throw new InvalidArgumentException('QueryBuilder: filter field name must not be empty.');
+        }
+
         $op = $operator instanceof FilterOperator ? $operator->value : $operator;
         $this->filters["{$field}-{$op}"] = $this->normalizeValue($value);
         return $this;

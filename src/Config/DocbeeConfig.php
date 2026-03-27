@@ -108,10 +108,12 @@ final class DocbeeConfig
      */
     public static function fromArray(array $data): self
     {
-        if (empty($data['tenant'])) {
+        // Use isset() + trim() instead of empty() so that the string '0' is accepted as
+        // a valid tenant or token (empty() would incorrectly treat '0' as falsy).
+        if (!isset($data['tenant']) || trim((string) $data['tenant']) === '') {
             throw new InvalidArgumentException("DocbeeConfig::fromArray() requires key 'tenant'.");
         }
-        if (empty($data['token'])) {
+        if (!isset($data['token']) || trim((string) $data['token']) === '') {
             throw new InvalidArgumentException("DocbeeConfig::fromArray() requires key 'token'.");
         }
 
