@@ -116,11 +116,38 @@ final class DocbeeConfigTest extends TestCase
         DocbeeConfig::fromArray(['tenant' => 'mycompany', 'token' => '   ']);
     }
 
-    public function testFromArrayAcceptsZeroStringAsTenant(): void
+    public function testTrimsWhitespaceFromTenantAndToken(): void
     {
-        // '0' is a valid tenant name — empty() would incorrectly reject it
-        $config = DocbeeConfig::fromArray(['tenant' => '0', 'token' => 'tok']);
-        $this->assertSame('0', $config->getTenant());
+        $config = new DocbeeConfig(tenant: '  mycompany  ', token: '  secret  ');
+
+        $this->assertSame('mycompany', $config->getTenant());
+        $this->assertSame('secret', $config->getToken());
+    }
+
+    public function testThrowsOnTenantWithDotSeparator(): void
+    {
+        // Dots would allow URL injection like "evil.com" → https://evil.com.docbee.com
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/alphanumeric/');
+        new DocbeeConfig(tenant: 'evil.com', token: 'tok');
+    }
+
+    public function testThrowsOnTenantWithSlash(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new DocbeeConfig(tenant: 'my/company', token: 'tok');
+    }
+
+    public function testThrowsOnTenantWithAt(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new DocbeeConfig(tenant: 'tenant@evil', token: 'tok');
+    }
+
+    public function testTenantAllowsHyphensAndUnderscores(): void
+    {
+        $config = new DocbeeConfig(tenant: 'my-company_123', token: 'tok');
+        $this->assertSame('my-company_123', $config->getTenant());
     }
 
     public function testDebugInfoRedactsToken(): void

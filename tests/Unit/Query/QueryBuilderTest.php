@@ -172,4 +172,40 @@ final class QueryBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         QueryBuilder::new()->sort('   ');
     }
+
+    public function testFilterThrowsOnFieldNameWithDot(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->filter('field.name', FilterOperator::EQ, 'value');
+    }
+
+    public function testFilterThrowsOnFieldNameWithDash(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->filter('field-name', FilterOperator::EQ, 'value');
+    }
+
+    public function testFilterThrowsOnFieldNameStartingWithDigit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->filter('1field', FilterOperator::EQ, 'value');
+    }
+
+    public function testSortThrowsOnFieldNameWithDot(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->sort('field.name');
+    }
+
+    public function testSortThrowsOnFieldNameStartingWithDigit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        QueryBuilder::new()->sort('1field');
+    }
+
+    public function testFilterAcceptsUnderscoreInFieldName(): void
+    {
+        $qs = QueryBuilder::new()->filter('field_name', FilterOperator::EQ, 'value')->build();
+        $this->assertStringContainsString('field_name-eq=value', $qs);
+    }
 }

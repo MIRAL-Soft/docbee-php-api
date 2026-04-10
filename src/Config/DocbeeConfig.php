@@ -26,28 +26,47 @@ use InvalidArgumentException;
 final class DocbeeConfig
 {
     /** Default request timeout in seconds. */
-    private const DEFAULT_TIMEOUT = 30;
+    private const int DEFAULT_TIMEOUT = 30;
 
     /** Default connection timeout in seconds. */
-    private const DEFAULT_CONNECT_TIMEOUT = 10;
+    private const int DEFAULT_CONNECT_TIMEOUT = 10;
 
     /** Default maximum number of retry attempts for 429 / 5xx responses. */
-    private const DEFAULT_MAX_RETRIES = 3;
+    private const int DEFAULT_MAX_RETRIES = 3;
 
     /** Base URL template; {tenant} is replaced at runtime. */
-    private const BASE_URL_TEMPLATE = 'https://%s.docbee.com/restApi/v1/';
+    private const string BASE_URL_TEMPLATE = 'https://%s.docbee.com/restApi/v1/';
+
+    /**
+     * Allowed characters for the tenant subdomain.
+     * Prevents URL-injection via a crafted value such as "evil.com/path".
+     */
+    private const string TENANT_PATTERN = '/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/';
+
+    // Declared separately (not constructor-promoted) so we can trim+validate
+    // before assigning to the readonly property.
+    private readonly string $tenant;
+    private readonly string $token;
 
     public function __construct(
-        private readonly string $tenant,
-        private readonly string $token,
-        private readonly int $timeout = self::DEFAULT_TIMEOUT,
+        string $tenant,
+        string $token,
+        private readonly int $timeout        = self::DEFAULT_TIMEOUT,
         private readonly int $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT,
-        private readonly int $maxRetries = self::DEFAULT_MAX_RETRIES,
+        private readonly int $maxRetries     = self::DEFAULT_MAX_RETRIES,
     ) {
-        if (trim($tenant) === '') {
+        $tenant = trim($tenant);
+        $token  = trim($token);
+
+        if ($tenant === '') {
             throw new InvalidArgumentException('DocbeeConfig: tenant must not be empty.');
         }
-        if (trim($token) === '') {
+        if (!preg_match(self::TENANT_PATTERN, $tenant)) {
+            throw new InvalidArgumentException(
+                'DocbeeConfig: tenant must contain only alphanumeric characters, hyphens, and underscores.'
+            );
+        }
+        if ($token === '') {
             throw new InvalidArgumentException('DocbeeConfig: token must not be empty.');
         }
         if ($timeout <= 0) {
@@ -56,6 +75,9 @@ final class DocbeeConfig
         if ($connectTimeout <= 0) {
             throw new InvalidArgumentException('DocbeeConfig: connectTimeout must be greater than 0.');
         }
+
+        $this->tenant = $tenant;
+        $this->token  = $token;
     }
 
     // -------------------------------------------------------------------------

@@ -7,6 +7,7 @@ namespace miralsoft\docbee\api\Tests\Unit\Resource;
 use LogicException;
 use miralsoft\docbee\api\Client\HttpClientInterface;
 use miralsoft\docbee\api\DTO\AbstractDTO;
+use miralsoft\docbee\api\DTO\TicketDTO;
 use miralsoft\docbee\api\Resource\AbstractResource;
 use PHPUnit\Framework\TestCase;
 
@@ -54,8 +55,24 @@ final class AbstractResourceTest extends TestCase
 
         new class($this->createMock(HttpClientInterface::class)) extends AbstractResource {
             protected string $endpoint = 'ticket';
-            protected string $dtoClass = 'Foo';
-            protected string $listKey  = '';     // intentionally empty
+            protected string $dtoClass = TicketDTO::class; // valid subclass so we reach the listKey check
+            protected string $listKey  = '';               // intentionally empty
+
+            public static function fromArray(array $data): static { return new static(...[]); }
+            public function toArray(): array { return []; }
+            public function getId(): ?int { return null; }
+        };
+    }
+
+    public function testThrowsWhenDtoClassIsNotAbstractDtoSubclass(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessageMatches('/dtoClass/');
+
+        new class($this->createMock(HttpClientInterface::class)) extends AbstractResource {
+            protected string $endpoint = 'ticket';
+            protected string $dtoClass = \stdClass::class; // not a subclass of AbstractDTO
+            protected string $listKey  = 'ticket';
 
             public static function fromArray(array $data): static { return new static(...[]); }
             public function toArray(): array { return []; }
@@ -65,10 +82,10 @@ final class AbstractResourceTest extends TestCase
 
     public function testProperlyConfiguredResourceConstructsWithoutException(): void
     {
-        // Should not throw
+        // Should not throw — TicketDTO is a valid AbstractDTO subclass
         $resource = new class($this->createMock(HttpClientInterface::class)) extends AbstractResource {
             protected string $endpoint = 'ticket';
-            protected string $dtoClass = AbstractDTO::class;
+            protected string $dtoClass = TicketDTO::class;
             protected string $listKey  = 'ticket';
         };
 

@@ -35,7 +35,13 @@ final class HttpClient implements HttpClientInterface
         $this->guzzle = $guzzle ?? new GuzzleClient([
             'timeout'         => $config->getTimeout(),
             'connect_timeout' => $config->getConnectTimeout(),
-            'http_errors'     => false, // We handle errors ourselves.
+            'http_errors'     => false,  // We handle errors ourselves.
+            'verify'          => true,   // Enforce TLS certificate verification (explicit, never disable).
+            'allow_redirects' => [
+                'max'       => 5,
+                'strict'    => true,     // Use original method on redirect (no GET downgrade).
+                'protocols' => ['https'], // Never follow a redirect to plain HTTP.
+            ],
         ]);
     }
 
@@ -180,13 +186,15 @@ final class HttpClient implements HttpClientInterface
         try {
             return $limiter->execute($callable);
         } catch (ConnectException $e) {
+            // Do not include $e->getMessage() directly — it can contain the full URL
+            // (including path segments that may reveal internal tenant/token info).
             throw new DocbeeApiException(
-                message:  'Connection to Docbee API failed: ' . $e->getMessage(),
+                message:  'Connection to Docbee API failed. Check network connectivity and tenant configuration.',
                 previous: $e,
             );
         } catch (RequestException $e) {
             throw new DocbeeApiException(
-                message:  'HTTP request to Docbee API failed: ' . $e->getMessage(),
+                message:  'HTTP request to Docbee API failed.',
                 previous: $e,
             );
         }

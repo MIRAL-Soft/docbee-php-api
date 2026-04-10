@@ -65,6 +65,12 @@ final class QueryBuilder
         if (trim($field) === '') {
             throw new InvalidArgumentException('QueryBuilder: filter field name must not be empty.');
         }
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $field)) {
+            throw new InvalidArgumentException(
+                "QueryBuilder: invalid filter field name '{$field}'. " .
+                'Field names must start with a letter and contain only letters, digits, and underscores.'
+            );
+        }
 
         $op = $operator instanceof FilterOperator ? $operator->value : $operator;
         $this->filters["{$field}-{$op}"] = $this->normalizeValue($value);
@@ -169,6 +175,12 @@ final class QueryBuilder
     {
         if (trim($field) === '') {
             throw new InvalidArgumentException('QueryBuilder: sort field name must not be empty.');
+        }
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*$/', $field)) {
+            throw new InvalidArgumentException(
+                "QueryBuilder: invalid sort field name '{$field}'. " .
+                'Field names must start with a letter and contain only letters, digits, and underscores.'
+            );
         }
         $dir = strtolower($direction);
         if (!in_array($dir, ['asc', 'desc'], true)) {

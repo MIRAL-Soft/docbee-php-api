@@ -56,6 +56,13 @@ abstract class AbstractResource
         if ($this->listKey === '') {
             throw new LogicException(static::class . ' must define a non-empty $listKey.');
         }
+        // Verify that the DTO class actually exists and is an AbstractDTO subclass.
+        // Catches typos at construction time instead of on the first API call.
+        if (!is_subclass_of($this->dtoClass, AbstractDTO::class)) {
+            throw new LogicException(
+                static::class . " \$dtoClass '{$this->dtoClass}' must be a subclass of AbstractDTO."
+            );
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -108,6 +115,10 @@ abstract class AbstractResource
         $response = $this->http->get("{$this->endpoint}{$qs}");
         $items    = $response[$this->listKey] ?? [];
 
+        if (!is_array($items)) {
+            return [];
+        }
+
         return array_map(
             fn(array $item) => ($this->dtoClass)::fromArray($item),
             $items,
@@ -156,6 +167,10 @@ abstract class AbstractResource
             $qs        = $pageQuery->build();
             $response  = $this->http->get("{$this->endpoint}{$qs}");
             $items     = $response[$this->listKey] ?? [];
+
+            if (!is_array($items)) {
+                break;
+            }
 
             foreach ($items as $item) {
                 yield ($this->dtoClass)::fromArray($item);
