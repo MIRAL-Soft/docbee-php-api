@@ -10,7 +10,7 @@ Provides typed access to all Docbee resources — tickets, customers, documents,
 
 | Requirement | Version |
 |-------------|---------|
-| PHP         | ≥ 8.1   |
+| PHP         | ≥ 8.3   |
 | Guzzle      | ^7.0    |
 | PSR Log     | ^2.0 or ^3.0 |
 
@@ -35,9 +35,8 @@ $client = new DocbeeClient(new DocbeeConfig(
     token:  'your-api-token',
 ));
 
-// List tickets with a specific status (pass the numeric status ID from TicketStatusResource)
-$statuses = $client->ticketStatuses()->listAll();
-$tickets  = $client->tickets()->findByStatus($statuses[0]->getId());
+// List tickets with a specific status
+$tickets = $client->tickets()->findByStatus(1);
 
 // Create a new ticket
 $ticket = $client->tickets()->create([
@@ -46,7 +45,7 @@ $ticket = $client->tickets()->create([
     'priority' => 1,
 ]);
 
-echo $ticket->getId();   // e.g. 1234
+echo $ticket->getId();    // e.g. 1234
 echo $ticket->getTitle(); // "Printer offline"
 ```
 
@@ -91,24 +90,141 @@ $config = DocbeeConfig::fromArray([
 
 ## Resources
 
-All resources are accessed via the `DocbeeClient` instance:
+### Top-level resources
 
-| Method                          | Resource               |
-|---------------------------------|------------------------|
-| `$client->tickets()`            | Support tickets        |
-| `$client->customers()`          | Customers              |
-| `$client->customerContacts()`   | Customer contacts      |
-| `$client->customerLocations()`  | Customer locations     |
-| `$client->users()`              | System users           |
-| `$client->tags()`               | Tags                   |
-| `$client->priorities()`         | Priority levels        |
-| `$client->requestTypes()`       | Request types          |
-| `$client->serviceTypes()`       | Service types          |
-| `$client->ticketStatuses()`     | Ticket statuses        |
-| `$client->documents()`          | Documents / protocols  |
-| `$client->documentTasks()`      | Document tasks         |
-| `$client->documentTemplates()`  | Document templates     |
-| `$client->webhooks()`           | Webhook subscriptions  |
+Access via the `DocbeeClient` instance. All resources support `find()`, `list()`, `listAll()`, `cursor()`, `count()`, `create()`, `update()`, `delete()`, `findModifiedSince()`, and `findCreatedSince()` unless the API endpoint is read-only.
+
+| Method | Description |
+|--------|-------------|
+| `$client->agreements()` | Service agreements |
+| `$client->agreementCategories()` | Agreement categories |
+| `$client->agreementTemplates()` | Agreement templates |
+| `$client->away()` | Away / out-of-office entries |
+| `$client->awayReasons()` | Away reason types |
+| `$client->companyData()` | Company master data |
+| `$client->confidentialTags()` | Confidential tags |
+| `$client->contingents()` | Service contingents |
+| `$client->costEstimations()` | Cost estimations |
+| `$client->costEstimationTemplates()` | Cost estimation templates |
+| `$client->customColors()` | Custom UI colours |
+| `$client->customFields()` | Custom field definitions |
+| `$client->customers()` | Customers |
+| `$client->customerContacts()` | Customer contacts |
+| `$client->customerLocations()` | Customer locations |
+| `$client->customerObjects()` | Customer objects / assets |
+| `$client->customerProfiles()` | Customer profiles |
+| `$client->customerStatuses()` | Customer status types |
+| `$client->customerUsers()` | Customer portal users |
+| `$client->dailyClosingConfigs()` | Daily closing configurations |
+| `$client->dashboards()` | Dashboards |
+| `$client->departments()` | Departments |
+| `$client->departmentProfiles()` | Department profiles |
+| `$client->documentRecurrences()` | Document recurrence rules |
+| `$client->docBeeScripts()` | Automation scripts |
+| `$client->documents()` | Documents / protocols |
+| `$client->documentTasks()` | Document tasks |
+| `$client->documentTemplates()` | Document templates |
+| `$client->dueDateColors()` | Due-date colour rules |
+| `$client->envVariables()` | Environment variables |
+| `$client->errorLogs()` | Error logs |
+| `$client->exportProfiles()` | Export profiles |
+| `$client->invoices()` | Invoices |
+| `$client->materialItems()` | Material items / products |
+| `$client->messageTemplates()` | Message templates |
+| `$client->notes()` | Notes |
+| `$client->notifications()` | Notifications |
+| `$client->objectCategories()` | Object categories |
+| `$client->observerCategories()` | Observer categories |
+| `$client->observerTypes()` | Observer types |
+| `$client->observerUsers()` | Observer (portal) users |
+| `$client->paymentProfiles()` | Payment profiles |
+| `$client->pdfLayouts()` | PDF layout configurations |
+| `$client->permissionGroups()` | Permission groups |
+| `$client->presetProfiles()` | Preset profiles |
+| `$client->priorities()` | Priority levels |
+| `$client->protocols()` | Protocols |
+| `$client->protocolTemplates()` | Protocol templates |
+| `$client->queues()` | Ticket queues |
+| `$client->requestTypes()` | Request types |
+| `$client->ruleEngineActions()` | Rule engine actions |
+| `$client->selectionCategories()` | Selection / dropdown categories |
+| `$client->serviceProviders()` | Service providers |
+| `$client->serviceProviderUsers()` | Service provider users |
+| `$client->serviceTypes()` | Service types |
+| `$client->serviceTypeProfiles()` | Service type profiles |
+| `$client->skills()` | Technician skills |
+| `$client->slaProfiles()` | SLA profiles |
+| `$client->tableConfigStorages()` | Saved table view configurations |
+| `$client->tags()` | Tags |
+| `$client->taskTemplates()` | Task templates |
+| `$client->tickets()` | Support tickets |
+| `$client->ticketBoards()` | Kanban-style ticket boards |
+| `$client->ticketBoardProfiles()` | Ticket board profiles |
+| `$client->ticketCategories()` | Ticket categories |
+| `$client->ticketLinkTypes()` | Ticket link type definitions |
+| `$client->ticketMailParserConfigs()` | Ticket mail parser rules |
+| `$client->ticketRecurrences()` | Ticket recurrence rules |
+| `$client->ticketStatuses()` | Ticket status types |
+| `$client->ticketTemplates()` | Ticket templates |
+| `$client->timers()` | Running timers |
+| `$client->timeRecords()` | Time records |
+| `$client->travelTypes()` | Travel type definitions |
+| `$client->userActivities()` | User activity logs |
+| `$client->userProfiles()` | User profiles |
+| `$client->users()` | System users |
+| `$client->webhooks()` | Webhook subscriptions |
+| `$client->workPipes()` | Work pipes |
+
+### Sub-resources
+
+Sub-resources are scoped to a parent record. Each call returns a fresh resource instance bound to the given parent ID.
+
+| Factory method | Endpoint |
+|----------------|----------|
+| `$client->agreementComponents(int $agreementId)` | `v1/agreement/{id}/component` |
+| `$client->agreementPeriods(int $agreementId)` | `v1/agreement/{id}/period` |
+| `$client->agreementInvoices(int $agreementId)` | `v1/agreement/{id}/invoice` |
+| `$client->agreementComponentTemplates(int $agreementTemplateId)` | `v1/agreementTemplate/{id}/componentTemplate` |
+| `$client->contingentElements(int $contingentId)` | `v1/contingent/{id}/element` |
+| `$client->contingentItems(int $contingentId)` | `v1/contingent/{id}/item` |
+| `$client->contingentItemRecurrences(int $contingentId)` | `v1/contingent/{id}/itemRecurrence` |
+| `$client->costEstimationTasks(int $costEstimationId)` | `v1/costEstimation/{id}/task` |
+| `$client->costEstimationTaskTemplates(int $templateId)` | `v1/costEstimationTemplate/{id}/task` |
+| `$client->dashboardWidgets(int $dashboardId)` | `v1/dashboard/{id}/widget` |
+| `$client->documentConflicts(int $documentId)` | `v1/docBeeDocument/{id}/conflict` |
+| `$client->documentMessages(int $documentId)` | `v1/docBeeDocument/{id}/message` |
+| `$client->docBeeScriptParameters(int $scriptId)` | `v1/docBeeScript/{id}/param` |
+| `$client->paymentProfileMappings(int $paymentProfileId)` | `v1/paymentProfile/{id}/mapping` |
+| `$client->presetValues(int $presetProfileId)` | `v1/presetProfile/{id}/value` |
+| `$client->protocolEntries(int $protocolId)` | `v1/protocol/{id}/entry` |
+| `$client->protocolGroupData(int $protocolId)` | `v1/protocol/{id}/groupData` |
+| `$client->protocolDocumentTemplates(int $protocolTemplateId)` | `v1/protocolTemplate/{id}/documentTemplate` |
+| `$client->ruleEngineConditions(int $actionId)` | `v1/ruleEngineAction/{id}/condition` |
+| `$client->ruleEngineReactions(int $actionId)` | `v1/ruleEngineAction/{id}/reaction` |
+| `$client->ruleEngineSettings(int $actionId)` | `v1/ruleEngineAction/{id}/setting` |
+| `$client->selectionValues(int $selectionCategoryId)` | `v1/selectionCategory/{id}/selectionValue` |
+| `$client->slaProfileSpecializations(int $slaProfileId)` | `v1/slaProfile/{id}/specialization` |
+| `$client->slaProfileWorkingHours(int $slaProfileId)` | `v1/slaProfile/{id}/workingHour` |
+| `$client->ticketBoardColumns(int $boardId)` | `v1/ticketBoard/{id}/column` |
+| `$client->ticketBoardFields(int $boardId)` | `v1/ticketBoard/{id}/field` |
+| `$client->ticketBoardFilters(int $boardId)` | `v1/ticketBoard/{id}/filter` |
+| `$client->ticketLinks(int $ticketId)` | `v1/ticket/{id}/link` |
+| `$client->ticketMessages(int $ticketId)` | `v1/ticket/{id}/message` |
+
+**Example:**
+
+```php
+// List all messages for ticket #42
+$messages = $client->ticketMessages(42)->listAll();
+
+// List all components of agreement #7
+$components = $client->agreementComponents(7)->list();
+
+// Paginate through rule engine conditions for action #3
+foreach ($client->ruleEngineConditions(3)->cursor() as $condition) {
+    process($condition);
+}
+```
 
 ---
 
@@ -138,7 +254,6 @@ $tickets = $client->tickets()->list(
 ### Count records
 
 ```php
-// status is a numeric ID — retrieve available IDs via ticketStatuses()
 $total = $client->tickets()->count(
     QueryBuilder::new()->filterEq('status', 1)
 );
@@ -148,7 +263,7 @@ $total = $client->tickets()->count(
 
 ```php
 foreach ($client->tickets()->cursor() as $ticket) {
-    // processes one ticket at a time
+    // processes one ticket at a time — no full list loaded into memory
     process($ticket);
 }
 ```
@@ -188,7 +303,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
 use miralsoft\docbee\api\Query\FilterOperator;
 
 $query = QueryBuilder::new()
-    ->filterEq('status', 1)                 // status == 1 (numeric ID)
+    ->filterEq('status', 1)                 // status == 1
     ->filterGt('priority', 2)               // priority > 2
     ->filterIlike('title', '%printer%')     // title LIKE '%printer%'
     ->filterIn('customer', [1, 2, 3])       // customer IN (1, 2, 3)
@@ -202,16 +317,16 @@ $tickets = $client->tickets()->list($query);
 
 ### Available filter operators (`FilterOperator`)
 
-| Constant             | Operator       |
-|----------------------|----------------|
-| `FilterOperator::EQ`    | equals (==)    |
-| `FilterOperator::NEQ`   | not equals (!=)|
+| Constant             | Operator              |
+|----------------------|-----------------------|
+| `FilterOperator::EQ`    | equals (==)        |
+| `FilterOperator::NEQ`   | not equals (!=)    |
 | `FilterOperator::ILIKE` | case-insensitive LIKE |
-| `FilterOperator::GT`    | greater than   |
+| `FilterOperator::GT`    | greater than       |
 | `FilterOperator::GTE`   | greater than or equal |
-| `FilterOperator::LT`    | less than      |
+| `FilterOperator::LT`    | less than          |
 | `FilterOperator::LTE`   | less than or equal |
-| `FilterOperator::IN`    | IN list        |
+| `FilterOperator::IN`    | IN list            |
 
 ---
 
@@ -229,8 +344,8 @@ $active   = $client->customers()->findActive();
 
 ```php
 $tickets = $client->tickets()->findByCustomer(42);
-$tickets = $client->tickets()->findByCustomer(42, statusId: 1); // statusId is a numeric ID
-$tickets = $client->tickets()->findByStatus(1);                 // all tickets with that status
+$tickets = $client->tickets()->findByCustomer(42, statusId: 1);
+$tickets = $client->tickets()->findByStatus(1);
 $tickets = $client->tickets()->findByOrderId('ORD-2024-001');
 $tickets = $client->tickets()->findByAssignedUser(5);
 ```
@@ -250,14 +365,14 @@ Docbee webhooks allow external systems to receive notifications when events occu
 
 ### Available event types
 
-| Constant                                  | Event                                  |
-|-------------------------------------------|----------------------------------------|
-| `WebhookResource::TYPE_CREATE_DOCUMENT`   | A new document is created              |
-| `WebhookResource::TYPE_CREATE_TICKET`     | A new ticket is created                |
-| `WebhookResource::TYPE_EDIT_PROTOCOL`     | A protocol is edited                   |
-| `WebhookResource::TYPE_CREATE_TICKET_MESSAGE` | A message is added to a ticket    |
-| `WebhookResource::TYPE_EXECUTE_RULE_ENGINE`   | The rule engine is executed        |
-| `WebhookResource::TYPE_CONTAINER`         | Container event                        |
+| Constant | Event |
+|----------|-------|
+| `WebhookResource::TYPE_CREATE_DOCUMENT` | A new document is created |
+| `WebhookResource::TYPE_CREATE_TICKET` | A new ticket is created |
+| `WebhookResource::TYPE_EDIT_PROTOCOL` | A protocol is edited |
+| `WebhookResource::TYPE_CREATE_TICKET_MESSAGE` | A message is added to a ticket |
+| `WebhookResource::TYPE_EXECUTE_RULE_ENGINE` | The rule engine is executed |
+| `WebhookResource::TYPE_CONTAINER` | Container event |
 
 ### Create a webhook
 
@@ -277,13 +392,13 @@ echo $webhook->getId();
 
 ```php
 $link = $client->webhooks()->createLink(
-    webhookId:         $webhook->getId(),
-    ownerId:           1,           // required: user ID
-    customerId:        42,          // optional
-    customerLocationId: 3,          // optional
+    webhookId:          $webhook->getId(),
+    ownerId:            1,   // required: user ID
+    customerId:         42,  // optional
+    customerLocationId: 3,   // optional
 );
 
-echo $link->getLink(); // share this URL with the customer
+echo $link->getLink();
 ```
 
 ### Validate incoming webhook payloads
@@ -291,13 +406,11 @@ echo $link->getLink(); // share this URL with the customer
 ```php
 use miralsoft\docbee\api\Util\WebhookValidator;
 
-// In your webhook receiver script:
 $body    = file_get_contents('php://input');
 $payload = WebhookValidator::parseAndValidate($body);
 
 WebhookValidator::validateType($payload['type']);
 
-// Safe to process
 handleWebhook($payload['type'], $payload);
 ```
 
@@ -305,7 +418,7 @@ handleWebhook($payload['type'], $payload);
 
 ## Error Handling
 
-All exceptions extend `DocbeeApiException`, so you can catch everything with one handler:
+All exceptions extend `DocbeeApiException`:
 
 ```php
 use miralsoft\docbee\api\Exception\DocbeeApiException;
@@ -318,20 +431,15 @@ use miralsoft\docbee\api\Exception\ServerException;
 try {
     $ticket = $client->tickets()->find(42);
 } catch (NotFoundException $e) {
-    echo "Ticket not found: " . $e->getMessage();
+    echo "Not found: " . $e->getMessage();
 } catch (AuthenticationException $e) {
-    echo "Invalid API token (HTTP " . $e->getStatusCode() . ")";
+    echo "Invalid token (HTTP " . $e->getStatusCode() . ")";
 } catch (RateLimitException $e) {
-    echo "Rate limit exceeded — all retries exhausted";
+    echo "Rate limit exceeded";
 } catch (ValidationException $e) {
-    echo "Invalid request: " . $e->getMessage();
-    echo "Response: " . $e->getResponseBody();
-} catch (ServerException $e) {
-    echo "Docbee server error: " . $e->getStatusCode();
+    echo "Bad request: " . $e->getMessage();
 } catch (DocbeeApiException $e) {
-    // Catch-all for any other API error
     echo $e->getMessage();
-    echo $e->getRequestUrl();
 }
 ```
 
@@ -339,11 +447,11 @@ try {
 
 ```
 DocbeeApiException
-├── AuthenticationException  – HTTP 401 / 403 (invalid/expired token)
-├── NotFoundException        – HTTP 404 (resource not found)
-├── RateLimitException       – HTTP 429 (rate limit exceeded)
-├── ValidationException      – HTTP 400 / 422 (bad request)
-└── ServerException          – HTTP 5xx (server error)
+├── AuthenticationException  – HTTP 401 / 403
+├── NotFoundException        – HTTP 404
+├── RateLimitException       – HTTP 429
+├── ValidationException      – HTTP 400 / 422
+└── ServerException          – HTTP 5xx
 ```
 
 ---
@@ -367,6 +475,26 @@ $client = new DocbeeClient(
 
 ---
 
+## Working with DTOs
+
+All API responses are returned as typed DTO objects:
+
+```php
+$customer = $client->customers()->find(42);
+echo $customer->getName();
+echo $customer->getEmail();
+
+// Update — pass a data array to update()
+$updated = $client->customers()->update(42, [
+    'email' => 'new@email.com',
+]);
+
+// DTOs implement JsonSerializable
+echo json_encode($customer); // serialises via toArray()
+```
+
+---
+
 ## Testing
 
 ```bash
@@ -382,23 +510,6 @@ composer analyse
 
 ---
 
-## Working with DTOs
-
-All API responses are returned as typed DTO objects. Use `toArray()` to serialise them back for write operations:
-
-```php
-// Fetch an existing customer
-$customer = $client->customers()->find(42);
-
-// Modify and update (pass a data array to update())
-$updated = $client->customers()->update(42, [
-    'email' => 'new@email.com',
-    'phone' => '+49 89 999999',
-]);
-```
-
----
-
 ## License
 
-Proprietary – © MIRAL-Soft / Miralsoft. All rights reserved.
+Proprietary — © Miralsoft
