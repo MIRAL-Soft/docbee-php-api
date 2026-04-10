@@ -82,7 +82,9 @@ final class RateLimiter
 
         if ($retryAfter !== '' && is_numeric($retryAfter)) {
             // Server-supplied value takes full precedence over client-side backoff.
-            return min((int) $retryAfter * 1_000, self::MAX_DELAY_MS);
+            // max(0, …) guards against a malicious/buggy server sending a negative value,
+            // which would otherwise pass a negative microsecond count to usleep().
+            return max(0, min((int) $retryAfter * 1_000, self::MAX_DELAY_MS));
         }
 
         // Pure exponential backoff: 1 s → 2 s → 4 s …

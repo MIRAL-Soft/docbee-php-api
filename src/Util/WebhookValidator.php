@@ -105,6 +105,13 @@ final class WebhookValidator
 
         $payload = json_decode($body, true);
 
+        // json_validate() only confirms the body is valid JSON — it does not
+        // guarantee a JSON object. Guard against scalars (e.g. "42", "null")
+        // which would cause a TypeError in validate(?array).
+        if (!is_array($payload)) {
+            throw new InvalidArgumentException('Webhook body must be a JSON object, not a scalar or null.');
+        }
+
         self::validate($payload);
         return $payload;
     }
