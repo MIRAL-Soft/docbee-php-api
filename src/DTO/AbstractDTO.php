@@ -78,6 +78,16 @@ abstract class AbstractDTO implements \JsonSerializable
     }
 
     /**
+     * Safely casts a value to float, returning null when the value is null/empty.
+     *
+     * @param mixed $value
+     */
+    protected static function toFloat(mixed $value): ?float
+    {
+        return ($value === null || $value === '') ? null : (float) $value;
+    }
+
+    /**
      * Safely casts a value to string, returning null when the value is null.
      *
      * @param mixed $value

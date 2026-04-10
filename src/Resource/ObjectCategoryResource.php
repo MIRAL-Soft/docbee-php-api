@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace miralsoft\docbee\api\Resource;
+
+use miralsoft\docbee\api\DTO\ObjectCategoryDTO;
+use miralsoft\docbee\api\Query\QueryBuilder;
+
+/**
+ * Provides access to Docbee ObjectCategory records.
+ *
+ * @extends AbstractResource<ObjectCategoryDTO>
+ */
+final class ObjectCategoryResource extends AbstractResource
+{
+    protected string $endpoint = 'v1/objectCategory';
+    protected string $dtoClass = ObjectCategoryDTO::class;
+    protected string $listKey  = 'objectCategory';
+}
