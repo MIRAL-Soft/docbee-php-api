@@ -30,15 +30,15 @@ final class CustomerResourceTest extends TestCase
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('customerNumber-eq=K-1001'))
+            ->with($this->stringContains('customerId-eq=K-1001'))
             ->willReturn([
                 'totalCount' => 1,
-                'customer'   => [['id' => 5, 'name' => 'Acme', 'customerNumber' => 'K-1001']],
+                'customer'   => [['id' => 5, 'name' => 'Acme', 'customerId' => 'K-1001']],
             ]);
 
         $dto = $this->resource->findByCustomerNumber('K-1001');
         $this->assertInstanceOf(CustomerDTO::class, $dto);
-        $this->assertSame('K-1001', $dto->getCustomerNumber());
+        $this->assertSame('K-1001', $dto->getCustomerId());
     }
 
     public function testFindByCustomerNumberThrowsNotFound(): void

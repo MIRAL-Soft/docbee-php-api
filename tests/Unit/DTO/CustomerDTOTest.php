@@ -17,7 +17,7 @@ final class CustomerDTOTest extends TestCase
         return [
             'id'             => 42,
             'name'           => 'Acme Corp',
-            'customerNumber' => 'K-1001',
+            'customerId'     => 'K-1001',
             'email'          => 'info@acme.com',
             'phone'          => '+49 89 123456',
             'mobile'         => null,
@@ -28,7 +28,7 @@ final class CustomerDTOTest extends TestCase
             'city'           => 'Munich',
             'country'        => 'DE',
             'notes'          => 'VIP customer',
-            'status'         => 1,
+            'customerStatus' => 1,
             'active'         => true,
             'createdAt'      => '2024-01-01T12:00:00',
             'changedAt'      => '2024-06-01T08:30:00',
@@ -41,7 +41,7 @@ final class CustomerDTOTest extends TestCase
 
         $this->assertSame(42, $dto->getId());
         $this->assertSame('Acme Corp', $dto->getName());
-        $this->assertSame('K-1001', $dto->getCustomerNumber());
+        $this->assertSame('K-1001', $dto->getCustomerId());
         $this->assertSame('info@acme.com', $dto->getEmail());
         $this->assertSame('+49 89 123456', $dto->getPhone());
         $this->assertSame('https://acme.com', $dto->getWebsite());
@@ -50,7 +50,7 @@ final class CustomerDTOTest extends TestCase
         $this->assertSame('Munich', $dto->getCity());
         $this->assertSame('DE', $dto->getCountry());
         $this->assertSame('VIP customer', $dto->getNotes());
-        $this->assertSame(1, $dto->getStatus());
+        $this->assertSame(1, $dto->getCustomerStatus());
         $this->assertTrue($dto->isActive());
         $this->assertSame('2024-01-01T12:00:00', $dto->getCreatedAt());
         $this->assertSame('2024-06-01T08:30:00', $dto->getChangedAt());

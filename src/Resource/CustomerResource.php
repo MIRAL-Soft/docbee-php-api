@@ -40,7 +40,7 @@ final class CustomerResource extends AbstractResource
      */
     public function findByCustomerNumber(string $customerNumber): CustomerDTO
     {
-        $query    = QueryBuilder::new()->filterEq('customerNumber', $customerNumber)->limit(1);
+        $query    = QueryBuilder::new()->filterEq('customerId', $customerNumber)->limit(1);
         $results  = $this->list($query);
 
         if (empty($results)) {

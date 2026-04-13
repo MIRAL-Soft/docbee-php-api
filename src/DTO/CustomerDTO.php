@@ -14,7 +14,7 @@ final class CustomerDTO extends AbstractDTO
     public function __construct(
         private readonly ?int    $id,
         private readonly ?string $name,
-        private readonly ?string $customerNumber,
+        private readonly ?string $customerId,
         private readonly ?string $email,
         private readonly ?string $phone,
         private readonly ?string $mobile,
@@ -25,7 +25,7 @@ final class CustomerDTO extends AbstractDTO
         private readonly ?string $city,
         private readonly ?string $country,
         private readonly ?string $notes,
-        private readonly ?int    $status,
+        private readonly ?int    $customerStatus,
         private readonly ?bool   $active,
         private readonly ?string $createdAt,
         private readonly ?string $changedAt,
@@ -37,7 +37,7 @@ final class CustomerDTO extends AbstractDTO
         return new self(
             id:             self::toInt($data['id'] ?? null),
             name:           self::toString($data['name'] ?? null),
-            customerNumber: self::toString($data['customerNumber'] ?? null),
+            customerId:     self::toString($data['customerId'] ?? null),
             email:          self::toString($data['email'] ?? null),
             phone:          self::toString($data['phone'] ?? null),
             mobile:         self::toString($data['mobile'] ?? null),
@@ -48,7 +48,7 @@ final class CustomerDTO extends AbstractDTO
             city:           self::toString($data['city'] ?? null),
             country:        self::toString($data['country'] ?? null),
             notes:          self::toString($data['notes'] ?? null),
-            status:         self::toInt($data['status'] ?? null),
+            customerStatus: self::toInt($data['customerStatus'] ?? null),
             active:         isset($data['active']) ? self::toBool($data['active']) : null,
             createdAt:      self::toString($data['createdAt'] ?? null),
             changedAt:      self::toString($data['changedAt'] ?? null),
@@ -60,7 +60,7 @@ final class CustomerDTO extends AbstractDTO
     {
         return array_filter([
             'name'           => $this->name,
-            'customerNumber' => $this->customerNumber,
+            'customerId'     => $this->customerId,
             'email'          => $this->email,
             'phone'          => $this->phone,
             'mobile'         => $this->mobile,
@@ -71,26 +71,26 @@ final class CustomerDTO extends AbstractDTO
             'city'           => $this->city,
             'country'        => $this->country,
             'notes'          => $this->notes,
-            'status'         => $this->status,
+            'customerStatus' => $this->customerStatus,
             'active'         => $this->active,
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int            { return $this->id; }
-    public function getName(): ?string       { return $this->name; }
-    public function getCustomerNumber(): ?string { return $this->customerNumber; }
-    public function getEmail(): ?string      { return $this->email; }
-    public function getPhone(): ?string      { return $this->phone; }
-    public function getMobile(): ?string     { return $this->mobile; }
-    public function getFax(): ?string        { return $this->fax; }
-    public function getWebsite(): ?string    { return $this->website; }
-    public function getStreet(): ?string     { return $this->street; }
-    public function getZip(): ?string        { return $this->zip; }
-    public function getCity(): ?string       { return $this->city; }
-    public function getCountry(): ?string    { return $this->country; }
-    public function getNotes(): ?string      { return $this->notes; }
-    public function getStatus(): ?int        { return $this->status; }
-    public function isActive(): ?bool        { return $this->active; }
-    public function getCreatedAt(): ?string  { return $this->createdAt; }
-    public function getChangedAt(): ?string  { return $this->changedAt; }
+    public function getId(): ?int              { return $this->id; }
+    public function getName(): ?string         { return $this->name; }
+    public function getCustomerId(): ?string   { return $this->customerId; }
+    public function getEmail(): ?string        { return $this->email; }
+    public function getPhone(): ?string        { return $this->phone; }
+    public function getMobile(): ?string       { return $this->mobile; }
+    public function getFax(): ?string          { return $this->fax; }
+    public function getWebsite(): ?string      { return $this->website; }
+    public function getStreet(): ?string       { return $this->street; }
+    public function getZip(): ?string          { return $this->zip; }
+    public function getCity(): ?string         { return $this->city; }
+    public function getCountry(): ?string      { return $this->country; }
+    public function getNotes(): ?string        { return $this->notes; }
+    public function getCustomerStatus(): ?int  { return $this->customerStatus; }
+    public function isActive(): ?bool          { return $this->active; }
+    public function getCreatedAt(): ?string    { return $this->createdAt; }
+    public function getChangedAt(): ?string    { return $this->changedAt; }
 }
