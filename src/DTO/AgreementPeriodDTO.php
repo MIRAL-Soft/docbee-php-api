@@ -10,14 +10,24 @@ namespace miralsoft\docbee\api\DTO;
 final class AgreementPeriodDTO extends AbstractDTO
 {
     public function __construct(
-        private readonly ?int $id,
+        private readonly ?int    $id,
+        private readonly ?string $modified,
+        private readonly ?string $link,
+        private ?int             $cycleAmount,
+        private ?string          $startDate,
+        private ?string          $endDate,
     ) {}
 
     #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
-            id: self::toInt($data['id'] ?? null),
+            id:          self::toInt($data['id'] ?? null),
+            modified:    self::toString($data['modified'] ?? null),
+            link:        self::toString($data['link'] ?? null),
+            cycleAmount: self::toInt($data['cycleAmount'] ?? null),
+            startDate:   self::toString($data['startDate'] ?? null),
+            endDate:     self::toString($data['endDate'] ?? null),
         );
     }
 
@@ -25,9 +35,16 @@ final class AgreementPeriodDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'cycleAmount' => $this->cycleAmount,
+            'startDate'   => $this->startDate,
+            'endDate'     => $this->endDate,
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int          { return $this->id; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string     { return $this->link; }
+    public function getCycleAmount(): ?int { return $this->cycleAmount; }
+    public function getStartDate(): ?string { return $this->startDate; }
+    public function getEndDate(): ?string  { return $this->endDate; }
 }

@@ -10,7 +10,6 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeScriptDTO extends AbstractDTO
 {
     public function __construct(
-        private readonly ?int $id,
         private readonly ?string $link,
         private readonly ?int $logFile,
         private ?string $description,
@@ -23,7 +22,6 @@ final class DocBeeScriptDTO extends AbstractDTO
     public static function fromArray(array $data): static
     {
         return new self(
-            id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
             logFile: self::toInt($data['logFile'] ?? null),
             description: self::toString($data['description'] ?? null),
@@ -44,7 +42,6 @@ final class DocBeeScriptDTO extends AbstractDTO
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getLogFile(): ?int { return $this->logFile; }
     public function getDescription(): ?string { return $this->description; }

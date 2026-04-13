@@ -10,14 +10,24 @@ namespace miralsoft\docbee\api\DTO;
 final class ContingentItemRecurrenceDTO extends AbstractDTO
 {
     public function __construct(
-        private readonly ?int $id,
+        private readonly ?int    $id,
+        private readonly ?string $link,
+        private ?string          $name,
+        private ?float           $money,
+        private ?int             $time,
+        private ?string          $description,
     ) {}
 
     #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
-            id: self::toInt($data['id'] ?? null),
+            id:          self::toInt($data['id'] ?? null),
+            link:        self::toString($data['link'] ?? null),
+            name:        self::toString($data['name'] ?? null),
+            money:       isset($data['money']) ? (float) $data['money'] : null,
+            time:        self::toInt($data['time'] ?? null),
+            description: self::toString($data['description'] ?? null),
         );
     }
 
@@ -25,9 +35,17 @@ final class ContingentItemRecurrenceDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'name'        => $this->name,
+            'money'       => $this->money,
+            'time'        => $this->time,
+            'description' => $this->description,
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int             { return $this->id; }
+    public function getLink(): ?string        { return $this->link; }
+    public function getName(): ?string        { return $this->name; }
+    public function getMoney(): ?float        { return $this->money; }
+    public function getTime(): ?int           { return $this->time; }
+    public function getDescription(): ?string { return $this->description; }
 }

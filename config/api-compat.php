@@ -99,6 +99,7 @@ return [
         'AbstractDTO',
         'WebhookDTO',
         'WebhookLinkDTO',
+        'RequestTypeDTO',
     ],
 
     // -------------------------------------------------------------------------
@@ -123,6 +124,6 @@ return [
         'SlaProfileWorkingHourDTO'      => 'WorkingHour',
         'DocumentDTO'                   => 'DocBeeDocument',
         'DocumentTemplateDTO'           => 'DocBeeDocumentTemplate',
-        'DocumentTaskDTO'               => 'DocBeeDocumentTask',
+        'DocBeeDocumentTaskDTO'         => 'Task',
     ],
 ];

@@ -10,22 +10,16 @@ namespace miralsoft\docbee\api\DTO;
 final class RequestTypeDTO extends AbstractDTO
 {
     public function __construct(
-        private readonly ?int    $id,
-        private readonly ?string $name,
-        private readonly ?bool   $active,
-        private readonly ?string $createdAt,
-        private readonly ?string $changedAt,
+        private readonly ?int $id,
+        private ?string       $name,
     ) {}
 
     #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
-            id:        self::toInt($data['id'] ?? null),
-            name:      self::toString($data['name'] ?? null),
-            active:    isset($data['active']) ? self::toBool($data['active']) : null,
-            createdAt: self::toString($data['createdAt'] ?? null),
-            changedAt: self::toString($data['changedAt'] ?? null),
+            id:   self::toInt($data['id'] ?? null),
+            name: self::toString($data['name'] ?? null),
         );
     }
 
@@ -33,14 +27,10 @@ final class RequestTypeDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'name'   => $this->name,
-            'active' => $this->active,
+            'name' => $this->name,
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int           { return $this->id; }
-    public function getName(): ?string      { return $this->name; }
-    public function isActive(): ?bool       { return $this->active; }
-    public function getCreatedAt(): ?string { return $this->createdAt; }
-    public function getChangedAt(): ?string { return $this->changedAt; }
+    public function getId(): ?int      { return $this->id; }
+    public function getName(): ?string { return $this->name; }
 }
