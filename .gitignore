@@ -533,3 +533,7 @@ local.properties
 # Typically, this file would be tracked if it contains build/dependency configurations:
 #.project
 /upload
+
+# Re-include project-specific bin/ directory (overrides Eclipse template rules above)
+!bin/
+!bin/**

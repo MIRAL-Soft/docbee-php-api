@@ -36,17 +36,17 @@ $client = new DocbeeClient(new DocbeeConfig(
 ));
 
 // List tickets with a specific status
-$tickets = $client->tickets()->findByStatus(1);
+$tickets = $client->tickets()->findByTicketStatus(1);
 
 // Create a new ticket
 $ticket = $client->tickets()->create([
-    'title'    => 'Printer offline',
-    'customer' => 42,
-    'priority' => 1,
+    'description' => 'Printer offline',
+    'customer'    => 42,
+    'priority'    => 1,
 ]);
 
-echo $ticket->getId();    // e.g. 1234
-echo $ticket->getTitle(); // "Printer offline"
+echo $ticket->getId();            // e.g. 1234
+echo $ticket->getDescription();   // "Printer offline"
 ```
 
 ---
@@ -335,19 +335,19 @@ $tickets = $client->tickets()->list($query);
 ### Customers
 
 ```php
-$customer = $client->customers()->findByCustomerNumber('K-1001');
+$customer = $client->customers()->findByCustomerId('K-1001');
 $matches  = $client->customers()->findByName('Acme');
-$active   = $client->customers()->findActive();
+$active   = $client->customers()->findByCustomerStatus(1);
 ```
 
 ### Tickets
 
 ```php
 $tickets = $client->tickets()->findByCustomer(42);
-$tickets = $client->tickets()->findByCustomer(42, statusId: 1);
-$tickets = $client->tickets()->findByStatus(1);
-$tickets = $client->tickets()->findByOrderId('ORD-2024-001');
-$tickets = $client->tickets()->findByAssignedUser(5);
+$tickets = $client->tickets()->findByCustomer(42, ticketStatusId: 1);
+$tickets = $client->tickets()->findByTicketStatus(1);
+$tickets = $client->tickets()->findByReferenceNumber('REF-2024-001');
+$tickets = $client->tickets()->findByOwner(5);
 ```
 
 ### Users
@@ -482,16 +482,59 @@ All API responses are returned as typed DTO objects:
 ```php
 $customer = $client->customers()->find(42);
 echo $customer->getName();
-echo $customer->getEmail();
+echo $customer->getCustomerId();
 
 // Update — pass a data array to update()
 $updated = $client->customers()->update(42, [
-    'email' => 'new@email.com',
+    'info' => 'Updated via API',
 ]);
 
 // DTOs implement JsonSerializable
 echo json_encode($customer); // serialises via toArray()
 ```
+
+---
+
+## API Compatibility Checking
+
+A built-in tool compares the live Docbee OpenAPI specification against the PHP implementation and reports every discrepancy: missing fields, extra fields, type mismatches, deprecated fields, and unimplemented endpoints.
+
+### Run a compatibility report
+
+```bash
+php bin/check-api-compat.php
+```
+
+### Save a snapshot (baseline for drift detection)
+
+```bash
+php bin/check-api-compat.php --save-snapshot
+```
+
+Once a snapshot exists, every subsequent run also shows **what changed in the API itself** since the snapshot was saved (new schemas, removed fields, new endpoints, deprecated operations).
+
+### Save reports to files
+
+```bash
+# Human-readable text report
+php bin/check-api-compat.php --output=var/api-compat/report.txt
+
+# Machine-readable JSON report (useful for automated processing)
+php bin/check-api-compat.php --json-output=var/api-compat/report.json
+
+# Combined: update snapshot and save both formats
+php bin/check-api-compat.php --save-snapshot \
+    --output=var/api-compat/report.txt \
+    --json-output=var/api-compat/report.json
+```
+
+### PHPUnit integration
+
+The compatibility check also runs as part of the test suite (`ApiCompatibilityTest`).  If the API is unreachable the test is **skipped**; if differences are found it is marked **incomplete** — never failed — so a spec drift does not break the build.
+
+### Configuration
+
+The spec URL and all paths are configured in `config/api-compat.php`.  This file is committed to the repository because the Docbee OpenAPI spec is publicly accessible.
 
 ---
 

@@ -18,12 +18,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `AbstractDTO::toFloat()` helper for `number`-type API fields.
 - 15 new unit tests in `SubResourceTest` covering the sub-resource constructor-injection
   pattern, endpoint construction, and DTO mapping.
+- **API compatibility checker** (`bin/check-api-compat.php` + `bin/ApiCompatChecker.php`) —
+  compares the live Docbee OpenAPI specification against every DTO and Resource in the
+  implementation.  Reports missing fields, extra fields (potentially deprecated), type
+  mismatches, read-only mismatches, nested sub-field coverage, and unimplemented endpoints.
+  Supports snapshot-based drift detection: saving a baseline with `--save-snapshot` lets
+  future runs show exactly what changed in the API since the last acknowledged state.
+  Reports can be saved as text (`--output`) or machine-readable JSON (`--json-output`).
+- `config/api-compat.php` — committed configuration file containing the OpenAPI spec URL
+  (`https://pcs.docbee.com/restApi/v1/openapi.json`) and all checker settings.
+- `tests/Unit/ApiCompatibilityTest.php` — PHPUnit integration: skipped when spec is
+  unreachable, marked incomplete (not failed) when differences are found.
+- Comprehensive security test suite (`tests/Unit/Security/`) covering HTTP header injection,
+  authentication header handling, response parser edge cases, rate-limiter behaviour,
+  webhook payload validation, input validation, and DTO serialisation.
+
+### Fixed
+- **104 DTOs regenerated** from the OpenAPI specification using recursive `$ref` resolution,
+  fixing all field-name and field-set mismatches introduced by the original manual authoring:
+  - `CustomerDTO`: corrected `customerId` (was `customerNumber`), `customerStatus` (was
+    `status`); removed non-spec fields (`email`, `phone`, `mobile`, `fax`, `website`,
+    `street`, `zip`, `city`, `country`, `notes`, `active`).
+  - `CustomerStatusDTO`: added missing fields (`name`, `selectable`).
+  - `MaterialItemDTO`: replaced empty stub with correct fields; fixed `hasHasSerialNumber()`
+    getter double-prefix → `hasSerialNumber()`.
+  - `TicketDTO`: corrected `ticketStatus` (was `status`), `owner` (was `assignedUser`),
+    `description` (was `title`); removed invented fields (`orderId`, `closedAt`, etc.).
+- `CustomerResource`: replaced `findByCustomerNumber()` with `findByCustomerId()`;
+  replaced `findByEmail()` / `findActive()` (non-spec methods) with `findByCustomerStatus()`.
+- `TicketResource`: replaced `findByStatus()` with `findByTicketStatus()`;
+  `findByAssignedUser()` with `findByOwner()`; `findByOrderId()` with
+  `findByReferenceNumber()`; added `findByErpReferenceNumber()`.
+- `RateLimiter`: guard against negative `Retry-After` header values causing a negative
+  `usleep()` argument (undefined behaviour).
+- `WebhookValidator::parseAndValidate()`: guard against non-object JSON (scalars, arrays)
+  causing a `TypeError` on the `validate(?array)` call.
 
 ### Changed
 - `DocbeeClient` expanded with accessor methods for all new top-level resources and factory
   methods for all sub-resources.
 - `README.md` updated: PHP requirement corrected to ≥ 8.3, full resource table added,
-  sub-resource section added with usage examples.
+  sub-resource section added, resource-specific method examples corrected to match the API
+  spec, API compatibility checker section added.
+- All unit tests for `TicketDTO`, `TicketResource`, `CustomerDTO`, and `CustomerResource`
+  rewritten to use spec-correct field names.
 
 ---
 
