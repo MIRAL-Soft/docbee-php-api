@@ -36,7 +36,7 @@ final class TicketDTO extends AbstractDTO
         private readonly ?array $protocols,
         /** slaProfile identifier */
         private readonly ?int $slaProfile,
-        /** sla report datas */
+        /** @var TicketSlaReportDTO[]|null sla report datas */
         private readonly ?array $slaReports,
         /** ticketNumber */
         private readonly ?string $ticketNumber,
@@ -48,7 +48,7 @@ final class TicketDTO extends AbstractDTO
         private ?bool $billable,
         /** confidentialTag identifier */
         private ?int $confidentialTag,
-        /** list of customFieldValues */
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
         /** customer identifier */
         private ?int $customer,
@@ -131,13 +131,17 @@ final class TicketDTO extends AbstractDTO
             mergedTickets: isset($data['mergedTickets']) && is_array($data['mergedTickets']) ? $data['mergedTickets'] : null,
             protocols: isset($data['protocols']) && is_array($data['protocols']) ? $data['protocols'] : null,
             slaProfile: self::toInt($data['slaProfile'] ?? null),
-            slaReports: isset($data['slaReports']) && is_array($data['slaReports']) ? $data['slaReports'] : null,
+            slaReports: isset($data['slaReports']) && is_array($data['slaReports'])
+                ? array_map(fn($x) => TicketSlaReportDTO::fromArray($x), $data['slaReports'])
+                : null,
             ticketNumber: self::toString($data['ticketNumber'] ?? null),
             webLink: self::toString($data['webLink'] ?? null),
             additionalData: isset($data['additionalData']) && is_array($data['additionalData']) ? $data['additionalData'] : null,
             billable: isset($data['billable']) ? self::toBool($data['billable']) : null,
             confidentialTag: self::toInt($data['confidentialTag'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             customer: self::toInt($data['customer'] ?? null),
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),

@@ -128,5 +128,11 @@ return [
         'WorkLogDTO'                    => 'WorkLog',
         'PlanningTimeDTO'               => 'PlanningTime',
         'MaterialDTO'                   => 'Material',
+        'CustomFieldValueDTO'           => 'CustomFieldValue',
+        'CustomFieldMappingDTO'         => 'CustomFieldMapping',
+        'TravelLogDTO'                  => 'TravelLog',
+        'TicketSlaReportDTO'            => 'TicketSlaReport',
+        'TableConfigStorageFieldDTO'    => 'TableConfigStorageField',
+        'TableConfigStorageFilterDTO'   => 'TableConfigStorageFilter',
     ],
 ];

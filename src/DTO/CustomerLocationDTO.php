@@ -24,7 +24,7 @@ final class CustomerLocationDTO extends AbstractDTO
         private readonly ?bool $temporary,
         /** city */
         private ?string $city,
-        /** list of customFieldValues */
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
         /** name */
         private ?string $name,
@@ -47,7 +47,9 @@ final class CustomerLocationDTO extends AbstractDTO
             customer: self::toInt($data['customer'] ?? null),
             temporary: isset($data['temporary']) ? self::toBool($data['temporary']) : null,
             city: self::toString($data['city'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             name: self::toString($data['name'] ?? null),
             street: self::toString($data['street'] ?? null),
             syncToApp: isset($data['syncToApp']) ? self::toBool($data['syncToApp']) : null,

@@ -22,7 +22,7 @@ final class CustomerContactDTO extends AbstractDTO
         private readonly ?int $customerLocation,
         /** If these contact is temporary */
         private readonly ?bool $temporary,
-        /** list of customFieldValues */
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
         /** email */
         private ?string $email,
@@ -62,7 +62,9 @@ final class CustomerContactDTO extends AbstractDTO
             customer: self::toInt($data['customer'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
             temporary: isset($data['temporary']) ? self::toBool($data['temporary']) : null,
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             email: self::toString($data['email'] ?? null),
             gender: self::toString($data['gender'] ?? null),
             info: self::toString($data['info'] ?? null),

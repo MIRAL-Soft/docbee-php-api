@@ -22,7 +22,7 @@ final class ServiceProviderDTO extends AbstractDTO
         private readonly ?string $number,
         /** shortName */
         private readonly ?string $shortName,
-        /** list of customFieldValues */
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
         /** name */
         private ?string $name
@@ -38,7 +38,9 @@ final class ServiceProviderDTO extends AbstractDTO
             email: self::toString($data['email'] ?? null),
             number: self::toString($data['number'] ?? null),
             shortName: self::toString($data['shortName'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             name: self::toString($data['name'] ?? null)
         );
     }

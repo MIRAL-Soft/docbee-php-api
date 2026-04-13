@@ -54,11 +54,11 @@ final class ProtocolDTO extends AbstractDTO
         private ?int $file,
         /** list of protocolGroupData */
         private ?array $groupData,
-        /** list of protocolGroups */
+        /** @var ProtocolGroupDataDTO[]|null list of protocol groups */
         private ?array $groups,
         /** user or queue identifier */
         private ?int $personInCharge,
-        /** list of protocolEntries */
+        /** @var ProtocolEntryDTO[]|null list of protocol entries */
         private ?array $protocolEntries,
         /** sendMessage */
         private ?bool $sendMessage,
@@ -92,9 +92,13 @@ final class ProtocolDTO extends AbstractDTO
             dueDate: self::toString($data['dueDate'] ?? null),
             file: self::toInt($data['file'] ?? null),
             groupData: isset($data['groupData']) && is_array($data['groupData']) ? $data['groupData'] : null,
-            groups: isset($data['groups']) && is_array($data['groups']) ? $data['groups'] : null,
+            groups: isset($data['groups']) && is_array($data['groups'])
+                ? array_map(fn($x) => ProtocolGroupDataDTO::fromArray($x), $data['groups'])
+                : null,
             personInCharge: self::toInt($data['personInCharge'] ?? null),
-            protocolEntries: isset($data['protocolEntries']) && is_array($data['protocolEntries']) ? $data['protocolEntries'] : null,
+            protocolEntries: isset($data['protocolEntries']) && is_array($data['protocolEntries'])
+                ? array_map(fn($x) => ProtocolEntryDTO::fromArray($x), $data['protocolEntries'])
+                : null,
             sendMessage: isset($data['sendMessage']) ? self::toBool($data['sendMessage']) : null,
             ticket: self::toInt($data['ticket'] ?? null)
         );

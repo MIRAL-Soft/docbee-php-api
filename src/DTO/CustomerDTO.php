@@ -22,7 +22,7 @@ final class CustomerDTO extends AbstractDTO
         private readonly ?int $defaultCustomerLocation,
         /** companyData identifier */
         private ?int $companyData,
-        /** list of customFieldValues */
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
         /** Unique customer id for a customer. Mostly defined by ERP */
         private ?string $customerId,
@@ -54,7 +54,9 @@ final class CustomerDTO extends AbstractDTO
             link: self::toString($data['link'] ?? null),
             defaultCustomerLocation: self::toInt($data['defaultCustomerLocation'] ?? null),
             companyData: self::toInt($data['companyData'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             customerId: self::toString($data['customerId'] ?? null),
             customerStatus: self::toInt($data['customerStatus'] ?? null),
             info: self::toString($data['info'] ?? null),

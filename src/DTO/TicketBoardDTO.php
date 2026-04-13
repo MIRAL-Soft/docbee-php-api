@@ -14,11 +14,11 @@ final class TicketBoardDTO extends AbstractDTO
         private readonly ?int $id,
         /** REST API Link */
         private readonly ?string $link,
-        /** columns data */
+        /** @var TicketBoardColumnDTO[]|null list of board columns */
         private ?array $columns,
-        /** field data */
+        /** @var TableConfigStorageFieldDTO[]|null list of table config fields */
         private ?array $fields,
-        /** filter data */
+        /** @var TableConfigStorageFilterDTO[]|null list of table config filters */
         private ?array $filters,
         /** ticketBoard name */
         private ?string $name
@@ -30,9 +30,15 @@ final class TicketBoardDTO extends AbstractDTO
         return new self(
             id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
-            columns: isset($data['columns']) && is_array($data['columns']) ? $data['columns'] : null,
-            fields: isset($data['fields']) && is_array($data['fields']) ? $data['fields'] : null,
-            filters: isset($data['filters']) && is_array($data['filters']) ? $data['filters'] : null,
+            columns: isset($data['columns']) && is_array($data['columns'])
+                ? array_map(fn($x) => TicketBoardColumnDTO::fromArray($x), $data['columns'])
+                : null,
+            fields: isset($data['fields']) && is_array($data['fields'])
+                ? array_map(fn($x) => TableConfigStorageFieldDTO::fromArray($x), $data['fields'])
+                : null,
+            filters: isset($data['filters']) && is_array($data['filters'])
+                ? array_map(fn($x) => TableConfigStorageFilterDTO::fromArray($x), $data['filters'])
+                : null,
             name: self::toString($data['name'] ?? null)
         );
     }

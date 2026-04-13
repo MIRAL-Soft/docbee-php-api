@@ -98,7 +98,7 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private ?bool $completedSuccessfully,
         /** confidentialTag identifier */
         private ?int $confidentialTag,
-        /** list of customFieldValues */
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
         /** customer identifier */
         private ?int $customer,
@@ -132,7 +132,7 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private ?bool $sendMessage,
         /** ticket identifier */
         private ?int $ticket,
-        /** list of travelLogs */
+        /** @var TravelLogDTO[]|null list of travel logs */
         private ?array $travelLog,
         /** drafted */
         private ?bool $type
@@ -186,7 +186,9 @@ final class DocBeeDocumentDTO extends AbstractDTO
             billable: isset($data['billable']) ? self::toBool($data['billable']) : null,
             completedSuccessfully: isset($data['completedSuccessfully']) ? self::toBool($data['completedSuccessfully']) : null,
             confidentialTag: self::toInt($data['confidentialTag'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             customer: self::toInt($data['customer'] ?? null),
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
@@ -203,7 +205,9 @@ final class DocBeeDocumentDTO extends AbstractDTO
             referenceNumber: self::toString($data['referenceNumber'] ?? null),
             sendMessage: isset($data['sendMessage']) ? self::toBool($data['sendMessage']) : null,
             ticket: self::toInt($data['ticket'] ?? null),
-            travelLog: isset($data['travelLog']) && is_array($data['travelLog']) ? $data['travelLog'] : null,
+            travelLog: isset($data['travelLog']) && is_array($data['travelLog'])
+                ? array_map(fn($x) => TravelLogDTO::fromArray($x), $data['travelLog'])
+                : null,
             type: isset($data['type']) ? self::toBool($data['type']) : null
         );
     }

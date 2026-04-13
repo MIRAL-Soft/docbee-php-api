@@ -18,7 +18,7 @@ final class ObjectCategoryDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** list of customFields */
+        /** @var CustomFieldMappingDTO[]|null list of customField mappings */
         private readonly ?array $customFields,
         /** isMonitored */
         private ?bool $isMonitored,
@@ -38,7 +38,9 @@ final class ObjectCategoryDTO extends AbstractDTO
             created: self::toString($data['created'] ?? null),
             modified: self::toString($data['modified'] ?? null),
             link: self::toString($data['link'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldMappingDTO::fromArray($x), $data['customFields'])
+                : null,
             isMonitored: isset($data['isMonitored']) ? self::toBool($data['isMonitored']) : null,
             name: self::toString($data['name'] ?? null),
             regex: self::toString($data['regex'] ?? null),
