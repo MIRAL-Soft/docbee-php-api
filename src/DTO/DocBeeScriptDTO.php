@@ -42,6 +42,7 @@ final class DocBeeScriptDTO extends AbstractDTO
         ], fn($v) => $v !== null);
     }
 
+    public function getId(): ?int      { return null; }
     public function getLink(): ?string { return $this->link; }
     public function getLogFile(): ?int { return $this->logFile; }
     public function getDescription(): ?string { return $this->description; }
