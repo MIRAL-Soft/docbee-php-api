@@ -10,26 +10,45 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomFieldDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customField */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** data encrypted */
         private readonly ?bool $dataEncrypted,
+        /** erp custom field name */
         private readonly ?string $erpCustomFieldName,
+        /** observerCategory identifier */
         private readonly ?int $observerCategory,
+        /** parentType */
         private readonly ?string $parentType,
+        /** placeholder name */
         private readonly ?string $placeholderName,
+        /** selectionCategory identifier */
         private readonly ?int $selectionCategory,
+        /** showAtTicketData, Deprecated: Renamed to isCustomerInfoData */
         private readonly ?bool $showAtTicketData,
+        /** type */
         private readonly ?string $type,
+        /** with advanced permission */
         private ?bool $advancedPermission,
+        /** deactivated */
         private ?bool $deactivated,
         private ?array $editPermissionUserProfiles,
+        /** is important */
         private ?bool $important,
+        /** is customer info data */
         private ?bool $isCustomerInfoData,
+        /** name */
         private ?string $name,
+        /** is searchable */
         private ?bool $searchable,
         private ?array $showPermissionUserProfiles,
+        /** visible for customer */
         private ?bool $visibleForCustomer
     ) {}
 

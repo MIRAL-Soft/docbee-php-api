@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomColorDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customColor */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** HTML color code in hexadecimal representation */
         private ?string $color,
+        /** document status as string in capitals */
         private ?string $documentStatus
     ) {}
 

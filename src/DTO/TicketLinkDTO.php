@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketLinkDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticket link */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** ticket identifier */
         private ?int $ticket,
+        /** ticket link type identifier */
         private ?int $type
     ) {}
 

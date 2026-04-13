@@ -10,11 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class DueDateColorDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific dueDateColor */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** HTML color code in hexadecimal representation */
         private ?string $color,
+        /** name */
         private ?string $name,
+        /** time in milliseconds */
         private ?int $timeOffset
     ) {}
 

@@ -10,12 +10,19 @@ namespace miralsoft\docbee\api\DTO;
 final class DashboardDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific dashboard */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** forcedSubscribed */
         private ?bool $forcedSubscribed,
+        /** name */
         private ?string $name,
+        /** shared */
         private ?bool $shared,
+        /** user id */
         private ?int $user,
+        /** @var DashboardWidgetDTO[]|null list of dashboard widgets */
         private ?array $widgets
     ) {}
 
@@ -29,7 +36,9 @@ final class DashboardDTO extends AbstractDTO
             name: self::toString($data['name'] ?? null),
             shared: isset($data['shared']) ? self::toBool($data['shared']) : null,
             user: self::toInt($data['user'] ?? null),
-            widgets: isset($data['widgets']) && is_array($data['widgets']) ? $data['widgets'] : null
+            widgets: isset($data['widgets']) && is_array($data['widgets'])
+                ? array_map(fn($x) => DashboardWidgetDTO::fromArray($x), $data['widgets'])
+                : null
         );
     }
 

@@ -5,73 +5,136 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\DTO;
 
 /**
- * Represents a Docbee Document record.
+ * Represents a Docbee DocBeeDocument record.
  */
-final class DocumentDTO extends AbstractDTO
+final class DocBeeDocumentDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocol */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** approved */
         private readonly ?bool $approved,
+        /** approvedComment */
         private readonly ?string $approvedComment,
+        /** approved date */
         private readonly ?string $approvedDate,
+        /** User is allowed to change document data */
         private readonly ?bool $canChangeDocument,
+        /** canceled */
         private readonly ?bool $canceled,
+        /** canceled date */
         private readonly ?string $canceledDate,
+        /** documentNumber */
         private readonly ?string $documentNumber,
+        /** drafted */
         private readonly ?bool $drafted,
+        /** file identifier */
         private readonly ?int $file,
+        /** finish pin */
         private readonly ?string $finishPin,
+        /** finished */
         private readonly ?bool $finished,
+        /** finished date */
         private readonly ?string $finishedDate,
+        /** invoiceNumber */
         private readonly ?string $invoiceNumber,
+        /** pre finished */
         private readonly ?bool $preFinished,
+        /** protocol identifiers */
         private readonly ?array $protocols,
+        /** released date */
         private readonly ?string $releasedDate,
+        /** serverModified date */
         private readonly ?string $serverModified,
+        /** task identifiers */
         private readonly ?array $tasks,
+        /** total internal price */
         private readonly ?float $totalInternalPrice,
+        /** total invoice price */
         private readonly ?float $totalInvoicePrice,
+        /** total invoice price with agreement */
         private readonly ?float $totalInvoicePriceWithAgreement,
+        /** total price */
         private readonly ?float $totalPrice,
+        /** total tasks internal price */
         private readonly ?float $totalTasksInternalPrice,
+        /** total tasks invoice price */
         private readonly ?float $totalTasksInvoicePrice,
+        /** total tasks invoice price with agreement */
         private readonly ?float $totalTasksInvoicePriceWithAgreement,
+        /** total tasks invoice time */
         private readonly ?int $totalTasksInvoiceTime,
+        /** total tasks invoice time with agreement */
         private readonly ?int $totalTasksInvoiceTimeWithAgreement,
+        /** total tasks price */
         private readonly ?float $totalTasksPrice,
+        /** total tasks working time */
         private readonly ?int $totalTasksWorkingTime,
+        /** total travel logs distance */
         private readonly ?float $totalTravelLogsDistance,
+        /** total travel logs internal price */
         private readonly ?float $totalTravelLogsInternalPrice,
+        /** total travel logs invoice price */
         private readonly ?float $totalTravelLogsInvoicePrice,
+        /** total travel logs invoice time */
         private readonly ?int $totalTravelLogsInvoiceTime,
+        /** total travel logs price */
         private readonly ?float $totalTravelLogsPrice,
+        /** total travel logs time */
         private readonly ?int $totalTravelLogsTime,
+        /** travelLog identifiers */
         private readonly ?array $travelLogs,
+        /** web link */
         private readonly ?string $webLink,
+        /** billable */
         private ?bool $billable,
+        /** completedSuccessfully */
         private ?bool $completedSuccessfully,
+        /** confidentialTag identifier */
         private ?int $confidentialTag,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** erpReferenceNumber */
         private ?string $erpReferenceNumber,
+        /** externalReferenceNumber */
         private ?string $externalReferenceNumber,
+        /** file identifiers */
         private ?array $infoFiles,
+        /** needFinishPin */
         private ?bool $needFinishPin,
+        /** needSignature */
         private ?bool $needSignature,
+        /** user or queue identifier */
         private ?int $personInCharge,
+        /** posted date */
         private ?string $postedDate,
+        /** priority identifier */
         private ?int $priority,
+        /** agreement identifier */
         private ?int $project,
+        /** allow record travel timer after pre finished */
         private ?bool $recordTravelTimeAfterPreFinished,
+        /** referenceNumber */
         private ?string $referenceNumber,
+        /** sendMessage */
         private ?bool $sendMessage,
+        /** ticket identifier */
         private ?int $ticket,
+        /** @var TravelLogDTO[]|null list of travel logs */
         private ?array $travelLog,
+        /** drafted */
         private ?bool $type
     ) {}
 
@@ -123,7 +186,9 @@ final class DocumentDTO extends AbstractDTO
             billable: isset($data['billable']) ? self::toBool($data['billable']) : null,
             completedSuccessfully: isset($data['completedSuccessfully']) ? self::toBool($data['completedSuccessfully']) : null,
             confidentialTag: self::toInt($data['confidentialTag'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             customer: self::toInt($data['customer'] ?? null),
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
@@ -140,7 +205,9 @@ final class DocumentDTO extends AbstractDTO
             referenceNumber: self::toString($data['referenceNumber'] ?? null),
             sendMessage: isset($data['sendMessage']) ? self::toBool($data['sendMessage']) : null,
             ticket: self::toInt($data['ticket'] ?? null),
-            travelLog: isset($data['travelLog']) && is_array($data['travelLog']) ? $data['travelLog'] : null,
+            travelLog: isset($data['travelLog']) && is_array($data['travelLog'])
+                ? array_map(fn($x) => TravelLogDTO::fromArray($x), $data['travelLog'])
+                : null,
             type: isset($data['type']) ? self::toBool($data['type']) : null
         );
     }

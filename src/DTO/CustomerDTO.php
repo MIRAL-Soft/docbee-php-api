@@ -10,21 +10,37 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomerDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customer */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** Unique identifier representing the default customerLocation */
         private readonly ?int $defaultCustomerLocation,
+        /** companyData identifier */
         private ?int $companyData,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** Unique customer id for a customer. Mostly defined by ERP */
         private ?string $customerId,
+        /** customerStatus identifier */
         private ?int $customerStatus,
+        /** Additional information about the customer */
         private ?string $info,
+        /** If these customer is an inhouse customer */
         private ?bool $inhouse,
+        /** Display name of customer */
         private ?string $name,
+        /** Customer short name */
         private ?string $shortName,
+        /** If this contact is synced to app. The customer setting withSyncToAppFlag needs to be set to use this property. Otherwise all contacts are synced. */
         private ?bool $syncToApp,
+        /** Display warning message of customer. E.g if customer has terminated the contract */
         private ?string $warning,
+        /** Wildcard email address. For Example "docbee.com" to automatically assign tickets to customer */
         private ?string $wildcardAddress
     ) {}
 
@@ -38,7 +54,9 @@ final class CustomerDTO extends AbstractDTO
             link: self::toString($data['link'] ?? null),
             defaultCustomerLocation: self::toInt($data['defaultCustomerLocation'] ?? null),
             companyData: self::toInt($data['companyData'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             customerId: self::toString($data['customerId'] ?? null),
             customerStatus: self::toInt($data['customerStatus'] ?? null),
             info: self::toString($data['info'] ?? null),

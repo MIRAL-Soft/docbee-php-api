@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketBoardFilterDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticketBoardFilter */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** filterData */
         private ?string $filterData,
+        /** selectionCategory identifier */
         private ?int $selectionCategory,
+        /** selectionCategory name */
         private ?string $selectionCategoryName,
+        /** filter type */
         private ?string $type,
+        /** is filter visible */
         private ?bool $visible,
+        /** filter has filterData */
         private ?bool $withData
     ) {}
 

@@ -99,6 +99,7 @@ return [
         'AbstractDTO',
         'WebhookDTO',
         'WebhookLinkDTO',
+        'RequestTypeDTO',
     ],
 
     // -------------------------------------------------------------------------
@@ -121,8 +122,17 @@ return [
         'ContingentItemRecurrenceDTO'   => 'ItemRecurrence',
         'SlaProfileSpecializationDTO'   => 'SlaSpecialization',
         'SlaProfileWorkingHourDTO'      => 'WorkingHour',
-        'DocumentDTO'                   => 'DocBeeDocument',
-        'DocumentTemplateDTO'           => 'DocBeeDocumentTemplate',
-        'DocumentTaskDTO'               => 'DocBeeDocumentTask',
+        'DocBeeDocumentDTO'             => 'DocBeeDocument',
+        'DocBeeDocumentTemplateDTO'     => 'DocBeeDocumentTemplate',
+        'DocBeeDocumentTaskDTO'         => 'Task',
+        'WorkLogDTO'                    => 'WorkLog',
+        'PlanningTimeDTO'               => 'PlanningTime',
+        'MaterialDTO'                   => 'Material',
+        'CustomFieldValueDTO'           => 'CustomFieldValue',
+        'CustomFieldMappingDTO'         => 'CustomFieldMapping',
+        'TravelLogDTO'                  => 'TravelLog',
+        'TicketSlaReportDTO'            => 'TicketSlaReport',
+        'TableConfigStorageFieldDTO'    => 'TableConfigStorageField',
+        'TableConfigStorageFilterDTO'   => 'TableConfigStorageFilter',
     ],
 ];

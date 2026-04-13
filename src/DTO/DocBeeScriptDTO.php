@@ -10,12 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeScriptDTO extends AbstractDTO
 {
     public function __construct(
-        private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** file identifier */
         private readonly ?int $logFile,
+        /** description */
         private ?string $description,
+        /** name */
         private ?string $name,
+        /** @var DocBeeScriptParameterDTO[]|null params data */
         private ?array $params,
+        /** script */
         private ?string $script
     ) {}
 
@@ -23,12 +28,13 @@ final class DocBeeScriptDTO extends AbstractDTO
     public static function fromArray(array $data): static
     {
         return new self(
-            id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
             logFile: self::toInt($data['logFile'] ?? null),
             description: self::toString($data['description'] ?? null),
             name: self::toString($data['name'] ?? null),
-            params: isset($data['params']) && is_array($data['params']) ? $data['params'] : null,
+            params: isset($data['params']) && is_array($data['params'])
+                ? array_map(fn($x) => DocBeeScriptParameterDTO::fromArray($x), $data['params'])
+                : null,
             script: self::toString($data['script'] ?? null)
         );
     }
@@ -44,7 +50,7 @@ final class DocBeeScriptDTO extends AbstractDTO
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int      { return null; }
     public function getLink(): ?string { return $this->link; }
     public function getLogFile(): ?int { return $this->logFile; }
     public function getDescription(): ?string { return $this->description; }

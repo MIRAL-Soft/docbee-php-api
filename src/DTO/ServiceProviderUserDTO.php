@@ -10,19 +10,33 @@ namespace miralsoft\docbee\api\DTO;
 final class ServiceProviderUserDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific service provider user */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** serviceProvider identifier */
         private readonly ?int $serviceProvider,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** email */
         private ?string $email,
+        /** enabled */
         private ?bool $enabled,
+        /** mobile */
         private ?string $mobile,
+        /** name */
         private ?string $name,
+        /** password */
         private ?string $password,
+        /** permissionGroup identifier */
         private ?int $permissionGroup,
+        /** shorthandName */
         private ?string $shorthandName,
+        /** telephone */
         private ?string $telephone,
+        /** use2FA */
         private ?bool $use2FA,
+        /** username */
         private ?string $username
     ) {}
 
@@ -33,7 +47,9 @@ final class ServiceProviderUserDTO extends AbstractDTO
             id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
             serviceProvider: self::toInt($data['serviceProvider'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             email: self::toString($data['email'] ?? null),
             enabled: isset($data['enabled']) ? self::toBool($data['enabled']) : null,
             mobile: self::toString($data['mobile'] ?? null),

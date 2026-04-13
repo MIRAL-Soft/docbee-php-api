@@ -10,38 +10,71 @@ namespace miralsoft\docbee\api\DTO;
 final class ProtocolTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocolTemplate */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** component */
         private readonly ?int $component,
+        /** released */
         private readonly ?bool $released,
+        /** releasedDate */
         private readonly ?string $releasedDate,
+        /** revision */
         private readonly ?int $revision,
+        /** actions */
         private ?array $actions,
+        /** additionalEmails */
         private ?string $additionalEmails,
+        /** additionalFaxes */
         private ?string $additionalFaxes,
+        /** allowInheritData */
         private ?bool $allowInheritData,
+        /** HTML color code in hexadecimal representation */
         private ?string $color,
+        /** entryStyles */
         private ?array $entryStyles,
+        /** finishText */
         private ?string $finishText,
+        /** groupContainers, */
         private ?array $groupContainers,
+        /** groupStyles */
         private ?array $groupStyles,
+        /** groups */
         private ?array $groups,
+        /** hide protocols with inheritable data */
         private ?bool $hideDocumentViewInList,
+        /** criterion needed to inherit protocol data */
         private ?string $inheritCriterion,
+        /** instantFinish */
         private ?bool $instantFinish,
+        /** duration after finish in which protocol data can be inherited in days */
         private ?int $maxLifeTime,
+        /** messageTemplate identifier */
         private ?int $messageTemplate,
+        /** mode */
         private ?string $mode,
+        /** name */
         private ?string $name,
+        /** pdfLayout identifier */
         private ?int $pdfLayout,
+        /** Pdf specific title. If not provided uses the name on creation */
         private ?string $pdfTitle,
+        /** sendMessageToCustomer */
         private ?bool $sendMessageToCustomer,
+        /** sendOnDocBeeDocumentFinished */
         private ?bool $sendOnDocBeeDocumentFinished,
+        /** number for sorting of the datatable list */
         private ?int $sortingNumber,
+        /** type identifier */
         private ?int $type,
+        /** validate that all groups are marked as done before finish */
         private ?bool $validateFinishTiles,
+        /** allow marking groups as done in mode TILES */
         private ?bool $withFinishTiles,
+        /** withPlanningTimes */
         private ?bool $withPlanningTimes
     ) {}
 

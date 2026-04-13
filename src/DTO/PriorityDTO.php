@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class PriorityDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific priority */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** HTML color code in hexadecimal representation */
         private ?string $color,
+        /** customerSelectable */
         private ?bool $customerSelectable,
+        /** isDefault */
         private ?bool $isDefault,
+        /** name */
         private ?string $name,
+        /** Range from 0 to 100 */
         private ?int $priority,
+        /** Sla in milliseconds */
         private ?int $sla
     ) {}
 

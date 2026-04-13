@@ -10,32 +10,59 @@ namespace miralsoft\docbee\api\DTO;
 final class ProtocolDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocol */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** finished */
         private readonly ?bool $canceled,
+        /** canceledDate */
         private readonly ?string $canceledDate,
+        /** Protocol data can't be inherited after this date */
         private readonly ?string $endDate,
+        /** finished */
         private readonly ?bool $finished,
+        /** finishedDate */
         private readonly ?string $finishedDate,
+        /** protocolNumber */
         private readonly ?string $protocolNumber,
+        /** protocolTemplate identifier */
         private readonly ?int $protocolTemplate,
+        /** serverModified date */
         private readonly ?string $serverModified,
+        /** web link */
         private readonly ?string $webLink,
+        /** confidentialTag identifier */
         private ?int $confidentialTag,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** customerObject identifiers */
         private ?array $customerObjects,
+        /** docBeeDocument identifier */
         private ?int $docBeeDocument,
+        /** dueDate */
         private ?string $dueDate,
+        /** file identifier */
         private ?int $file,
+        /** list of protocolGroupData */
         private ?array $groupData,
+        /** @var ProtocolGroupDataDTO[]|null list of protocol groups */
         private ?array $groups,
+        /** user or queue identifier */
         private ?int $personInCharge,
+        /** @var ProtocolEntryDTO[]|null list of protocol entries */
         private ?array $protocolEntries,
+        /** sendMessage */
         private ?bool $sendMessage,
+        /** ticket identifier */
         private ?int $ticket
     ) {}
 
@@ -65,9 +92,13 @@ final class ProtocolDTO extends AbstractDTO
             dueDate: self::toString($data['dueDate'] ?? null),
             file: self::toInt($data['file'] ?? null),
             groupData: isset($data['groupData']) && is_array($data['groupData']) ? $data['groupData'] : null,
-            groups: isset($data['groups']) && is_array($data['groups']) ? $data['groups'] : null,
+            groups: isset($data['groups']) && is_array($data['groups'])
+                ? array_map(fn($x) => ProtocolGroupDataDTO::fromArray($x), $data['groups'])
+                : null,
             personInCharge: self::toInt($data['personInCharge'] ?? null),
-            protocolEntries: isset($data['protocolEntries']) && is_array($data['protocolEntries']) ? $data['protocolEntries'] : null,
+            protocolEntries: isset($data['protocolEntries']) && is_array($data['protocolEntries'])
+                ? array_map(fn($x) => ProtocolEntryDTO::fromArray($x), $data['protocolEntries'])
+                : null,
             sendMessage: isset($data['sendMessage']) ? self::toBool($data['sendMessage']) : null,
             ticket: self::toInt($data['ticket'] ?? null)
         );

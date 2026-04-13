@@ -10,17 +10,29 @@ namespace miralsoft\docbee\api\DTO;
 final class DailyClosingConfigDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific dailyClosingConfig */
         private readonly ?int $id,
+        /** list of CC Mail Recievers */
         private ?string $ccMailRecievers,
+        /** if this is active only not internal times are counted for minTime */
         private ?bool $countOnlyExternalTimes,
+        /** if this is active only finished times are counted for minTime */
         private ?bool $countOnlyFinishedTimes,
+        /** mail MessageTemplate */
         private ?array $messageTemplate,
+        /** minimum time per day in miliseconds */
         private ?int $minTime,
+        /** name */
         private ?string $name,
+        /** flag to send mail */
         private ?bool $sendMail,
+        /** flag to send web notification */
         private ?bool $sendWebNotification,
+        /** flag to show reminder */
         private ?bool $showReminder,
+        /** offset to midnight */
         private ?int $timeOffset,
+        /** webNotification MessageTemplate */
         private ?array $webNotificationTemplate
     ) {}
 

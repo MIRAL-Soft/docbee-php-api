@@ -10,12 +10,19 @@ namespace miralsoft\docbee\api\DTO;
 final class PresetValueDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific preset value */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** group */
         private readonly ?string $group,
+        /** code */
         private ?string $code,
+        /** value */
         private ?string $value,
+        /** value searchable */
         private ?bool $valueSearchable
     ) {}
 

@@ -10,11 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class PaymentProfileDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific paymentProfile */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** defaultPrice */
         private ?float $defaultPrice,
+        /** isDefault */
         private ?bool $isDefault,
+        /** name */
         private ?string $name,
+        /** type */
         private ?string $type
     ) {}
 

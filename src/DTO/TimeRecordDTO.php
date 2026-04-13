@@ -10,15 +10,25 @@ namespace miralsoft\docbee\api\DTO;
 final class TimeRecordDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific time record */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** is TimeRecord enabled */
         private readonly ?bool $enabled,
+        /** comment for the timeRecord */
         private ?string $comment,
+        /** current active timeRecord can only be set if externalAppName is set */
         private ?bool $current,
+        /** external app name */
         private ?string $externalAppName,
+        /** external id */
         private ?string $externalId,
+        /** started date */
         private ?string $started,
+        /** time in milliseconds */
         private ?int $time,
+        /** User identifier. If not provided the identifier of the logged in user. */
         private ?int $user
     ) {}
 

@@ -10,25 +10,45 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomerContactDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customerContact */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** customer identifier */
         private readonly ?int $customer,
+        /** customerLocation identifier */
         private readonly ?int $customerLocation,
+        /** If these contact is temporary */
         private readonly ?bool $temporary,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** email */
         private ?string $email,
+        /** gender */
         private ?string $gender,
+        /** Additional information about the customer contact */
         private ?string $info,
+        /** labeling */
         private ?string $labeling,
+        /** mobile */
         private ?string $mobile,
+        /** name */
         private ?string $name,
+        /** if sendEmail is set documents or protocols are send to these contact via email */
         private ?bool $sendEmail,
+        /** if sendEmailIfSelected is set documents or protocols are send to these contact via email if these contact is the selected contact for the document or protocol */
         private ?bool $sendEmailIfSelected,
+        /** if sendFax is set documents or protocols are send to these contact via fax */
         private ?bool $sendFax,
+        /** if sendFaxIfSelected is set documents or protocols are send to these contact via fax if these contact is the selected contact for the document or protocol */
         private ?bool $sendFaxIfSelected,
+        /** If this contact is synced to app. The customer setting withSyncToAppFlag needs to be set to use this property. Otherwise all contacts are synced. */
         private ?bool $syncToApp,
+        /** telefax */
         private ?string $telefax,
+        /** telephone */
         private ?string $telephone
     ) {}
 
@@ -42,7 +62,9 @@ final class CustomerContactDTO extends AbstractDTO
             customer: self::toInt($data['customer'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
             temporary: isset($data['temporary']) ? self::toBool($data['temporary']) : null,
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             email: self::toString($data['email'] ?? null),
             gender: self::toString($data['gender'] ?? null),
             info: self::toString($data['info'] ?? null),

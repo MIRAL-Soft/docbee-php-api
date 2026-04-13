@@ -10,25 +10,45 @@ namespace miralsoft\docbee\api\DTO;
 final class AgreementTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific agreement template */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** component template identifiers */
         private readonly ?array $components,
+        /** agreementCategory identifier */
         private ?int $agreementCategory,
+        /** autoRenew */
         private ?bool $autoRenew,
+        /** costEstimationTemplate identifier */
         private ?int $costEstimationTemplate,
+        /** description */
         private ?string $description,
+        /** invoiceCycle */
         private ?string $invoiceCycle,
+        /** name */
         private ?string $name,
+        /** noticePeriod in months */
         private ?int $noticePeriod,
+        /** price */
         private ?float $price,
+        /** renewCycle */
         private ?string $renewCycle,
+        /** slaProfile identifier */
         private ?int $slaProfile,
+        /** threshold */
         private ?string $threshold,
+        /** ticketSla in milliseconds */
         private ?int $ticketSla,
+        /** timeEstimate */
         private ?float $timeEstimate,
+        /** type */
         private ?string $type,
+        /** withInvoice */
         private ?bool $withInvoice,
+        /** withinWorkingSla */
         private ?bool $withinWorkingSla
     ) {}
 

@@ -10,15 +10,25 @@ namespace miralsoft\docbee\api\DTO;
 final class ObserverUserDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific observerUser */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** email */
         private ?string $email,
+        /** enabled */
         private ?bool $enabled,
+        /** name */
         private ?string $name,
+        /** observer identifier */
         private ?int $observer,
+        /** password */
         private ?string $password,
+        /** shorthandName */
         private ?string $shorthandName,
+        /** use2FA */
         private ?bool $use2FA,
+        /** username */
         private ?string $username
     ) {}
 

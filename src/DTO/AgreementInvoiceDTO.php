@@ -10,13 +10,21 @@ namespace miralsoft\docbee\api\DTO;
 final class AgreementInvoiceDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific component */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** agreement identifier */
         private readonly ?int $agreement,
+        /** moneyThreshold */
         private ?float $amount,
+        /** startDate */
         private ?string $fromDate,
+        /** invoiceNumber */
         private ?string $invoiceNumber,
+        /** startDate */
         private ?string $tillDate
     ) {}
 

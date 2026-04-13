@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class WorkPipeDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific work pipe item */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** json object */
         private ?array $data,
+        /** work pipe item type */
         private ?string $type
     ) {}
 

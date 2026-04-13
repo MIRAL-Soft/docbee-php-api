@@ -10,18 +10,31 @@ namespace miralsoft\docbee\api\DTO;
 final class MessageDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticketTemplate */
         private readonly ?int $id,
+        /** created */
         private readonly ?string $created,
+        /** REST API Link */
         private readonly ?string $link,
+        /** contact identifier */
         private readonly ?int $contact,
+        /** receivedDate */
         private readonly ?string $receivedDate,
+        /** sender */
         private readonly ?string $sender,
+        /** sender type */
         private readonly ?string $senderType,
+        /** user identifier */
         private readonly ?int $user,
+        /** file identifiers */
         private ?array $attachments,
+        /** content */
         private ?string $content,
+        /** hidden */
         private ?bool $hidden,
+        /** internal */
         private ?bool $internal,
+        /** subject */
         private ?string $subject
     ) {}
 

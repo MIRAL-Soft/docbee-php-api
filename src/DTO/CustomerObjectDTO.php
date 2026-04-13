@@ -10,31 +10,57 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomerObjectDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customerObject */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** customer identifier */
         private readonly ?int $customer,
+        /** customerContact identifier */
         private readonly ?int $customerContact,
+        /** customerLocation identifier */
         private readonly ?int $customerLocation,
+        /** acquisitionDate */
         private ?string $acquisitionDate,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** details */
         private ?string $details,
+        /** extendedName */
         private ?string $extendedName,
+        /** itChassisType */
         private ?string $itChassisType,
+        /** itExternalAddress */
         private ?string $itExternalAddress,
+        /** itIpAddress */
         private ?string $itIpAddress,
+        /** itMac1Address */
         private ?string $itMac1Address,
+        /** itMac2Address */
         private ?string $itMac2Address,
+        /** itMac3Address */
         private ?string $itMac3Address,
+        /** itOs */
         private ?string $itOs,
+        /** itProcessorCount */
         private ?int $itProcessorCount,
+        /** itRole */
         private ?string $itRole,
+        /** itServicePack */
         private ?string $itServicePack,
+        /** itTotalMemory */
         private ?string $itTotalMemory,
+        /** number */
         private ?string $number,
+        /** object identifier */
         private ?int $object,
+        /** parentCustomerObject identifier */
         private ?int $parentCustomerObject,
+        /** scanCode */
         private ?string $scanCode
     ) {}
 
@@ -50,7 +76,9 @@ final class CustomerObjectDTO extends AbstractDTO
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
             acquisitionDate: self::toString($data['acquisitionDate'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             details: self::toString($data['details'] ?? null),
             extendedName: self::toString($data['extendedName'] ?? null),
             itChassisType: self::toString($data['itChassisType'] ?? null),

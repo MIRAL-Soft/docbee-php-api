@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomerStatusDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customerStatus */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** name */
         private ?string $name,
+        /** selectable */
         private ?bool $selectable
     ) {}
 

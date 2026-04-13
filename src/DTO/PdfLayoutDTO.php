@@ -10,14 +10,21 @@ namespace miralsoft\docbee\api\DTO;
 final class PdfLayoutDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific pdf layout */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
         private mixed $firstPageLayout,
+        /** is default pdf layout */
         private ?bool $isDefault,
+        /** name */
         private ?string $name,
         private mixed $otherPageLayout,
+        /** settings */
         private ?array $settings,
+        /** tableConfigStorage identifier */
         private ?int $tableConfigStorage,
+        /** type */
         private ?string $type
     ) {}
 

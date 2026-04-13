@@ -10,23 +10,41 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticketTemplate */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** customerObject identifiers */
         private ?array $customerObjects,
+        /** customerSelectable */
         private ?bool $customerSelectable,
+        /** time added to the creation date of the ticket to determine the deadline */
         private ?int $deadline,
+        /** description */
         private ?string $description,
+        /** time added to the creation date of the ticket to determine the final due date */
         private ?int $dueDate,
+        /** internalDescription */
         private ?string $internalDescription,
+        /** name */
         private ?string $name,
+        /** user or queue identifier */
         private ?int $owner,
+        /** priority identifier */
         private ?int $priority,
+        /** tag identifiers */
         private ?array $tags,
+        /** ticketCategory identifier */
         private ?int $ticketCategory,
+        /** ticketStatus identifier */
         private ?int $ticketStatus
     ) {}
 

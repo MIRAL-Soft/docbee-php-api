@@ -10,13 +10,21 @@ namespace miralsoft\docbee\api\DTO;
 final class DashboardWidgetDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific dashboardWidget */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** withEmail */
         private ?bool $forcedSubscribed,
+        /** name */
         private ?string $name,
+        /** map of settings */
         private ?array $settings,
+        /** type */
         private ?string $type,
+        /** user id */
         private ?int $user,
+        /** validForUser */
         private ?bool $validForUser,
         private mixed $viewConfiguration
     ) {}

@@ -5,37 +5,64 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\DTO;
 
 /**
- * Represents a Docbee DocumentTemplate record.
+ * Represents a Docbee DocBeeDocumentTemplate record.
  */
-final class DocumentTemplateDTO extends AbstractDTO
+final class DocBeeDocumentTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific docBeeDocumentTemplate */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** taskTemplate identifiers */
         private readonly ?array $taskTemplates,
+        /** travelLogTemplate identifiers */
         private readonly ?array $travelLogTemplates,
+        /** worker identifiers */
         private readonly ?array $workers,
+        /** billable */
         private ?bool $billable,
+        /** completedSuccessfully */
         private ?bool $completedSuccessfully,
+        /** confidentialTag identifier */
         private ?int $confidentialTag,
+        /** list of customFieldValues */
         private ?array $customFields,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** erpReferenceNumber */
         private ?string $erpReferenceNumber,
+        /** externalReferenceNumber */
         private ?string $externalReferenceNumber,
+        /** isDraft */
         private ?bool $isDraft,
+        /** name */
         private ?string $name,
+        /** needFinishPin */
         private ?bool $needFinishPin,
+        /** needSignature */
         private ?bool $needSignature,
+        /** user or queue identifier */
         private ?int $personInCharge,
+        /** priority identifier */
         private ?int $priority,
+        /** protocolDocumentTemplate identifiers */
         private ?array $protocolDocumentTemplates,
+        /** record travel time after prefinish */
         private ?bool $recordTravelTimeAfterPreFinished,
+        /** referenceNumber */
         private ?string $referenceNumber,
+        /** release offset in days of the to be created docBeeDocument draft */
         private ?int $releaseOffset,
+        /** sendMessage */
         private ?bool $sendMessage,
+        /** tag identifiers */
         private ?array $tags
     ) {}
 

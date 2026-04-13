@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class SelectionValueDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific selectionValue */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** details */
         private readonly ?string $details,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** file identifiers */
         private ?array $filterNames,
+        /** name */
         private ?string $name,
+        /** scanCode */
         private ?string $scanCode
     ) {}
 
@@ -30,7 +39,9 @@ final class SelectionValueDTO extends AbstractDTO
             modified: self::toString($data['modified'] ?? null),
             link: self::toString($data['link'] ?? null),
             details: self::toString($data['details'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             filterNames: isset($data['filterNames']) && is_array($data['filterNames']) ? $data['filterNames'] : null,
             name: self::toString($data['name'] ?? null),
             scanCode: self::toString($data['scanCode'] ?? null)

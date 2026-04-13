@@ -10,8 +10,11 @@ namespace miralsoft\docbee\api\DTO;
 final class AgreementCategoryDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific agreementCategory */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** name */
         private ?string $name
     ) {}
 

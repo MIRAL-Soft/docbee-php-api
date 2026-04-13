@@ -10,18 +10,31 @@ namespace miralsoft\docbee\api\DTO;
 final class ProtocolDocumentTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocolTemplate */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** name */
         private readonly ?string $name,
+        /** protocolTemplate Id */
         private readonly ?int $protocolTemplate,
+        /** confidentialTag identifier */
         private ?int $confidentialTag,
+        /** customer identifier */
         private ?int $customer,
+        /** contact identifier */
         private ?int $customerContact,
+        /** location identifier */
         private ?int $customerLocation,
+        /** customerObject identifiers */
         private ?array $customerObjects,
+        /** time added to the creation date of the protocol to determine the final due date */
         private ?int $dueDate,
+        /** personInCharge identifier */
         private ?int $personInCharge,
+        /** tags identifier */
         private ?int $tags
     ) {}
 

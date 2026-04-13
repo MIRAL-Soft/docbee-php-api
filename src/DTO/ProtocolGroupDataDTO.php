@@ -10,8 +10,11 @@ namespace miralsoft\docbee\api\DTO;
 final class ProtocolGroupDataDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocolGroupData */
         private readonly ?int $id,
+        /** finished */
         private readonly ?bool $finished,
+        /** templateGroup */
         private readonly ?int $templateGroup
     ) {}
 

@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class SelectionCategoryDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific selectionCategory */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** @var CustomFieldMappingDTO[]|null list of customField mappings */
         private readonly ?array $customFields,
+        /** detailsPattern */
         private ?string $detailsPattern,
+        /** name */
         private ?string $name,
+        /** uniqueValues */
         private ?bool $uniqueValues,
+        /** withScanCode */
         private ?bool $withScanCode
     ) {}
 
@@ -29,7 +38,9 @@ final class SelectionCategoryDTO extends AbstractDTO
             created: self::toString($data['created'] ?? null),
             modified: self::toString($data['modified'] ?? null),
             link: self::toString($data['link'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldMappingDTO::fromArray($x), $data['customFields'])
+                : null,
             detailsPattern: self::toString($data['detailsPattern'] ?? null),
             name: self::toString($data['name'] ?? null),
             uniqueValues: isset($data['uniqueValues']) ? self::toBool($data['uniqueValues']) : null,

@@ -10,13 +10,21 @@ namespace miralsoft\docbee\api\DTO;
 final class ServiceProviderDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific serviceProvider */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** deactivated */
         private readonly ?bool $deactivated,
+        /** email */
         private readonly ?string $email,
+        /** number */
         private readonly ?string $number,
+        /** shortName */
         private readonly ?string $shortName,
+        /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
+        /** name */
         private ?string $name
     ) {}
 
@@ -30,7 +38,9 @@ final class ServiceProviderDTO extends AbstractDTO
             email: self::toString($data['email'] ?? null),
             number: self::toString($data['number'] ?? null),
             shortName: self::toString($data['shortName'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                : null,
             name: self::toString($data['name'] ?? null)
         );
     }

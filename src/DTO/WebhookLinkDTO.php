@@ -12,6 +12,7 @@ namespace miralsoft\docbee\api\DTO;
 final class WebhookLinkDTO extends AbstractDTO
 {
     public function __construct(
+        /** link */
         private readonly ?string $link,
     ) {}
 

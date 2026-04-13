@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class ErrorLogDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific errorLog */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** internal identifier of the type of error */
         private ?string $code,
+        /** Content of the error message */
         private ?string $content,
+        /** map of data */
         private ?array $dataMap,
+        /** occurrence date */
         private ?string $date,
+        /** level of the error */
         private ?string $level,
+        /** count of occurrences */
         private ?int $occurrenceCount,
+        /** processed status */
         private ?bool $processed
     ) {}
 

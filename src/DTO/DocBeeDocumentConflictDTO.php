@@ -10,10 +10,15 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeDocumentConflictDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific docbee document conflict */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** text */
         private readonly ?string $text
     ) {}
 
