@@ -10,10 +10,15 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketCategoryDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticketCategory */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** name */
         private ?string $name,
+        /** protocolTemplateProfile identifiers */
         private ?array $protocolTemplateProfiles
     ) {}
 

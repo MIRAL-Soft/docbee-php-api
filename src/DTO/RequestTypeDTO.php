@@ -10,6 +10,7 @@ namespace miralsoft\docbee\api\DTO;
 final class RequestTypeDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier */
         private readonly ?int $id,
         private ?string       $name,
     ) {}

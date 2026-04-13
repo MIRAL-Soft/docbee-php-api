@@ -10,15 +10,25 @@ namespace miralsoft\docbee\api\DTO;
 final class NotificationDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific notification */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** body of notification */
         private ?string $body,
+        /** link url */
         private ?string $linkUrl,
+        /** senderUser */
         private ?int $senderUser,
+        /** subject of notification */
         private ?string $subject,
+        /** a unique tag for the notification */
         private ?string $tag,
+        /** tracked by user */
         private ?bool $tracked,
+        /** notification type */
         private ?string $type,
+        /** user id if type is User */
         private ?int $user
     ) {}
 

@@ -10,13 +10,21 @@ namespace miralsoft\docbee\api\DTO;
 final class ContingentElementDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific element */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** contingentItem identifier */
         private ?int $contingentItem,
+        /** date */
         private ?string $date,
+        /** postType */
         private ?string $postType,
+        /** postedMoney */
         private ?float $postedMoney,
+        /** postedTime */
         private ?int $postedTime,
+        /** task identifier */
         private ?int $task
     ) {}
 

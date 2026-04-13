@@ -10,10 +10,15 @@ namespace miralsoft\docbee\api\DTO;
 final class ExportProfileDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific exportProfile */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** exportType */
         private ?string $exportType,
+        /** name */
         private ?string $fileName,
+        /** name */
         private ?string $name
     ) {}
 

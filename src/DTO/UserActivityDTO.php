@@ -10,23 +10,41 @@ namespace miralsoft\docbee\api\DTO;
 final class UserActivityDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific userActivity */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** processed */
         private readonly ?bool $processed,
+        /** Email of a customerContact. Only used if customer, customerLocation and customerContact is not provided. */
         private ?string $contactEmail,
+        /** Telephone or mobile number of a customerContact. Only used if customer, customerLocation and customerContact is not provided. */
         private ?string $contactPhoneNumber,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** daily */
         private ?bool $daily,
+        /** description */
         private ?string $description,
+        /** duration in milliseconds */
         private ?int $duration,
+        /** startDate */
         private ?string $startDate,
+        /** title */
         private ?string $title,
+        /** type */
         private ?string $type,
+        /** url */
         private ?string $url,
+        /** User identifier. If not provided the identifier of the logged in user. */
         private ?int $user,
+        /** Email of a user. Only used if user is not provided. */
         private ?string $userEmail,
+        /** Telephone or mobile number of a user. Only used if user is not provided. */
         private ?string $userPhoneNumber
     ) {}
 

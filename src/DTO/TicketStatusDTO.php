@@ -10,15 +10,25 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketStatusDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticketStatus */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** behaviour */
         private ?string $behaviour,
+        /** color */
         private ?string $color,
+        /** escalate */
         private ?bool $escalate,
+        /** name */
         private ?string $name,
+        /** sendCustomerMail */
         private ?bool $sendCustomerMail,
+        /** sendOwnerMail */
         private ?bool $sendOwnerMail,
+        /** syncToApp */
         private ?bool $syncToApp
     ) {}
 

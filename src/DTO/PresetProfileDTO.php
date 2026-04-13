@@ -10,10 +10,15 @@ namespace miralsoft\docbee\api\DTO;
 final class PresetProfileDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific preset profile */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** presetValue identifiers */
         private readonly ?array $presetValues,
+        /** user identifiers */
         private readonly ?array $users,
+        /** name */
         private ?string $name
     ) {}
 

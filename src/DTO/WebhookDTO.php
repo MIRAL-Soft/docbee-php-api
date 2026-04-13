@@ -12,20 +12,35 @@ namespace miralsoft\docbee\api\DTO;
 final class WebhookDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific webhook */
         private readonly ?int    $id,
+        /** name */
         private readonly ?string $name,
+        /** type */
         private readonly ?string $type,
+        /** docBeeDocumentTemplate id */
         private readonly ?int    $docBeeDocumentTemplate,
+        /** ticketTemplate id */
         private readonly ?int    $ticketTemplate,
+        /** protocolTemplate id */
         private readonly ?int    $protocolTemplate,
+        /** withForm */
         private readonly ?bool   $withForm,
+        /** withEmail */
         private readonly ?bool   $withEmail,
+        /** withAttachment */
         private readonly ?bool   $withAttachment,
+        /** threshold */
         private readonly ?int    $threshold,
+        /** successText */
         private readonly ?string $successText,
+        /** redirectUrl */
         private readonly ?string $redirectUrl,
+        /** redirectWebhook id */
         private readonly ?int    $redirectWebhook,
+        /** ruleEngineAction id */
         private readonly ?int    $ruleEngineActionId,
+        /** REST API Link */
         private readonly ?string $link,
     ) {}
 

@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class RuleEngineReactionDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ruleEngineReaction */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** data */
         private ?array $data,
+        /** type */
         private ?string $type
     ) {}
 

@@ -10,12 +10,19 @@ namespace miralsoft\docbee\api\DTO;
 final class EnvVariableDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific envVariable */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** Name of the envVariable */
         private ?string $name,
+        /** Secret status */
         private ?bool $secret,
+        /** Value of the envVariable (If the value is stored as secret no value will returned) */
         private ?string $value
     ) {}
 

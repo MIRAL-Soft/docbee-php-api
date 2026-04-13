@@ -10,12 +10,19 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketBoardColumnDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticketBoardColumn */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** additionalInfo */
         private ?string $additionalInfo,
+        /** customField identifier */
         private ?int $customField,
+        /** name */
         private ?string $name,
+        /** ticketStatus identifiers */
         private ?array $ticketStatuses
     ) {}
 

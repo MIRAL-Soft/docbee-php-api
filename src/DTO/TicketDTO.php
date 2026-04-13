@@ -10,56 +10,107 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticket */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** last status change when the ticket was set into a closed state */
         private readonly ?int $closedStatusChange,
+        /** First status change when the ticket was created */
         private readonly ?int $createdStatusChange,
+        /** docBeeDocument identifiers */
         private readonly ?array $docBeeDocuments,
+        /** Indicates whether the current user can see any docBeeDocuments attached to this ticket. */
         private readonly ?bool $hasDocBeeDocuments,
+        /** Indicates whether the current user can see any protocols attached to this ticket. */
         private readonly ?bool $hasProtocols,
+        /** Indicates whether the current user can see any links attached to this ticket. */
         private readonly ?bool $hasTicketLinks,
+        /** ticket identifiers */
         private readonly ?array $mergedTickets,
+        /** protocol identifiers */
         private readonly ?array $protocols,
+        /** slaProfile identifier */
         private readonly ?int $slaProfile,
+        /** sla report datas */
         private readonly ?array $slaReports,
+        /** ticketNumber */
         private readonly ?string $ticketNumber,
+        /** web link */
         private readonly ?string $webLink,
+        /** additional data */
         private ?array $additionalData,
+        /** billable */
         private ?bool $billable,
+        /** confidentialTag identifier */
         private ?int $confidentialTag,
+        /** list of customFieldValues */
         private ?array $customFields,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** customerObject identifiers */
         private ?array $customerObjects,
+        /** deadline */
         private ?string $deadline,
+        /** department identifier */
         private ?int $department,
+        /** description */
         private ?string $description,
+        /** dueDate */
         private ?string $dueDate,
+        /** erpReferenceNumber */
         private ?string $erpReferenceNumber,
+        /** externalReferenceNumber */
         private ?string $externalReferenceNumber,
+        /** external sla if only the sla is defined the sla due date get calculated */
         private ?int $externalSla,
+        /** external sla due date if only the the sla due date is defined the sla get calculated */
         private ?string $externalSlaDueDate,
+        /** internalDescription */
         private ?string $internalDescription,
+        /** Related ticket link identifiers, only included if explicitly requested via fields parameter */
         private ?array $inwardLinks,
+        /** locked */
         private ?bool $isLocked,
+        /** lockReason */
         private ?string $lockReason,
+        /** locked visible for customer */
         private ?bool $lockVisibleForCustomer,
+        /** lowest dueDate of ticket and referenced docBeeDocuments */
         private ?string $lowestDueDate,
+        /** ticket identifier */
         private ?int $mergedToTicket,
+        /** Related ticket link identifiers, only included if explicitly requested via fields parameter */
         private ?array $outwardLinks,
+        /** user or queue identifier */
         private ?int $owner,
+        /** priority identifier */
         private ?int $priority,
+        /** agreement identifier */
         private ?int $project,
+        /** referenceNumber */
         private ?string $referenceNumber,
+        /** sla in milliseconds */
         private ?int $sla,
+        /** sla dueDate */
         private ?string $slaDueDate,
+        /** sla running time in milliseconds */
         private ?int $slaRunning,
+        /** start date */
         private ?string $startDate,
+        /** tag identifiers */
         private ?array $tags,
+        /** ticketCategory identifier */
         private ?int $ticketCategory,
+        /** ticketStatus identifier */
         private ?int $ticketStatus
     ) {}
 

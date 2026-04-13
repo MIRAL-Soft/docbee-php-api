@@ -10,11 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class AgreementPeriodDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific period */
         private readonly ?int    $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** cycleAmount */
         private ?int             $cycleAmount,
+        /** startDate */
         private ?string          $startDate,
+        /** endDate */
         private ?string          $endDate,
     ) {}
 

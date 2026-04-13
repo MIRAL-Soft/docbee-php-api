@@ -10,12 +10,19 @@ namespace miralsoft\docbee\api\DTO;
 final class AwayReasonDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific awayReason */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** forwardNotifications */
         private ?bool $forwardNotifications,
+        /** name */
         private ?string $name,
+        /** requiredSubstitution */
         private ?bool $requiredSubstitution,
+        /** userInCc */
         private ?bool $userInCc,
+        /** withSubstitution */
         private ?bool $withSubstitution
     ) {}
 

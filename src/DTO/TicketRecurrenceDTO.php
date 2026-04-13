@@ -10,8 +10,11 @@ namespace miralsoft\docbee\api\DTO;
 final class TicketRecurrenceDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific ticket recurrence */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** name */
         private ?string $name,
         private mixed $recurrence,
         private mixed $template

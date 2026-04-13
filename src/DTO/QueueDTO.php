@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class QueueDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific queue */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** enabled */
         private ?bool $enabled,
+        /** name */
         private ?string $name
     ) {}
 

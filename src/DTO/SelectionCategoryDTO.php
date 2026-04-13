@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class SelectionCategoryDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific selectionCategory */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** list of customFields */
         private readonly ?array $customFields,
+        /** detailsPattern */
         private ?string $detailsPattern,
+        /** name */
         private ?string $name,
+        /** uniqueValues */
         private ?bool $uniqueValues,
+        /** withScanCode */
         private ?bool $withScanCode
     ) {}
 

@@ -10,11 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class TagDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific tag */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** HTML color code in hexadecimal representation */
         private ?string $color,
+        /** deactivated */
         private ?bool $deactivated,
+        /** name */
         private ?string $name
     ) {}
 

@@ -10,18 +10,31 @@ namespace miralsoft\docbee\api\DTO;
 final class CompanyDataDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific companyData */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** isDefault */
         private readonly ?bool $isDefault,
+        /** city */
         private ?string $city,
+        /** File identifier for the document logo image */
         private ?int $documentLogo,
+        /** faxNumber */
         private ?string $faxNumber,
+        /** name */
         private ?string $name,
+        /** PDF Layout identifier with type DocBeeDocument */
         private ?int $pdfLayout,
+        /** street */
         private ?string $street,
+        /** telephoneNumber */
         private ?string $telephoneNumber,
+        /** File identifier for the website logo image */
         private ?int $websiteLogo,
+        /** zipcode */
         private ?string $zipcode
     ) {}
 

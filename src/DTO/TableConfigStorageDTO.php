@@ -10,15 +10,25 @@ namespace miralsoft\docbee\api\DTO;
 final class TableConfigStorageDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific table config storage */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** field identifiers */
         private readonly ?array $fields,
+        /** filter identifiers */
         private readonly ?array $filters,
+        /** name */
         private ?string $name,
+        /** shared */
         private ?bool $shared,
+        /** subType identifier */
         private ?int $subType,
+        /** type */
         private ?string $type,
+        /** user which owns this table config storage */
         private ?int $user
     ) {}
 

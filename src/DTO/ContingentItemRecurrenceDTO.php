@@ -10,11 +10,16 @@ namespace miralsoft\docbee\api\DTO;
 final class ContingentItemRecurrenceDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific itemRecurrence */
         private readonly ?int    $id,
+        /** REST API Link */
         private readonly ?string $link,
         private ?string          $name,
+        /** money */
         private ?float           $money,
+        /** time in milliseconds */
         private ?int             $time,
+        /** description */
         private ?string          $description,
     ) {}
 

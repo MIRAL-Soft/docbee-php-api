@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class DepartmentProfileDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific departmentProfile */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** department identifiers */
         private ?array $links,
+        /** name */
         private ?string $name
     ) {}
 

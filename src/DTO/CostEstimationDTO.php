@@ -10,28 +10,51 @@ namespace miralsoft\docbee\api\DTO;
 final class CostEstimationDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific costEstimation */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** approved */
         private readonly ?bool $approved,
+        /** approve date */
         private readonly ?string $approvedDate,
+        /** Unique identifier representing a specific ticketCategory */
         private readonly ?int $defaultTicketCategory,
+        /** Unique identifier representing a specific file */
         private readonly ?int $file,
+        /** finished */
         private readonly ?bool $finished,
+        /** finish date */
         private readonly ?string $finishedDate,
+        /** type */
         private readonly ?string $mode,
+        /** Unique identifier representing the next revision of a revised costEstimation */
         private readonly ?int $nextRevision,
+        /** Unique identifier representing the previous revision of a costEstimation */
         private readonly ?int $previousRevision,
+        /** task identifiers */
         private readonly ?array $tasks,
+        /** Unique identifier representing a specific ticket */
         private readonly ?int $ticket,
+        /** Unique identifier representing a specific ticketLinkType */
         private readonly ?int $ticketLinkType,
+        /** agreement identifier */
         private ?int $agreement,
+        /** defaultBuffer */
         private ?float $defaultBuffer,
+        /** serviceType identifier */
         private ?int $defaultServiceType,
+        /** name */
         private ?string $name,
+        /** pdfLayout identifier */
         private ?int $pdfLayout,
+        /** personInCharge identifier */
         private ?int $personInCharge,
+        /** prependNameToTaskName (only valid for mode SUBTASK2DOCUMENT_TASK2TICKET) */
         private ?bool $prependNameToTaskName,
+        /** taskPersonInCharge identifier */
         private ?int $taskPersonInCharge
     ) {}
 

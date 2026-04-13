@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class ConfidentialTagDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific confidentialTag */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** allow owner of an object with a confidentialTag to access that object */
         private ?bool $addOwnerAccess,
+        /** name */
         private ?string $name
     ) {}
 

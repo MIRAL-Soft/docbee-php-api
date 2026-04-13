@@ -10,32 +10,59 @@ namespace miralsoft\docbee\api\DTO;
 final class TaskTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific TaskTemplate */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** materialTemplate identifiers */
         private readonly ?array $materialTemplates,
+        /** planningTimeTemplate identifiers */
         private readonly ?array $planningTimeTemplates,
+        /** workLogTemplate identifiers */
         private readonly ?array $workLogTemplates,
+        /** alternativeLocationAddress */
         private ?string $alternativeLocationAddress,
+        /** alternativeLocationLatitude */
         private ?float $alternativeLocationLatitude,
+        /** alternativeLocationLongitude */
         private ?float $alternativeLocationLongitude,
+        /** arrivalEstimate */
         private ?int $arrivalEstimate,
+        /** contingent identifier */
         private ?int $contingent,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** customerObject identifiers */
         private ?array $customerObjects,
+        /** description */
         private ?string $description,
+        /** dueDate offset in days of the to be created task */
         private ?int $dueDateOffset,
+        /** dueDate time of day in milliseconds */
         private ?int $dueDateTime,
+        /** estimate */
         private ?int $estimate,
+        /** internalDescription */
         private ?string $internalDescription,
+        /** name */
         private ?string $name,
+        /** planningEstimate */
         private ?int $planningEstimate,
+        /** remainingEstimate */
         private ?int $remainingEstimate,
+        /** returnEstimate */
         private ?int $returnEstimate,
+        /** serviceType identifier */
         private ?int $serviceType,
+        /** templateName */
         private ?string $templateName,
+        /** user identifiers */
         private ?array $workers
     ) {}
 

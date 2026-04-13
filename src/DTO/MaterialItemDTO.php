@@ -10,12 +10,19 @@ namespace miralsoft\docbee\api\DTO;
 final class MaterialItemDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific materialItem */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** deactivated */
         private ?bool $deactivated,
+        /** indicates if the material must have a serial number */
         private ?bool $hasSerialNumber,
+        /** name */
         private ?string $name,
+        /** number */
         private ?string $number
     ) {}
 

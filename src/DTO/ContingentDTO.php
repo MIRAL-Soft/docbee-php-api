@@ -10,22 +10,39 @@ namespace miralsoft\docbee\api\DTO;
 final class ContingentDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific contingent */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** behavior */
         private readonly ?string $behavior,
+        /** customer identifier */
         private readonly ?int $customer,
+        /** item identifiers */
         private readonly ?array $items,
+        /** moneyStat */
         private readonly ?float $moneyStat,
+        /** timeStat */
         private readonly ?int $timeStat,
+        /** type */
         private readonly ?string $type,
+        /** deactivated */
         private ?bool $deactivated,
+        /** file identifiers */
         private ?array $files,
+        /** moneyThreshold */
         private ?float $moneyThreshold,
+        /** name */
         private ?string $name,
+        /** showOnInvoice */
         private ?bool $showOnInvoice,
+        /** timeThreshold */
         private ?int $timeThreshold,
+        /** visibleForCustomer */
         private ?bool $visibleForCustomer
     ) {}
 

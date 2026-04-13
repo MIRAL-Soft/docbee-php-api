@@ -10,19 +10,33 @@ namespace miralsoft\docbee\api\DTO;
 final class CostEstimationTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific costEstimationTemplate */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** type */
         private readonly ?string $mode,
+        /** TaskTemplate identifiers */
         private readonly ?array $tasks,
+        /** defaultBuffer */
         private ?float $defaultBuffer,
+        /** serviceType identifier */
         private ?int $defaultServiceType,
+        /** defaultTicketCategory identifier (only valid for mode SUBTASK2DOCUMENT_TASK2TICKET) */
         private ?int $defaultTicketCategory,
+        /** name */
         private ?string $name,
+        /** pdfLayout identifier */
         private ?int $pdfLayout,
+        /** personInCharge identifier */
         private ?int $personInCharge,
+        /** prependNameToTaskName (only valid for mode SUBTASK2DOCUMENT_TASK2TICKET) */
         private ?bool $prependNameToTaskName,
+        /** taskPersonInCharge identifier */
         private ?int $taskPersonInCharge,
+        /** ticketLinkType identifier (only valid for mode SUBTASK2DOCUMENT_TASK2TICKET) */
         private ?int $ticketLinkType
     ) {}
 

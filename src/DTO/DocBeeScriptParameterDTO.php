@@ -10,16 +10,27 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeScriptParameterDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific DocBeeScriptParameter */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** a boolean value if type is BOOLEAN */
         private ?bool $booleanValue,
+        /** description */
         private ?string $description,
+        /** a double value if type is DOUBLE */
         private ?float $doubleValue,
+        /** a file identifier if type if FILE */
         private ?int $fileValue,
+        /** key */
         private ?string $key,
+        /** a long value if type is LONG */
         private ?int $longValue,
+        /** a text if type is STRING or LIST_STRING */
         private ?string $textValue,
+        /** type */
         private ?string $type
     ) {}
 

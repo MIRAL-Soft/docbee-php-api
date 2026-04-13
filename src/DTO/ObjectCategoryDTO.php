@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class ObjectCategoryDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific objectCategory */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** list of customFields */
         private readonly ?array $customFields,
+        /** isMonitored */
         private ?bool $isMonitored,
+        /** name */
         private ?string $name,
+        /** scanCode regex */
         private ?string $regex,
+        /** withScanCode */
         private ?bool $withScanCode
     ) {}
 

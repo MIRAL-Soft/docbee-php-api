@@ -10,11 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class InvoiceDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific invoice */
         private readonly ?int $id,
+        /** agreementInvoice identifier */
         private readonly ?int $agreementInvoice,
+        /** docBeeDocument identifier */
         private readonly ?int $docBeeDocument,
+        /** docBeeDocument status */
         private readonly ?string $status,
+        /** billable */
         private ?bool $billable,
+        /** invoiceNumber */
         private ?string $invoiceNumber
     ) {}
 

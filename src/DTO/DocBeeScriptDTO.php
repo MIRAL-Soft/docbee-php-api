@@ -10,11 +10,17 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeScriptDTO extends AbstractDTO
 {
     public function __construct(
+        /** REST API Link */
         private readonly ?string $link,
+        /** file identifier */
         private readonly ?int $logFile,
+        /** description */
         private ?string $description,
+        /** name */
         private ?string $name,
+        /** params data */
         private ?array $params,
+        /** script */
         private ?string $script
     ) {}
 

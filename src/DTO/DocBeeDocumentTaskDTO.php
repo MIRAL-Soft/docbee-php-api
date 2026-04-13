@@ -10,47 +10,89 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeDocumentTaskDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific Task */
         private readonly ?int    $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** totalWorkingTime */
         private readonly ?int    $totalWorkingTime,
+        /** totalPlanningTime */
         private readonly ?int    $totalPlanningTime,
+        /** total invoice time */
         private readonly ?int    $totalInvoiceTime,
+        /** total invoice time with agreement */
         private readonly ?int    $totalInvoiceTimeWithAgreement,
+        /** total revised time */
         private readonly ?int    $totalRevisedTime,
+        /** total contingent time */
         private readonly ?int    $totalContingentTime,
+        /** price */
         private readonly ?float  $price,
+        /** internal price */
         private readonly ?float  $internalPrice,
+        /** revised price */
         private readonly ?float  $revisedPrice,
+        /** contingent price */
         private readonly ?float  $contingentPrice,
+        /** invoice price */
         private readonly ?float  $invoicePrice,
+        /** invoice price with agreement */
         private readonly ?float  $invoicePriceWithAgreement,
+        /** name */
         private ?string          $name,
+        /** description */
         private ?string          $description,
+        /** internalDescription */
         private ?string          $internalDescription,
+        /** serviceType identifier */
         private ?int             $serviceType,
+        /** contingent identifier */
         private ?int             $contingent,
+        /** dueDate */
         private ?string          $dueDate,
+        /** estimate */
         private ?int             $estimate,
+        /** arrivalEstimate */
         private ?int             $arrivalEstimate,
+        /** returnEstimate */
         private ?int             $returnEstimate,
+        /** remainingEstimate */
         private ?int             $remainingEstimate,
+        /** planningEstimate */
         private ?int             $planningEstimate,
+        /** user identifiers */
         private ?array           $workers,
+        /** customerObject identifiers */
         private ?array           $customerObjects,
+        /** finished */
         private ?bool            $finished,
+        /** isObligingness */
         private ?bool            $isObligingness,
+        /** obligingnessMsg */
         private ?string          $obligingnessMsg,
+        /** reviseValue */
         private ?float           $reviseValue,
+        /** type */
         private ?string          $reviseType,
+        /** reviseMsg */
         private ?string          $reviseMsg,
+        /** file identifier of images */
         private ?array           $files,
+        /** alternativeLocationAddress */
         private ?string          $alternativeLocationAddress,
+        /** alternativeLocationLatitude */
         private ?float           $alternativeLocationLatitude,
+        /** alternativeLocationLongitude */
         private ?float           $alternativeLocationLongitude,
+        /** @var WorkLogDTO[]|null list of workLogs */
         private ?array           $workLogs,
+        /** @var PlanningTimeDTO[]|null list of planningTimes */
         private ?array           $planningTimes,
+        /** @var MaterialDTO[]|null list of materials */
         private ?array           $materials,
     ) {}
 
@@ -97,9 +139,15 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
             alternativeLocationAddress:    self::toString($data['alternativeLocationAddress'] ?? null),
             alternativeLocationLatitude:   isset($data['alternativeLocationLatitude']) ? (float) $data['alternativeLocationLatitude'] : null,
             alternativeLocationLongitude:  isset($data['alternativeLocationLongitude']) ? (float) $data['alternativeLocationLongitude'] : null,
-            workLogs:                      isset($data['workLogs']) && is_array($data['workLogs']) ? $data['workLogs'] : null,
-            planningTimes:                 isset($data['planningTimes']) && is_array($data['planningTimes']) ? $data['planningTimes'] : null,
-            materials:                     isset($data['materials']) && is_array($data['materials']) ? $data['materials'] : null,
+            workLogs:                      isset($data['workLogs']) && is_array($data['workLogs'])
+                                               ? array_map(fn($w) => WorkLogDTO::fromArray($w), $data['workLogs'])
+                                               : null,
+            planningTimes:                 isset($data['planningTimes']) && is_array($data['planningTimes'])
+                                               ? array_map(fn($p) => PlanningTimeDTO::fromArray($p), $data['planningTimes'])
+                                               : null,
+            materials:                     isset($data['materials']) && is_array($data['materials'])
+                                               ? array_map(fn($m) => MaterialDTO::fromArray($m), $data['materials'])
+                                               : null,
         );
     }
 
@@ -172,7 +220,10 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
     public function getAlternativeLocationAddress(): ?string    { return $this->alternativeLocationAddress; }
     public function getAlternativeLocationLatitude(): ?float    { return $this->alternativeLocationLatitude; }
     public function getAlternativeLocationLongitude(): ?float   { return $this->alternativeLocationLongitude; }
-    public function getWorkLogs(): ?array                  { return $this->workLogs; }
-    public function getPlanningTimes(): ?array             { return $this->planningTimes; }
-    public function getMaterials(): ?array                 { return $this->materials; }
+    /** @return WorkLogDTO[]|null */
+    public function getWorkLogs(): ?array      { return $this->workLogs; }
+    /** @return PlanningTimeDTO[]|null */
+    public function getPlanningTimes(): ?array { return $this->planningTimes; }
+    /** @return MaterialDTO[]|null */
+    public function getMaterials(): ?array     { return $this->materials; }
 }

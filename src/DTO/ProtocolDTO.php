@@ -10,32 +10,59 @@ namespace miralsoft\docbee\api\DTO;
 final class ProtocolDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocol */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** finished */
         private readonly ?bool $canceled,
+        /** canceledDate */
         private readonly ?string $canceledDate,
+        /** Protocol data can't be inherited after this date */
         private readonly ?string $endDate,
+        /** finished */
         private readonly ?bool $finished,
+        /** finishedDate */
         private readonly ?string $finishedDate,
+        /** protocolNumber */
         private readonly ?string $protocolNumber,
+        /** protocolTemplate identifier */
         private readonly ?int $protocolTemplate,
+        /** serverModified date */
         private readonly ?string $serverModified,
+        /** web link */
         private readonly ?string $webLink,
+        /** confidentialTag identifier */
         private ?int $confidentialTag,
+        /** customer identifier */
         private ?int $customer,
+        /** customerContact identifier */
         private ?int $customerContact,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** customerObject identifiers */
         private ?array $customerObjects,
+        /** docBeeDocument identifier */
         private ?int $docBeeDocument,
+        /** dueDate */
         private ?string $dueDate,
+        /** file identifier */
         private ?int $file,
+        /** list of protocolGroupData */
         private ?array $groupData,
+        /** list of protocolGroups */
         private ?array $groups,
+        /** user or queue identifier */
         private ?int $personInCharge,
+        /** list of protocolEntries */
         private ?array $protocolEntries,
+        /** sendMessage */
         private ?bool $sendMessage,
+        /** ticket identifier */
         private ?int $ticket
     ) {}
 

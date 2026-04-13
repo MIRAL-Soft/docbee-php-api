@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomerProfileDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customerProfile */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** customer identifiers */
         private ?array $customers,
+        /** name */
         private ?string $name
     ) {}
 

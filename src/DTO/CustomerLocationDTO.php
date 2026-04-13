@@ -10,17 +10,29 @@ namespace miralsoft\docbee\api\DTO;
 final class CustomerLocationDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific customerLocation */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** customer identifier */
         private readonly ?int $customer,
+        /** If these location is temporary */
         private readonly ?bool $temporary,
+        /** city */
         private ?string $city,
+        /** list of customFieldValues */
         private ?array $customFields,
+        /** name */
         private ?string $name,
+        /** street */
         private ?string $street,
+        /** If this contact is synced to app. The customer setting withSyncToAppFlag needs to be set to use this property. Otherwise all contacts are synced. */
         private ?bool $syncToApp,
+        /** zipcode */
         private ?string $zipcode
     ) {}
 

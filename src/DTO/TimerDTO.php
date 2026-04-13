@@ -10,17 +10,29 @@ namespace miralsoft\docbee\api\DTO;
 final class TimerDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific invoice */
         private readonly ?int $id,
+        /** captured time in milliseconds */
         private ?int $capturedTime,
+        /** customer identifier */
         private ?int $customer,
+        /** customerLocation identifier */
         private ?int $customerLocation,
+        /** customerObject identifier */
         private ?int $customerObject,
+        /** name */
         private ?string $name,
+        /** running start date */
         private ?string $runningStartDate,
+        /** status */
         private ?string $status,
+        /** the index of the status */
         private ?int $statusOrder,
+        /** task identifier */
         private ?int $task,
+        /** timerIdentifier */
         private ?string $timerIdentifier,
+        /** user identifier */
         private ?int $user
     ) {}
 

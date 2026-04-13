@@ -10,35 +10,65 @@ namespace miralsoft\docbee\api\DTO;
 final class UserDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific user */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** departmentProfile identifiers */
         private ?array $assignableDepartmentProfiles,
+        /** assignableUserProfile identifiers */
         private ?array $assignableUserProfiles,
+        /** CalendarEnabled defines if the an external calendar connection for these user is enabled. Property only available if calendar connection is enabled in DocBee. */
         private ?bool $calendarEnabled,
+        /** confidentialTag identifiers */
         private ?array $confidentialTags,
+        /** dailyClosingConfig identifier */
         private ?int $dailyClosingConfig,
+        /** dailyClosingStartDate */
         private ?string $dailyClosingStartDate,
+        /** department identifier */
         private ?int $department,
+        /** departmentProfile identifiers */
         private ?array $departmentProfiles,
+        /** email */
         private ?string $email,
+        /** enabled */
         private ?bool $enabled,
+        /** externalErpNumber */
         private ?string $externalErpNumber,
+        /** mobile */
         private ?string $mobile,
+        /** name */
         private ?string $name,
+        /** password */
         private ?string $password,
+        /** permissionGroup identifier */
         private ?int $permissionGroup,
+        /** presetProfile identifiers */
         private ?array $presetProfiles,
+        /** profile image file identifier */
         private ?int $profileImage,
+        /** protocolTemplateProfile identifiers */
         private ?array $protocolTemplateProfiles,
+        /** serviceTypeProfile identifiers */
         private ?array $serviceTypeProfiles,
+        /** shorthandName */
         private ?string $shorthandName,
+        /** skill identifiers */
         private ?array $skills,
+        /** is the user a system user (not selectable) */
         private ?bool $systemUser,
+        /** telephone */
         private ?string $telephone,
+        /** ticketBoardProfile identifiers */
         private ?array $ticketBoardProfiles,
+        /** use2FA */
         private ?bool $use2FA,
+        /** userProfile identifiers */
         private ?array $userProfiles,
+        /** username */
         private ?string $username,
+        /** is time recoding enabled for this user */
         private ?bool $withTimeRecord
     ) {}
 

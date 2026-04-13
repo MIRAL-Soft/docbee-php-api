@@ -10,13 +10,21 @@ namespace miralsoft\docbee\api\DTO;
 final class SlaProfileDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific slaProfile */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** defaultSla in milliseconds */
         private ?int $defaultSla,
+        /** sla scope */
         private ?string $scope,
+        /** setDueDate */
         private ?bool $setDueDate,
+        /** specializations */
         private ?array $specializations,
+        /** ticket status identifiers */
         private ?array $targetTicketStatuses,
+        /** workingHours */
         private ?array $workingHours
     ) {}
 

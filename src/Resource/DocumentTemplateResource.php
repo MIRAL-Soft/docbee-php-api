@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace miralsoft\docbee\api\Resource;
 
-use miralsoft\docbee\api\DTO\DocumentTemplateDTO;
+use miralsoft\docbee\api\DTO\DocBeeDocumentTemplateDTO;
 use miralsoft\docbee\api\Exception\NotFoundException;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
 /**
  * Provides access to Docbee document templates.
  *
- * @extends AbstractResource<DocumentTemplateDTO>
+ * @extends AbstractResource<DocBeeDocumentTemplateDTO>
  */
 final class DocumentTemplateResource extends AbstractResource
 {
     protected string $endpoint = 'docbeedocumenttemplate';
-    protected string $dtoClass = DocumentTemplateDTO::class;
+    protected string $dtoClass = DocBeeDocumentTemplateDTO::class;
     protected string $listKey  = 'docBeeDocumentTemplate';
 
     /**
@@ -25,7 +25,7 @@ final class DocumentTemplateResource extends AbstractResource
      * @throws NotFoundException when not found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
-    public function findByName(string $name): DocumentTemplateDTO
+    public function findByName(string $name): DocBeeDocumentTemplateDTO
     {
         $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
         if (empty($results)) {

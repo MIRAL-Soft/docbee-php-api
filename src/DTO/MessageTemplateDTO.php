@@ -10,17 +10,29 @@ namespace miralsoft\docbee\api\DTO;
 final class MessageTemplateDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific messageTemplate */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** Unique identifier representing a specific messageTemplate */
         private readonly ?int $layout,
+        /** Body of the messageTemplate, may contain HTML */
         private ?string $body,
+        /** create html from text */
         private ?bool $createHtmlFromText,
+        /** is default */
         private ?bool $isDefault,
+        /** Type of the messageTemplate */
         private ?string $messageFormat,
+        /** Name of the messageTemplate */
         private ?string $name,
+        /** Subject of the messageTemplate, required for all Email-Formats */
         private ?string $subject,
+        /** target link */
         private ?string $targetLink,
+        /** Body of the messageTemplate */
         private ?string $textBody,
+        /** Type of the messageTemplate */
         private ?string $type
     ) {}
 

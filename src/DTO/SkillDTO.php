@@ -10,8 +10,11 @@ namespace miralsoft\docbee\api\DTO;
 final class SkillDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific skill */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** name */
         private ?string $name
     ) {}
 

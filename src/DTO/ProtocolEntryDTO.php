@@ -10,21 +10,37 @@ namespace miralsoft\docbee\api\DTO;
 final class ProtocolEntryDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific protocolEntry */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** entryMapping identifier */
         private readonly ?int $entryMapping,
+        /** groupIdx */
         private readonly ?int $groupIdx,
+        /** mapped protocol document id */
         private readonly ?int $protocolDocumentIdValue,
+        /** booleanValue */
         private ?bool $booleanValue,
+        /** date */
         private ?string $date,
+        /** doubleValue */
         private ?float $doubleValue,
+        /** element identifier */
         private ?int $element,
+        /** file identifiers */
         private ?array $files,
+        /** longValue */
         private ?int $longValue,
+        /** observer identifiers */
         private ?array $observers,
+        /** selectionValue identifiers */
         private ?array $selectionValues,
+        /** text */
         private ?string $text
     ) {}
 

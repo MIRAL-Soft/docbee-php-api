@@ -122,8 +122,11 @@ return [
         'ContingentItemRecurrenceDTO'   => 'ItemRecurrence',
         'SlaProfileSpecializationDTO'   => 'SlaSpecialization',
         'SlaProfileWorkingHourDTO'      => 'WorkingHour',
-        'DocumentDTO'                   => 'DocBeeDocument',
-        'DocumentTemplateDTO'           => 'DocBeeDocumentTemplate',
+        'DocBeeDocumentDTO'             => 'DocBeeDocument',
+        'DocBeeDocumentTemplateDTO'     => 'DocBeeDocumentTemplate',
         'DocBeeDocumentTaskDTO'         => 'Task',
+        'WorkLogDTO'                    => 'WorkLog',
+        'PlanningTimeDTO'               => 'PlanningTime',
+        'MaterialDTO'                   => 'Material',
     ],
 ];

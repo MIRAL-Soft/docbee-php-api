@@ -10,9 +10,13 @@ namespace miralsoft\docbee\api\DTO;
 final class SlaProfileWorkingHourDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific workingHour */
         private readonly ?int $id,
+        /** day of week */
         private ?string $dayOfWeek,
+        /** start time */
         private ?int $from,
+        /** end time */
         private ?int $till
     ) {}
 

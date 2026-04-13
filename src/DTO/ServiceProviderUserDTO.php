@@ -10,19 +10,33 @@ namespace miralsoft\docbee\api\DTO;
 final class ServiceProviderUserDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific service provider user */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** serviceProvider identifier */
         private readonly ?int $serviceProvider,
+        /** list of customFieldValues */
         private ?array $customFields,
+        /** email */
         private ?string $email,
+        /** enabled */
         private ?bool $enabled,
+        /** mobile */
         private ?string $mobile,
+        /** name */
         private ?string $name,
+        /** password */
         private ?string $password,
+        /** permissionGroup identifier */
         private ?int $permissionGroup,
+        /** shorthandName */
         private ?string $shorthandName,
+        /** telephone */
         private ?string $telephone,
+        /** use2FA */
         private ?bool $use2FA,
+        /** username */
         private ?string $username
     ) {}
 

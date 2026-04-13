@@ -10,14 +10,23 @@ namespace miralsoft\docbee\api\DTO;
 final class SelectionValueDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific selectionValue */
         private readonly ?int $id,
+        /** created date */
         private readonly ?string $created,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** details */
         private readonly ?string $details,
+        /** list of customFieldValues */
         private ?array $customFields,
+        /** file identifiers */
         private ?array $filterNames,
+        /** name */
         private ?string $name,
+        /** scanCode */
         private ?string $scanCode
     ) {}
 

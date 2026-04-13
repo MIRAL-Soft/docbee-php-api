@@ -10,15 +10,25 @@ namespace miralsoft\docbee\api\DTO;
 final class PermissionGroupDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific permissionGroup */
         private readonly ?int $id,
+        /** modified date */
         private readonly ?string $modified,
+        /** REST API Link */
         private readonly ?string $link,
+        /** type */
         private readonly ?string $type,
+        /** enabled */
         private ?bool $enabled,
+        /** Shared tableConfigStorage identifiers, which every user with this permissionGroup gets subscribed to and shown as favorit */
         private ?array $favoritTableConfigStorages,
+        /** If 'true' all users 'use2FA' are forced set to 'true' and can not be changed */
         private ?bool $force2FA,
+        /** name */
         private ?string $name,
+        /** list of roles */
         private ?array $roles,
+        /** Shared tableConfigStorage identifiers, which every user with this permissionGroup gets subscribed to */
         private ?array $tableConfigStorages
     ) {}
 

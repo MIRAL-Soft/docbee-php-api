@@ -10,8 +10,11 @@ namespace miralsoft\docbee\api\DTO;
 final class NoteDTO extends AbstractDTO
 {
     public function __construct(
+        /** Unique identifier representing a specific note */
         private readonly ?int $id,
+        /** REST API Link */
         private readonly ?string $link,
+        /** The text content of the note */
         private ?string $note
     ) {}
 
