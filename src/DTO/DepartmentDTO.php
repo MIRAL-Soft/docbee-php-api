@@ -11,6 +11,9 @@ final class DepartmentDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $link,
+        private ?string $calendarRegion,
+        private ?string $name
     ) {}
 
     #[Override]
@@ -18,6 +21,9 @@ final class DepartmentDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            calendarRegion: self::toString($data['calendarRegion'] ?? null),
+            name: self::toString($data['name'] ?? null)
         );
     }
 
@@ -25,9 +31,13 @@ final class DepartmentDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'calendarRegion' => $this->calendarRegion,
+            'name' => $this->name
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getLink(): ?string { return $this->link; }
+    public function getCalendarRegion(): ?string { return $this->calendarRegion; }
+    public function getName(): ?string { return $this->name; }
 }

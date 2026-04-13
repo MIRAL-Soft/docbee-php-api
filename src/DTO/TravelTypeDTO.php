@@ -11,6 +11,11 @@ final class TravelTypeDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $modified,
+        private readonly ?string $link,
+        private ?bool $deactivated,
+        private ?string $name,
+        private ?string $number
     ) {}
 
     #[Override]
@@ -18,6 +23,11 @@ final class TravelTypeDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            modified: self::toString($data['modified'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            deactivated: isset($data['deactivated']) ? self::toBool($data['deactivated']) : null,
+            name: self::toString($data['name'] ?? null),
+            number: self::toString($data['number'] ?? null)
         );
     }
 
@@ -25,9 +35,16 @@ final class TravelTypeDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'deactivated' => $this->deactivated,
+            'name' => $this->name,
+            'number' => $this->number
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string { return $this->link; }
+    public function isDeactivated(): ?bool { return $this->deactivated; }
+    public function getName(): ?string { return $this->name; }
+    public function getNumber(): ?string { return $this->number; }
 }

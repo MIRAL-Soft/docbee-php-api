@@ -10,16 +10,26 @@ namespace miralsoft\docbee\api\DTO;
 final class DocBeeScriptDTO extends AbstractDTO
 {
     public function __construct(
+        private readonly ?int $id,
+        private readonly ?string $link,
         private readonly ?int $logFile,
-        private readonly array $params,
+        private ?string $description,
+        private ?string $name,
+        private ?array $params,
+        private ?string $script
     ) {}
 
     #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
+            id: self::toInt($data['id'] ?? null),
+            link: self::toString($data['link'] ?? null),
             logFile: self::toInt($data['logFile'] ?? null),
-            params: $data['params'] ?? [],
+            description: self::toString($data['description'] ?? null),
+            name: self::toString($data['name'] ?? null),
+            params: isset($data['params']) && is_array($data['params']) ? $data['params'] : null,
+            script: self::toString($data['script'] ?? null)
         );
     }
 
@@ -27,12 +37,18 @@ final class DocBeeScriptDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'logFile' => $this->logFile,
+            'description' => $this->description,
+            'name' => $this->name,
             'params' => $this->params,
+            'script' => $this->script
         ], fn($v) => $v !== null);
     }
 
+    public function getId(): ?int { return $this->id; }
+    public function getLink(): ?string { return $this->link; }
     public function getLogFile(): ?int { return $this->logFile; }
-    public function getParams(): array { return $this->params; }
-    public function getId(): ?int { return null; }
+    public function getDescription(): ?string { return $this->description; }
+    public function getName(): ?string { return $this->name; }
+    public function getParams(): ?array { return $this->params; }
+    public function getScript(): ?string { return $this->script; }
 }

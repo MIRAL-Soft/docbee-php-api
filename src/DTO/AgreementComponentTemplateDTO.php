@@ -11,6 +11,12 @@ final class AgreementComponentTemplateDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $modified,
+        private readonly ?string $link,
+        private ?bool $inclusive,
+        private ?int $serviceType,
+        private ?int $sla,
+        private ?bool $withinWorkingSla
     ) {}
 
     #[Override]
@@ -18,6 +24,12 @@ final class AgreementComponentTemplateDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            modified: self::toString($data['modified'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            inclusive: isset($data['inclusive']) ? self::toBool($data['inclusive']) : null,
+            serviceType: self::toInt($data['serviceType'] ?? null),
+            sla: self::toInt($data['sla'] ?? null),
+            withinWorkingSla: isset($data['withinWorkingSla']) ? self::toBool($data['withinWorkingSla']) : null
         );
     }
 
@@ -25,9 +37,18 @@ final class AgreementComponentTemplateDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'inclusive' => $this->inclusive,
+            'serviceType' => $this->serviceType,
+            'sla' => $this->sla,
+            'withinWorkingSla' => $this->withinWorkingSla
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string { return $this->link; }
+    public function getInclusive(): ?bool { return $this->inclusive; }
+    public function getServiceType(): ?int { return $this->serviceType; }
+    public function getSla(): ?int { return $this->sla; }
+    public function getWithinWorkingSla(): ?bool { return $this->withinWorkingSla; }
 }

@@ -11,7 +11,10 @@ final class DocBeeDocumentConflictDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
-        private readonly ?string $text,
+        private readonly ?string $created,
+        private readonly ?string $modified,
+        private readonly ?string $link,
+        private readonly ?string $text
     ) {}
 
     #[Override]
@@ -19,7 +22,10 @@ final class DocBeeDocumentConflictDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
-            text: self::toString($data['text'] ?? null),
+            created: self::toString($data['created'] ?? null),
+            modified: self::toString($data['modified'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            text: self::toString($data['text'] ?? null)
         );
     }
 
@@ -27,10 +33,12 @@ final class DocBeeDocumentConflictDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'text' => $this->text,
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getCreated(): ?string { return $this->created; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string { return $this->link; }
     public function getText(): ?string { return $this->text; }
 }

@@ -11,6 +11,8 @@ final class ProtocolGroupDataDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?bool $finished,
+        private readonly ?int $templateGroup
     ) {}
 
     #[Override]
@@ -18,6 +20,8 @@ final class ProtocolGroupDataDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            finished: isset($data['finished']) ? self::toBool($data['finished']) : null,
+            templateGroup: self::toInt($data['templateGroup'] ?? null)
         );
     }
 
@@ -25,9 +29,10 @@ final class ProtocolGroupDataDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getFinished(): ?bool { return $this->finished; }
+    public function getTemplateGroup(): ?int { return $this->templateGroup; }
 }

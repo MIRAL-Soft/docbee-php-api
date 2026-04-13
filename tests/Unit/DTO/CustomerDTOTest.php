@@ -15,23 +15,20 @@ final class CustomerDTOTest extends TestCase
     private function sampleData(): array
     {
         return [
-            'id'             => 42,
-            'name'           => 'Acme Corp',
-            'customerId'     => 'K-1001',
-            'email'          => 'info@acme.com',
-            'phone'          => '+49 89 123456',
-            'mobile'         => null,
-            'fax'            => null,
-            'website'        => 'https://acme.com',
-            'street'         => 'Main Street 1',
-            'zip'            => '80333',
-            'city'           => 'Munich',
-            'country'        => 'DE',
-            'notes'          => 'VIP customer',
-            'customerStatus' => 1,
-            'active'         => true,
-            'createdAt'      => '2024-01-01T12:00:00',
-            'changedAt'      => '2024-06-01T08:30:00',
+            'id'                      => 42,
+            'created'                 => '2024-01-01T12:00:00',
+            'modified'                => '2024-06-01T08:30:00',
+            'defaultCustomerLocation' => 7,
+            'name'                    => 'Acme Corp',
+            'customerId'              => 'K-1001',
+            'customerStatus'          => 1,
+            'shortName'               => 'Acme',
+            'wildcardAddress'         => 'acme.com',
+            'inhouse'                 => false,
+            'companyData'             => 5,
+            'info'                    => 'VIP customer',
+            'syncToApp'               => true,
+            'warning'                 => 'Contract ends 2025-01-01',
         ];
     }
 
@@ -40,20 +37,19 @@ final class CustomerDTOTest extends TestCase
         $dto = CustomerDTO::fromArray($this->sampleData());
 
         $this->assertSame(42, $dto->getId());
+        $this->assertSame('2024-01-01T12:00:00', $dto->getCreated());
+        $this->assertSame('2024-06-01T08:30:00', $dto->getModified());
+        $this->assertSame(7, $dto->getDefaultCustomerLocation());
         $this->assertSame('Acme Corp', $dto->getName());
         $this->assertSame('K-1001', $dto->getCustomerId());
-        $this->assertSame('info@acme.com', $dto->getEmail());
-        $this->assertSame('+49 89 123456', $dto->getPhone());
-        $this->assertSame('https://acme.com', $dto->getWebsite());
-        $this->assertSame('Main Street 1', $dto->getStreet());
-        $this->assertSame('80333', $dto->getZip());
-        $this->assertSame('Munich', $dto->getCity());
-        $this->assertSame('DE', $dto->getCountry());
-        $this->assertSame('VIP customer', $dto->getNotes());
         $this->assertSame(1, $dto->getCustomerStatus());
-        $this->assertTrue($dto->isActive());
-        $this->assertSame('2024-01-01T12:00:00', $dto->getCreatedAt());
-        $this->assertSame('2024-06-01T08:30:00', $dto->getChangedAt());
+        $this->assertSame('Acme', $dto->getShortName());
+        $this->assertSame('acme.com', $dto->getWildcardAddress());
+        $this->assertFalse($dto->isInhouse());
+        $this->assertSame(5, $dto->getCompanyData());
+        $this->assertSame('VIP customer', $dto->getInfo());
+        $this->assertTrue($dto->isSyncToApp());
+        $this->assertSame('Contract ends 2025-01-01', $dto->getWarning());
     }
 
     public function testFromArrayHandlesNullValues(): void
@@ -62,7 +58,8 @@ final class CustomerDTOTest extends TestCase
 
         $this->assertNull($dto->getId());
         $this->assertNull($dto->getName());
-        $this->assertNull($dto->getEmail());
+        $this->assertNull($dto->getCustomerId());
+        $this->assertNull($dto->getCustomerStatus());
     }
 
     public function testToArrayExcludesNullValues(): void
@@ -71,10 +68,8 @@ final class CustomerDTOTest extends TestCase
         $result = $dto->toArray();
 
         $this->assertArrayHasKey('name', $result);
-        $this->assertArrayHasKey('email', $result);
-        $this->assertArrayNotHasKey('id', $result);
-        $this->assertArrayNotHasKey('createdAt', $result);
-        $this->assertArrayNotHasKey('changedAt', $result);
+        $this->assertArrayHasKey('customerId', $result);
+        $this->assertArrayHasKey('customerStatus', $result);
     }
 
     public function testToArrayDoesNotIncludeReadOnlyFields(): void
@@ -82,9 +77,11 @@ final class CustomerDTOTest extends TestCase
         $dto    = CustomerDTO::fromArray($this->sampleData());
         $result = $dto->toArray();
 
-        // id, createdAt, changedAt are server-managed and must not be sent
+        // id, created, modified, defaultCustomerLocation are server-managed
         $this->assertArrayNotHasKey('id', $result);
-        $this->assertArrayNotHasKey('createdAt', $result);
-        $this->assertArrayNotHasKey('changedAt', $result);
+        $this->assertArrayNotHasKey('created', $result);
+        $this->assertArrayNotHasKey('modified', $result);
+        $this->assertArrayNotHasKey('defaultCustomerLocation', $result);
+        $this->assertArrayNotHasKey('link', $result);
     }
 }

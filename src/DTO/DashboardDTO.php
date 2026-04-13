@@ -11,9 +11,12 @@ final class DashboardDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
-        private readonly bool $forcedSubscribed,
-        private readonly ?int $user,
-        private readonly array $widgets,
+        private readonly ?string $link,
+        private ?bool $forcedSubscribed,
+        private ?string $name,
+        private ?bool $shared,
+        private ?int $user,
+        private ?array $widgets
     ) {}
 
     #[Override]
@@ -21,9 +24,12 @@ final class DashboardDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
-            forcedSubscribed: self::toBool($data['forcedSubscribed'] ?? false),
+            link: self::toString($data['link'] ?? null),
+            forcedSubscribed: isset($data['forcedSubscribed']) ? self::toBool($data['forcedSubscribed']) : null,
+            name: self::toString($data['name'] ?? null),
+            shared: isset($data['shared']) ? self::toBool($data['shared']) : null,
             user: self::toInt($data['user'] ?? null),
-            widgets: $data['widgets'] ?? [],
+            widgets: isset($data['widgets']) && is_array($data['widgets']) ? $data['widgets'] : null
         );
     }
 
@@ -32,13 +38,18 @@ final class DashboardDTO extends AbstractDTO
     {
         return array_filter([
             'forcedSubscribed' => $this->forcedSubscribed,
+            'name' => $this->name,
+            'shared' => $this->shared,
             'user' => $this->user,
-            'widgets' => $this->widgets,
+            'widgets' => $this->widgets
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
-    public function isForcedSubscribed(): bool { return $this->forcedSubscribed; }
+    public function getLink(): ?string { return $this->link; }
+    public function getForcedSubscribed(): ?bool { return $this->forcedSubscribed; }
+    public function getName(): ?string { return $this->name; }
+    public function getShared(): ?bool { return $this->shared; }
     public function getUser(): ?int { return $this->user; }
-    public function getWidgets(): array { return $this->widgets; }
+    public function getWidgets(): ?array { return $this->widgets; }
 }

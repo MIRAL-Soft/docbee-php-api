@@ -26,7 +26,7 @@ final class CustomerResourceTest extends TestCase
         $this->resource = new CustomerResource($this->http);
     }
 
-    public function testFindByCustomerNumberReturnsDTO(): void
+    public function testFindByCustomerIdReturnsDTO(): void
     {
         $this->http
             ->method('get')
@@ -36,19 +36,19 @@ final class CustomerResourceTest extends TestCase
                 'customer'   => [['id' => 5, 'name' => 'Acme', 'customerId' => 'K-1001']],
             ]);
 
-        $dto = $this->resource->findByCustomerNumber('K-1001');
+        $dto = $this->resource->findByCustomerId('K-1001');
         $this->assertInstanceOf(CustomerDTO::class, $dto);
         $this->assertSame('K-1001', $dto->getCustomerId());
     }
 
-    public function testFindByCustomerNumberThrowsNotFound(): void
+    public function testFindByCustomerIdThrowsNotFound(): void
     {
         $this->http
             ->method('get')
             ->willReturn(['totalCount' => 0, 'customer' => []]);
 
         $this->expectException(NotFoundException::class);
-        $this->resource->findByCustomerNumber('NOPE');
+        $this->resource->findByCustomerId('NOPE');
     }
 
     public function testFindByNameUsesIlikeFilter(): void
@@ -62,37 +62,22 @@ final class CustomerResourceTest extends TestCase
         $this->assertSame([], $results);
     }
 
-    public function testFindByEmailFiltersCorrectly(): void
+    public function testFindByCustomerStatusFiltersCorrectly(): void
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('email-eq=info%40acme.com'))
-            ->willReturn([
-                'totalCount' => 1,
-                'customer'   => [['id' => 3, 'email' => 'info@acme.com']],
-            ]);
-
-        $results = $this->resource->findByEmail('info@acme.com');
-        $this->assertCount(1, $results);
-        $this->assertInstanceOf(CustomerDTO::class, $results[0]);
-        $this->assertSame('info@acme.com', $results[0]->getEmail());
-    }
-
-    public function testFindActiveFiltersCorrectly(): void
-    {
-        $this->http
-            ->method('get')
-            ->with($this->stringContains('active-eq=1'))
+            ->with($this->stringContains('customerStatus-eq=1'))
             ->willReturn([
                 'totalCount' => 2,
                 'customer'   => [
-                    ['id' => 1, 'name' => 'Active Corp', 'active' => true],
-                    ['id' => 2, 'name' => 'Also Active', 'active' => true],
+                    ['id' => 1, 'name' => 'Acme', 'customerStatus' => 1],
+                    ['id' => 2, 'name' => 'Corp',  'customerStatus' => 1],
                 ],
             ]);
 
-        $results = $this->resource->findActive();
+        $results = $this->resource->findByCustomerStatus(1);
         $this->assertCount(2, $results);
-        $this->assertTrue($results[0]->isActive());
+        $this->assertInstanceOf(CustomerDTO::class, $results[0]);
+        $this->assertSame(1, $results[0]->getCustomerStatus());
     }
 }

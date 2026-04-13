@@ -15,22 +15,24 @@ final class TicketDTOTest extends TestCase
     private function sampleData(): array
     {
         return [
-            'id'               => 99,
-            'title'            => 'Printer offline',
-            'description'      => 'The printer on 2nd floor is not responding.',
-            'customer'         => 42,
-            'customerContact'  => 7,
-            'customerLocation' => 3,
-            'assignedUser'     => 5,
-            'status'           => 1,
-            'priority'         => 2,
-            'serviceType'      => 10,
-            'requestType'      => 4,
-            'orderId'          => 'ORD-2024-001',
-            'dueDate'          => '2024-12-31T23:59:59',
-            'closedAt'         => null,
-            'createdAt'        => '2024-06-01T08:00:00',
-            'changedAt'        => '2024-06-01T09:00:00',
+            'id'                      => 99,
+            'created'                 => '2024-06-01T08:00:00',
+            'modified'                => '2024-06-01T09:00:00',
+            'ticketNumber'            => 'TK-0099',
+            'description'             => 'The printer on 2nd floor is not responding.',
+            'internalDescription'     => 'Checked remotely, needs on-site visit.',
+            'customer'                => 42,
+            'customerContact'         => 7,
+            'customerLocation'        => 3,
+            'owner'                   => 5,
+            'ticketStatus'            => 1,
+            'priority'                => 2,
+            'dueDate'                 => '2024-12-31T23:59:59',
+            'referenceNumber'         => 'REF-001',
+            'erpReferenceNumber'      => 'ERP-2024-001',
+            'externalReferenceNumber' => 'EXT-123',
+            'billable'                => true,
+            'startDate'               => '2024-06-01T00:00:00',
         ];
     }
 
@@ -39,19 +41,32 @@ final class TicketDTOTest extends TestCase
         $dto = TicketDTO::fromArray($this->sampleData());
 
         $this->assertSame(99, $dto->getId());
-        $this->assertSame('Printer offline', $dto->getTitle());
+        $this->assertSame('2024-06-01T08:00:00', $dto->getCreated());
+        $this->assertSame('2024-06-01T09:00:00', $dto->getModified());
+        $this->assertSame('TK-0099', $dto->getTicketNumber());
         $this->assertSame('The printer on 2nd floor is not responding.', $dto->getDescription());
+        $this->assertSame('Checked remotely, needs on-site visit.', $dto->getInternalDescription());
         $this->assertSame(42, $dto->getCustomer());
         $this->assertSame(7, $dto->getCustomerContact());
         $this->assertSame(3, $dto->getCustomerLocation());
-        $this->assertSame(5, $dto->getAssignedUser());
-        $this->assertSame(1, $dto->getStatus());
+        $this->assertSame(5, $dto->getOwner());
+        $this->assertSame(1, $dto->getTicketStatus());
         $this->assertSame(2, $dto->getPriority());
-        $this->assertSame(10, $dto->getServiceType());
-        $this->assertSame(4, $dto->getRequestType());
-        $this->assertSame('ORD-2024-001', $dto->getOrderId());
         $this->assertSame('2024-12-31T23:59:59', $dto->getDueDate());
-        $this->assertNull($dto->getClosedAt());
+        $this->assertSame('REF-001', $dto->getReferenceNumber());
+        $this->assertSame('ERP-2024-001', $dto->getErpReferenceNumber());
+        $this->assertSame('EXT-123', $dto->getExternalReferenceNumber());
+        $this->assertTrue($dto->getBillable());
+    }
+
+    public function testFromArrayHandlesNullAndMissingFields(): void
+    {
+        $dto = TicketDTO::fromArray(['id' => 1, 'customer' => null]);
+
+        $this->assertSame(1, $dto->getId());
+        $this->assertNull($dto->getCustomer());
+        $this->assertNull($dto->getOwner());
+        $this->assertNull($dto->getTicketStatus());
     }
 
     public function testToArrayExcludesReadOnlyFields(): void
@@ -59,11 +74,18 @@ final class TicketDTOTest extends TestCase
         $dto    = TicketDTO::fromArray($this->sampleData());
         $result = $dto->toArray();
 
-        $this->assertArrayHasKey('title', $result);
+        // Writable fields are present
+        $this->assertArrayHasKey('description', $result);
         $this->assertArrayHasKey('customer', $result);
+        $this->assertArrayHasKey('ticketStatus', $result);
+        $this->assertArrayHasKey('owner', $result);
+        $this->assertArrayHasKey('referenceNumber', $result);
+
+        // Read-only server fields must not be sent
         $this->assertArrayNotHasKey('id', $result);
-        $this->assertArrayNotHasKey('closedAt', $result);
-        $this->assertArrayNotHasKey('createdAt', $result);
-        $this->assertArrayNotHasKey('changedAt', $result);
+        $this->assertArrayNotHasKey('created', $result);
+        $this->assertArrayNotHasKey('modified', $result);
+        $this->assertArrayNotHasKey('ticketNumber', $result);
+        $this->assertArrayNotHasKey('link', $result);
     }
 }

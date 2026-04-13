@@ -11,11 +11,17 @@ final class TimerDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
-        private readonly ?int $user,
-        private readonly ?string $status,
-        private readonly ?int $statusOrder,
-        private readonly ?string $runningStartDate,
-        private readonly ?int $capturedTime,
+        private ?int $capturedTime,
+        private ?int $customer,
+        private ?int $customerLocation,
+        private ?int $customerObject,
+        private ?string $name,
+        private ?string $runningStartDate,
+        private ?string $status,
+        private ?int $statusOrder,
+        private ?int $task,
+        private ?string $timerIdentifier,
+        private ?int $user
     ) {}
 
     #[Override]
@@ -23,11 +29,17 @@ final class TimerDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
-            user: self::toInt($data['user'] ?? null),
+            capturedTime: self::toInt($data['capturedTime'] ?? null),
+            customer: self::toInt($data['customer'] ?? null),
+            customerLocation: self::toInt($data['customerLocation'] ?? null),
+            customerObject: self::toInt($data['customerObject'] ?? null),
+            name: self::toString($data['name'] ?? null),
+            runningStartDate: self::toString($data['runningStartDate'] ?? null),
             status: self::toString($data['status'] ?? null),
             statusOrder: self::toInt($data['statusOrder'] ?? null),
-            runningStartDate: self::toString($data['runningStartDate'] ?? null),
-            capturedTime: self::toInt($data['capturedTime'] ?? null),
+            task: self::toInt($data['task'] ?? null),
+            timerIdentifier: self::toString($data['timerIdentifier'] ?? null),
+            user: self::toInt($data['user'] ?? null)
         );
     }
 
@@ -35,18 +47,30 @@ final class TimerDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'user' => $this->user,
+            'capturedTime' => $this->capturedTime,
+            'customer' => $this->customer,
+            'customerLocation' => $this->customerLocation,
+            'customerObject' => $this->customerObject,
+            'name' => $this->name,
+            'runningStartDate' => $this->runningStartDate,
             'status' => $this->status,
             'statusOrder' => $this->statusOrder,
-            'runningStartDate' => $this->runningStartDate,
-            'capturedTime' => $this->capturedTime,
+            'task' => $this->task,
+            'timerIdentifier' => $this->timerIdentifier,
+            'user' => $this->user
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
-    public function getUser(): ?int { return $this->user; }
+    public function getCapturedTime(): ?int { return $this->capturedTime; }
+    public function getCustomer(): ?int { return $this->customer; }
+    public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    public function getCustomerObject(): ?int { return $this->customerObject; }
+    public function getName(): ?string { return $this->name; }
+    public function getRunningStartDate(): ?string { return $this->runningStartDate; }
     public function getStatus(): ?string { return $this->status; }
     public function getStatusOrder(): ?int { return $this->statusOrder; }
-    public function getRunningStartDate(): ?string { return $this->runningStartDate; }
-    public function getCapturedTime(): ?int { return $this->capturedTime; }
+    public function getTask(): ?int { return $this->task; }
+    public function getTimerIdentifier(): ?string { return $this->timerIdentifier; }
+    public function getUser(): ?int { return $this->user; }
 }

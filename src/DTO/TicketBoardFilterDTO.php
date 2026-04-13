@@ -11,6 +11,14 @@ final class TicketBoardFilterDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $modified,
+        private readonly ?string $link,
+        private ?string $filterData,
+        private ?int $selectionCategory,
+        private ?string $selectionCategoryName,
+        private ?string $type,
+        private ?bool $visible,
+        private ?bool $withData
     ) {}
 
     #[Override]
@@ -18,6 +26,14 @@ final class TicketBoardFilterDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            modified: self::toString($data['modified'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            filterData: self::toString($data['filterData'] ?? null),
+            selectionCategory: self::toInt($data['selectionCategory'] ?? null),
+            selectionCategoryName: self::toString($data['selectionCategoryName'] ?? null),
+            type: self::toString($data['type'] ?? null),
+            visible: isset($data['visible']) ? self::toBool($data['visible']) : null,
+            withData: isset($data['withData']) ? self::toBool($data['withData']) : null
         );
     }
 
@@ -25,9 +41,22 @@ final class TicketBoardFilterDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'filterData' => $this->filterData,
+            'selectionCategory' => $this->selectionCategory,
+            'selectionCategoryName' => $this->selectionCategoryName,
+            'type' => $this->type,
+            'visible' => $this->visible,
+            'withData' => $this->withData
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string { return $this->link; }
+    public function getFilterData(): ?string { return $this->filterData; }
+    public function getSelectionCategory(): ?int { return $this->selectionCategory; }
+    public function getSelectionCategoryName(): ?string { return $this->selectionCategoryName; }
+    public function getType(): ?string { return $this->type; }
+    public function getVisible(): ?bool { return $this->visible; }
+    public function getWithData(): ?bool { return $this->withData; }
 }

@@ -14,13 +14,13 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * ```php
  * $resource = $client->customers();
  *
- * // Find a customer by ID
- * $customer = $resource->find(42);
+ * // Find a customer by their ERP customer ID
+ * $customer = $resource->findByCustomerId('K-10042');
  *
- * // Find by ERP customer number
- * $customer = $resource->findByCustomerNumber('K-10042');
+ * // Find by name (partial, case-insensitive)
+ * $customers = $resource->findByName('Acme');
  *
- * // Delta-sync: get all customers changed in the last hour
+ * // Delta-sync: all customers changed in the last hour
  * $changed = $resource->findModifiedSince(new DateTimeImmutable('-1 hour'));
  * ```
  *
@@ -33,19 +33,18 @@ final class CustomerResource extends AbstractResource
     protected string $listKey  = 'customer';
 
     /**
-     * Finds a customer by their ERP customer number (e.g. "K-10042").
+     * Finds a customer by their ERP customer ID (e.g. "K-10042").
      *
      * @throws NotFoundException when no match is found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
-    public function findByCustomerNumber(string $customerNumber): CustomerDTO
+    public function findByCustomerId(string $customerId): CustomerDTO
     {
-        $query    = QueryBuilder::new()->filterEq('customerId', $customerNumber)->limit(1);
-        $results  = $this->list($query);
+        $results = $this->list(QueryBuilder::new()->filterEq('customerId', $customerId)->limit(1));
 
         if (empty($results)) {
             throw new NotFoundException(
-                message:    "Customer with number '{$customerNumber}' not found.",
+                message:    "Customer with customerId '{$customerId}' not found.",
                 statusCode: 404,
                 requestUrl: $this->endpoint,
             );
@@ -62,30 +61,17 @@ final class CustomerResource extends AbstractResource
      */
     public function findByName(string $name): array
     {
-        $query = QueryBuilder::new()->filterIlike('name', "%{$name}%");
-        return $this->list($query);
+        return $this->list(QueryBuilder::new()->filterIlike('name', "%{$name}%"));
     }
 
     /**
-     * Finds customers by exact email address.
+     * Finds customers by their customerStatus ID.
      *
      * @return list<CustomerDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
-    public function findByEmail(string $email): array
+    public function findByCustomerStatus(int $customerStatusId): array
     {
-        $query = QueryBuilder::new()->filterEq('email', $email);
-        return $this->list($query);
-    }
-
-    /**
-     * Returns only active customers.
-     *
-     * @return list<CustomerDTO>
-     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
-     */
-    public function findActive(): array
-    {
-        return $this->list(QueryBuilder::new()->filterEq('active', true));
+        return $this->list(QueryBuilder::new()->filterEq('customerStatus', $customerStatusId));
     }
 }

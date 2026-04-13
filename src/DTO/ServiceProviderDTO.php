@@ -11,10 +11,13 @@ final class ServiceProviderDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
-        private readonly ?string $shortName,
+        private readonly ?string $link,
+        private readonly ?bool $deactivated,
         private readonly ?string $email,
         private readonly ?string $number,
-        private readonly bool $deactivated,
+        private readonly ?string $shortName,
+        private ?array $customFields,
+        private ?string $name
     ) {}
 
     #[Override]
@@ -22,10 +25,13 @@ final class ServiceProviderDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
-            shortName: self::toString($data['shortName'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            deactivated: isset($data['deactivated']) ? self::toBool($data['deactivated']) : null,
             email: self::toString($data['email'] ?? null),
             number: self::toString($data['number'] ?? null),
-            deactivated: self::toBool($data['deactivated'] ?? false),
+            shortName: self::toString($data['shortName'] ?? null),
+            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            name: self::toString($data['name'] ?? null)
         );
     }
 
@@ -33,16 +39,17 @@ final class ServiceProviderDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'shortName' => $this->shortName,
-            'email' => $this->email,
-            'number' => $this->number,
-            'deactivated' => $this->deactivated,
+            'customFields' => $this->customFields,
+            'name' => $this->name
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
-    public function getShortName(): ?string { return $this->shortName; }
+    public function getLink(): ?string { return $this->link; }
+    public function isDeactivated(): ?bool { return $this->deactivated; }
     public function getEmail(): ?string { return $this->email; }
     public function getNumber(): ?string { return $this->number; }
-    public function isDeactivated(): bool { return $this->deactivated; }
+    public function getShortName(): ?string { return $this->shortName; }
+    public function getCustomFields(): ?array { return $this->customFields; }
+    public function getName(): ?string { return $this->name; }
 }

@@ -11,8 +11,19 @@ final class CostEstimationTemplateDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $modified,
+        private readonly ?string $link,
         private readonly ?string $mode,
-        private readonly array $tasks,
+        private readonly ?array $tasks,
+        private ?float $defaultBuffer,
+        private ?int $defaultServiceType,
+        private ?int $defaultTicketCategory,
+        private ?string $name,
+        private ?int $pdfLayout,
+        private ?int $personInCharge,
+        private ?bool $prependNameToTaskName,
+        private ?int $taskPersonInCharge,
+        private ?int $ticketLinkType
     ) {}
 
     #[Override]
@@ -20,8 +31,19 @@ final class CostEstimationTemplateDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            modified: self::toString($data['modified'] ?? null),
+            link: self::toString($data['link'] ?? null),
             mode: self::toString($data['mode'] ?? null),
-            tasks: $data['tasks'] ?? [],
+            tasks: isset($data['tasks']) && is_array($data['tasks']) ? $data['tasks'] : null,
+            defaultBuffer: self::toFloat($data['defaultBuffer'] ?? null),
+            defaultServiceType: self::toInt($data['defaultServiceType'] ?? null),
+            defaultTicketCategory: self::toInt($data['defaultTicketCategory'] ?? null),
+            name: self::toString($data['name'] ?? null),
+            pdfLayout: self::toInt($data['pdfLayout'] ?? null),
+            personInCharge: self::toInt($data['personInCharge'] ?? null),
+            prependNameToTaskName: isset($data['prependNameToTaskName']) ? self::toBool($data['prependNameToTaskName']) : null,
+            taskPersonInCharge: self::toInt($data['taskPersonInCharge'] ?? null),
+            ticketLinkType: self::toInt($data['ticketLinkType'] ?? null)
         );
     }
 
@@ -29,12 +51,30 @@ final class CostEstimationTemplateDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'mode' => $this->mode,
-            'tasks' => $this->tasks,
+            'defaultBuffer' => $this->defaultBuffer,
+            'defaultServiceType' => $this->defaultServiceType,
+            'defaultTicketCategory' => $this->defaultTicketCategory,
+            'name' => $this->name,
+            'pdfLayout' => $this->pdfLayout,
+            'personInCharge' => $this->personInCharge,
+            'prependNameToTaskName' => $this->prependNameToTaskName,
+            'taskPersonInCharge' => $this->taskPersonInCharge,
+            'ticketLinkType' => $this->ticketLinkType
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string { return $this->link; }
     public function getMode(): ?string { return $this->mode; }
-    public function getTasks(): array { return $this->tasks; }
+    public function getTasks(): ?array { return $this->tasks; }
+    public function getDefaultBuffer(): ?float { return $this->defaultBuffer; }
+    public function getDefaultServiceType(): ?int { return $this->defaultServiceType; }
+    public function getDefaultTicketCategory(): ?int { return $this->defaultTicketCategory; }
+    public function getName(): ?string { return $this->name; }
+    public function getPdfLayout(): ?int { return $this->pdfLayout; }
+    public function getPersonInCharge(): ?int { return $this->personInCharge; }
+    public function getPrependNameToTaskName(): ?bool { return $this->prependNameToTaskName; }
+    public function getTaskPersonInCharge(): ?int { return $this->taskPersonInCharge; }
+    public function getTicketLinkType(): ?int { return $this->ticketLinkType; }
 }

@@ -11,6 +11,8 @@ final class NoteDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $link,
+        private ?string $note
     ) {}
 
     #[Override]
@@ -18,6 +20,8 @@ final class NoteDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            note: self::toString($data['note'] ?? null)
         );
     }
 
@@ -25,9 +29,11 @@ final class NoteDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'note' => $this->note
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getLink(): ?string { return $this->link; }
+    public function getNote(): ?string { return $this->note; }
 }

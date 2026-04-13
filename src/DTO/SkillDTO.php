@@ -11,6 +11,8 @@ final class SkillDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $link,
+        private ?string $name
     ) {}
 
     #[Override]
@@ -18,6 +20,8 @@ final class SkillDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            name: self::toString($data['name'] ?? null)
         );
     }
 
@@ -25,9 +29,11 @@ final class SkillDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'name' => $this->name
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getLink(): ?string { return $this->link; }
+    public function getName(): ?string { return $this->name; }
 }

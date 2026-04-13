@@ -11,6 +11,10 @@ final class RuleEngineConditionDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $link,
+        private ?string $comparator,
+        private ?array $data,
+        private ?string $type
     ) {}
 
     #[Override]
@@ -18,6 +22,10 @@ final class RuleEngineConditionDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            comparator: self::toString($data['comparator'] ?? null),
+            data: isset($data['data']) && is_array($data['data']) ? $data['data'] : null,
+            type: self::toString($data['type'] ?? null)
         );
     }
 
@@ -25,9 +33,15 @@ final class RuleEngineConditionDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'comparator' => $this->comparator,
+            'data' => $this->data,
+            'type' => $this->type
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getLink(): ?string { return $this->link; }
+    public function getComparator(): ?string { return $this->comparator; }
+    public function getData(): ?array { return $this->data; }
+    public function getType(): ?string { return $this->type; }
 }

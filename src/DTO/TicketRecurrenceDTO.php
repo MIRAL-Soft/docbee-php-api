@@ -11,6 +11,10 @@ final class TicketRecurrenceDTO extends AbstractDTO
 {
     public function __construct(
         private readonly ?int $id,
+        private readonly ?string $link,
+        private ?string $name,
+        private mixed $recurrence,
+        private mixed $template
     ) {}
 
     #[Override]
@@ -18,6 +22,10 @@ final class TicketRecurrenceDTO extends AbstractDTO
     {
         return new self(
             id: self::toInt($data['id'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            name: self::toString($data['name'] ?? null),
+            recurrence: $data['recurrence'] ?? null,
+            template: $data['template'] ?? null
         );
     }
 
@@ -25,9 +33,15 @@ final class TicketRecurrenceDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-
+            'name' => $this->name,
+            'recurrence' => $this->recurrence,
+            'template' => $this->template
         ], fn($v) => $v !== null);
     }
 
     public function getId(): ?int { return $this->id; }
+    public function getLink(): ?string { return $this->link; }
+    public function getName(): ?string { return $this->name; }
+    public function getRecurrence(): mixed { return $this->recurrence; }
+    public function getTemplate(): mixed { return $this->template; }
 }

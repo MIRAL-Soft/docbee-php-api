@@ -32,13 +32,13 @@ final class TicketResourceTest extends TestCase
             ->expects($this->once())
             ->method('get')
             ->with('ticket/42')
-            ->willReturn(['id' => 42, 'title' => 'Test Ticket', 'customer' => 5]);
+            ->willReturn(['id' => 42, 'description' => 'Test Ticket', 'customer' => 5]);
 
         $dto = $this->resource->find(42);
 
         $this->assertInstanceOf(TicketDTO::class, $dto);
         $this->assertSame(42, $dto->getId());
-        $this->assertSame('Test Ticket', $dto->getTitle());
+        $this->assertSame('Test Ticket', $dto->getDescription());
     }
 
     public function testFindThrowsNotFoundOnEmptyResponse(): void
@@ -60,8 +60,8 @@ final class TicketResourceTest extends TestCase
                 'offset'     => 0,
                 'limit'      => 50,
                 'ticket'     => [
-                    ['id' => 1, 'title' => 'Ticket A'],
-                    ['id' => 2, 'title' => 'Ticket B'],
+                    ['id' => 1, 'description' => 'Ticket A'],
+                    ['id' => 2, 'description' => 'Ticket B'],
                 ],
             ]);
 
@@ -69,7 +69,7 @@ final class TicketResourceTest extends TestCase
 
         $this->assertCount(2, $results);
         $this->assertInstanceOf(TicketDTO::class, $results[0]);
-        $this->assertSame('Ticket A', $results[0]->getTitle());
+        $this->assertSame('Ticket A', $results[0]->getDescription());
     }
 
     public function testCountReturnsInteger(): void
@@ -83,13 +83,13 @@ final class TicketResourceTest extends TestCase
 
     public function testCreatePostsData(): void
     {
-        $payload = ['title' => 'New Ticket', 'customer' => 1];
+        $payload = ['description' => 'New Ticket', 'customer' => 1];
 
         $this->http
             ->expects($this->once())
             ->method('post')
             ->with('ticket', $payload)
-            ->willReturn(['id' => 100, 'title' => 'New Ticket', 'customer' => 1]);
+            ->willReturn(['id' => 100, 'description' => 'New Ticket', 'customer' => 1]);
 
         $dto = $this->resource->create($payload);
 
@@ -110,68 +110,68 @@ final class TicketResourceTest extends TestCase
         $this->assertCount(1, $results);
     }
 
-    public function testFindByCustomerWithStatusIdFiltersCorrectly(): void
+    public function testFindByCustomerWithTicketStatusFiltersCorrectly(): void
     {
         $this->http
             ->method('get')
             ->with($this->logicalAnd(
                 $this->stringContains('customer-eq=42'),
-                $this->stringContains('status-eq=3'),
+                $this->stringContains('ticketStatus-eq=3'),
             ))
             ->willReturn([
                 'totalCount' => 1,
-                'ticket'     => [['id' => 10, 'customer' => 42, 'status' => 3]],
+                'ticket'     => [['id' => 10, 'customer' => 42, 'ticketStatus' => 3]],
             ]);
 
-        $results = $this->resource->findByCustomer(42, statusId: 3);
+        $results = $this->resource->findByCustomer(42, ticketStatusId: 3);
         $this->assertCount(1, $results);
     }
 
-    public function testFindByStatusFiltersCorrectly(): void
+    public function testFindByTicketStatusFiltersCorrectly(): void
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('status-eq=2'))
+            ->with($this->stringContains('ticketStatus-eq=2'))
             ->willReturn([
                 'totalCount' => 0,
                 'ticket'     => [],
             ]);
 
-        $results = $this->resource->findByStatus(2);
+        $results = $this->resource->findByTicketStatus(2);
         $this->assertSame([], $results);
     }
 
-    public function testFindByOrderIdFiltersCorrectly(): void
+    public function testFindByReferenceNumberFiltersCorrectly(): void
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('orderId-eq=ORD-2024-001'))
+            ->with($this->stringContains('referenceNumber-eq=REF-001'))
             ->willReturn([
                 'totalCount' => 1,
-                'ticket'     => [['id' => 7, 'orderId' => 'ORD-2024-001']],
+                'ticket'     => [['id' => 7, 'referenceNumber' => 'REF-001']],
             ]);
 
-        $results = $this->resource->findByOrderId('ORD-2024-001');
+        $results = $this->resource->findByReferenceNumber('REF-001');
         $this->assertCount(1, $results);
-        $this->assertSame('ORD-2024-001', $results[0]->getOrderId());
+        $this->assertSame('REF-001', $results[0]->getReferenceNumber());
     }
 
-    public function testFindByAssignedUserFiltersCorrectly(): void
+    public function testFindByOwnerFiltersCorrectly(): void
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('assignedUser-eq=5'))
+            ->with($this->stringContains('owner-eq=5'))
             ->willReturn([
                 'totalCount' => 2,
                 'ticket'     => [
-                    ['id' => 1, 'assignedUser' => 5],
-                    ['id' => 2, 'assignedUser' => 5],
+                    ['id' => 1, 'owner' => 5],
+                    ['id' => 2, 'owner' => 5],
                 ],
             ]);
 
-        $results = $this->resource->findByAssignedUser(5);
+        $results = $this->resource->findByOwner(5);
         $this->assertCount(2, $results);
-        $this->assertSame(5, $results[0]->getAssignedUser());
+        $this->assertSame(5, $results[0]->getOwner());
     }
 
     public function testDeleteCallsHttpDelete(): void
@@ -186,15 +186,15 @@ final class TicketResourceTest extends TestCase
 
     public function testUpdateCallsHttpPut(): void
     {
-        $payload = ['title' => 'Updated Title'];
+        $payload = ['description' => 'Updated description'];
 
         $this->http
             ->expects($this->once())
             ->method('put')
             ->with('ticket/42', $payload)
-            ->willReturn(['id' => 42, 'title' => 'Updated Title']);
+            ->willReturn(['id' => 42, 'description' => 'Updated description']);
 
         $dto = $this->resource->update(42, $payload);
-        $this->assertSame('Updated Title', $dto->getTitle());
+        $this->assertSame('Updated description', $dto->getDescription());
     }
 }

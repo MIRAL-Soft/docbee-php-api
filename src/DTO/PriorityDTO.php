@@ -5,29 +5,35 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\DTO;
 
 /**
- * Represents a Docbee ticket priority level.
+ * Represents a Docbee Priority record.
  */
 final class PriorityDTO extends AbstractDTO
 {
     public function __construct(
-        private readonly ?int    $id,
-        private readonly ?string $name,
-        private readonly ?int    $level,
-        private readonly ?string $color,
-        private readonly ?string $createdAt,
-        private readonly ?string $changedAt,
+        private readonly ?int $id,
+        private readonly ?string $modified,
+        private readonly ?string $link,
+        private ?string $color,
+        private ?bool $customerSelectable,
+        private ?bool $isDefault,
+        private ?string $name,
+        private ?int $priority,
+        private ?int $sla
     ) {}
 
     #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
-            id:        self::toInt($data['id'] ?? null),
-            name:      self::toString($data['name'] ?? null),
-            level:     self::toInt($data['level'] ?? null),
-            color:     self::toString($data['color'] ?? null),
-            createdAt: self::toString($data['createdAt'] ?? null),
-            changedAt: self::toString($data['changedAt'] ?? null),
+            id: self::toInt($data['id'] ?? null),
+            modified: self::toString($data['modified'] ?? null),
+            link: self::toString($data['link'] ?? null),
+            color: self::toString($data['color'] ?? null),
+            customerSelectable: isset($data['customerSelectable']) ? self::toBool($data['customerSelectable']) : null,
+            isDefault: isset($data['isDefault']) ? self::toBool($data['isDefault']) : null,
+            name: self::toString($data['name'] ?? null),
+            priority: self::toInt($data['priority'] ?? null),
+            sla: self::toInt($data['sla'] ?? null)
         );
     }
 
@@ -35,16 +41,22 @@ final class PriorityDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'name'  => $this->name,
-            'level' => $this->level,
             'color' => $this->color,
+            'customerSelectable' => $this->customerSelectable,
+            'isDefault' => $this->isDefault,
+            'name' => $this->name,
+            'priority' => $this->priority,
+            'sla' => $this->sla
         ], fn($v) => $v !== null);
     }
 
-    public function getId(): ?int           { return $this->id; }
-    public function getName(): ?string      { return $this->name; }
-    public function getLevel(): ?int        { return $this->level; }
-    public function getColor(): ?string     { return $this->color; }
-    public function getCreatedAt(): ?string { return $this->createdAt; }
-    public function getChangedAt(): ?string { return $this->changedAt; }
+    public function getId(): ?int { return $this->id; }
+    public function getModified(): ?string { return $this->modified; }
+    public function getLink(): ?string { return $this->link; }
+    public function getColor(): ?string { return $this->color; }
+    public function getCustomerSelectable(): ?bool { return $this->customerSelectable; }
+    public function getIsDefault(): ?bool { return $this->isDefault; }
+    public function getName(): ?string { return $this->name; }
+    public function getPriority(): ?int { return $this->priority; }
+    public function getSla(): ?int { return $this->sla; }
 }
