@@ -17,4 +17,6 @@ final class SkillResource extends AbstractResource
     protected string $endpoint = 'v1/skill';
     protected string $dtoClass = SkillDTO::class;
     protected string $listKey  = 'skill';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

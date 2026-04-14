@@ -17,4 +17,6 @@ final class TicketLinkTypeResource extends AbstractResource
     protected string $endpoint = 'v1/ticketLinkType';
     protected string $dtoClass = TicketLinkTypeDTO::class;
     protected string $listKey  = 'ticketLinkType';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

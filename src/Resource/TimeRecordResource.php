@@ -17,4 +17,23 @@ final class TimeRecordResource extends AbstractResource
     protected string $endpoint = 'v1/timeRecord';
     protected string $dtoClass = TimeRecordDTO::class;
     protected string $listKey  = 'timeRecord';
+
+    /** Returns the current active time record. */
+    public function getCurrent(): ?TimeRecordDTO
+    {
+        $data = $this->http->get("{$this->endpoint}/current");
+        return empty($data) ? null : TimeRecordDTO::fromArray($data);
+    }
+
+    /** Start a new time record. */
+    public function start(array $data = []): TimeRecordDTO
+    {
+        return TimeRecordDTO::fromArray($this->http->post("{$this->endpoint}/start", $data));
+    }
+
+    /** Stop the current time record. */
+    public function stop(array $data = []): TimeRecordDTO
+    {
+        return TimeRecordDTO::fromArray($this->http->put("{$this->endpoint}/stop", $data));
+    }
 }

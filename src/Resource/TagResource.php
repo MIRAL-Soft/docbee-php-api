@@ -37,4 +37,6 @@ final class TagResource extends AbstractResource
         }
         return $results[0];
     }
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

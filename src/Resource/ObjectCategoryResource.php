@@ -17,4 +17,6 @@ final class ObjectCategoryResource extends AbstractResource
     protected string $endpoint = 'v1/objectCategory';
     protected string $dtoClass = ObjectCategoryDTO::class;
     protected string $listKey  = 'objectCategory';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

@@ -17,4 +17,6 @@ final class QueueResource extends AbstractResource
     protected string $endpoint = 'v1/queue';
     protected string $dtoClass = QueueDTO::class;
     protected string $listKey  = 'queue';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

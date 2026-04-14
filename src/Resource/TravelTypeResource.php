@@ -17,4 +17,6 @@ final class TravelTypeResource extends AbstractResource
     protected string $endpoint = 'v1/travelType';
     protected string $dtoClass = TravelTypeDTO::class;
     protected string $listKey  = 'travelType';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

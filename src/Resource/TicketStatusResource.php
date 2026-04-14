@@ -48,4 +48,6 @@ final class TicketStatusResource extends AbstractResource
     {
         return $this->list(QueryBuilder::new()->filterEq('isClosed', true));
     }
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

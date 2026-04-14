@@ -23,4 +23,24 @@ final class SelectionValueResource extends AbstractResource
         $this->endpoint = "v1/selectionCategory/{$selectionCategoryId}/selectionValue";
         parent::__construct($http);
     }
+
+    public function findByScanCode(int $selectionCategoryId, string $scanCode): array
+    {
+        return $this->http->get("v1/selectionCategory/{$selectionCategoryId}/selectionValue/findByScanCode/{$scanCode}");
+    }
+
+    public function guess(int $selectionCategoryId, array $data): array
+    {
+        return $this->http->post("v1/selectionCategory/{$selectionCategoryId}/selectionValue/guess", $data);
+    }
+
+    public function addFilter(int $selectionCategoryId, int $id): void
+    {
+        $this->http->put("v1/selectionCategory/{$selectionCategoryId}/selectionValue/{$id}/addFilter", []);
+    }
+
+    public function removeFilter(int $selectionCategoryId, int $id): void
+    {
+        $this->http->put("v1/selectionCategory/{$selectionCategoryId}/selectionValue/{$id}/removeFilter", []);
+    }
 }

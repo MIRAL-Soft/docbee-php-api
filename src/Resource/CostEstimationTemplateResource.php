@@ -17,4 +17,6 @@ final class CostEstimationTemplateResource extends AbstractResource
     protected string $endpoint = 'v1/costEstimationTemplate';
     protected string $dtoClass = CostEstimationTemplateDTO::class;
     protected string $listKey  = 'costEstimationTemplate';
+
+    public function createPayloadForCostEstimation(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/createPayloadForCostEstimation"); }
 }

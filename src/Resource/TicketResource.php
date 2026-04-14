@@ -94,4 +94,23 @@ final class TicketResource extends AbstractResource
     {
         return $this->listAll(QueryBuilder::new()->filterEq('erpReferenceNumber', $erpReferenceNumber));
     }
+
+    public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
+    public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
+    public function fromTemplate(int $templateId, array $data = []): TicketDTO { return TicketDTO::fromArray($this->http->post("{$this->endpoint}/fromTemplate", array_merge(['template' => $templateId], $data))); }
+    public function findByNumber(string $number): TicketDTO { return TicketDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
+    public function clone(int $id): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }
+    public function merge(int $id, int $sourceTicketId): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/merge/{$sourceTicketId}", [])); }
+    public function isMerged(int $id): bool { $r = $this->http->get("{$this->endpoint}/{$id}/isMerged"); return (bool)($r['isMerged'] ?? false); }
+    public function getStatusChange(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/statusChange"); }
+    public function subscribe(int $id): void { $this->http->put("{$this->endpoint}/{$id}/subscribe", []); }
+    public function unsubscribe(int $id): void { $this->http->put("{$this->endpoint}/{$id}/unsubscribe", []); }
+    public function poke(int $id, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/poke", $data); }
+    public function reply(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/reply/{$messageId}", $data); }
+    public function forward(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/forward/{$messageId}", $data); }
+    public function getMessageData(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/messageData"); }
+    public function finishExternalSla(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/finishExternalSla", $data); }
+    public function executeAction(int $id, int $actionId, array $data = []): array { return $this->http->post("{$this->endpoint}/{$id}/action/{$actionId}/execute", $data); }
+    public function export(int $exportProfileId): array { return $this->http->get("{$this->endpoint}/export/{$exportProfileId}"); }
+    public function exportByIds(int $exportProfileId, array $ids): array { return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]); }
 }

@@ -74,4 +74,22 @@ final class CustomerResource extends AbstractResource
     {
         return $this->list(QueryBuilder::new()->filterEq('customerStatus', $customerStatusId));
     }
+
+    /** Get all custom fields for customers. */
+    public function getCustomFields(): array
+    {
+        return $this->http->get("{$this->endpoint}/customFields");
+    }
+
+    /** Update custom field configuration. */
+    public function updateCustomFields(array $data): array
+    {
+        return $this->http->put("{$this->endpoint}/customFields", $data);
+    }
+
+    /** Guess/match customers. */
+    public function guess(array $data): array
+    {
+        return $this->http->post("{$this->endpoint}/guess", $data);
+    }
 }

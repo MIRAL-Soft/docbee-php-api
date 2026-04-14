@@ -17,4 +17,6 @@ final class MaterialItemResource extends AbstractResource
     protected string $endpoint = 'v1/materialItem';
     protected string $dtoClass = MaterialItemDTO::class;
     protected string $listKey  = 'materialItem';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

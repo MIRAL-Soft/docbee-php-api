@@ -17,4 +17,7 @@ final class ProtocolTemplateResource extends AbstractResource
     protected string $endpoint = 'v1/protocolTemplate';
     protected string $dtoClass = ProtocolTemplateDTO::class;
     protected string $listKey  = 'protocolTemplate';
+
+    public function release(int $id): void { $this->http->put("{$this->endpoint}/{$id}/release", []); }
+    public function revision(int $id): void { $this->http->put("{$this->endpoint}/{$id}/revision", []); }
 }

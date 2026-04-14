@@ -17,4 +17,7 @@ final class DocBeeScriptResource extends AbstractResource
     protected string $endpoint = 'v1/docBeeScript';
     protected string $dtoClass = DocBeeScriptDTO::class;
     protected string $listKey  = 'docBeeScript';
+
+    public function clearLog(int $scriptId): void { $this->http->post("{$this->endpoint}/{$scriptId}/clearLog"); }
+    public function execute(int $scriptId, array $data = []): array { return $this->http->post("{$this->endpoint}/{$scriptId}/execute", $data); }
 }
