@@ -44,6 +44,7 @@ final class DtoFieldInfo
         public readonly string $phpType,         // e.g. "int", "string", "array"
         public readonly bool $phpNullable,
         public readonly bool $phpReadOnly,
+        public readonly ?string $nestedDtoClass = null,  // e.g. "WorkLogDTO" from @var WorkLogDTO[]|null
     ) {}
 }
 
@@ -58,9 +59,11 @@ final class DtoReport
     /** @var list<array{field:string, specType:string, dtoType:string}> */
     public array $typeMismatches  = [];
     /** @var list<FieldInfo> */
-    public array $nestedObjects   = [];   // complex spec fields stored flat in DTO
+    public array $nestedObjects   = [];   // complex spec fields stored flat in DTO (untyped ?array)
     /** @var list<FieldInfo> */
     public array $deprecatedFields = [];  // fields the spec marks as deprecated
+    /** @var array<string, array{dtoClass:string, schemaName:string, report:DtoReport}> keyed by field name */
+    public array $nestedDtoResults = [];  // results of recursive checks on typed nested DTOs
     public ?string $specSchemaName = null;
     public bool $schemaFound       = false;
 }
@@ -69,8 +72,15 @@ final class EndpointCoverage
 {
     /** @var list<string> */
     public array $implemented = [];
-    /** @var list<string> */
+    /** @var list<string> kept for backward compatibility — union of all three missing categories */
     public array $notImplemented = [];
+
+    /** @var list<array{path:string, methods:list<string>}> No Resource class for this top-level entity */
+    public array $missingResources = [];
+    /** @var list<array{path:string, methods:list<string>}> Parent resource exists but sub-path not implemented */
+    public array $missingSubResources = [];
+    /** @var list<array{path:string, methods:list<string>}> Special action/operation on an existing resource */
+    public array $missingActions = [];
 }
 
 final class ApiChange
@@ -119,6 +129,14 @@ final class CompatReport
                 || !empty($r->readonlyMismatches) || !empty($r->typeMismatches)) {
                 return true;
             }
+            // Also check nested DTO results
+            foreach ($r->nestedDtoResults as $nested) {
+                $nr = $nested['report'];
+                if (!empty($nr->missingFields) || !empty($nr->extraFields)
+                    || !empty($nr->readonlyMismatches) || !empty($nr->typeMismatches)) {
+                    return true;
+                }
+            }
         }
         return !empty($this->dtosMissingSchema)
             || !empty($this->schemasMissingDto)
@@ -129,14 +147,23 @@ final class CompatReport
     public function summarize(): string
     {
         $counts = [
-            'DTOs without schema'         => count($this->dtosMissingSchema),
-            'Schemas without DTO'         => count($this->schemasMissingDto),
-            'Unimplemented endpoints'     => count($this->endpointCoverage->notImplemented),
+            'DTOs without schema'                    => count($this->dtosMissingSchema),
+            'Schemas without DTO'                    => count($this->schemasMissingDto),
+            'Unimplemented endpoints (total)'        => count($this->endpointCoverage->notImplemented),
+            '  · Missing resources'                  => count($this->endpointCoverage->missingResources),
+            '  · Missing sub-resources'              => count($this->endpointCoverage->missingSubResources),
+            '  · Missing actions/operations'         => count($this->endpointCoverage->missingActions),
         ];
         $fieldIssues = 0;
         foreach ($this->dtoReports as $r) {
             $fieldIssues += count($r->missingFields) + count($r->extraFields)
                 + count($r->readonlyMismatches) + count($r->typeMismatches);
+            // Count nested DTO issues too
+            foreach ($r->nestedDtoResults as $nested) {
+                $nr = $nested['report'];
+                $fieldIssues += count($nr->missingFields) + count($nr->extraFields)
+                    + count($nr->readonlyMismatches) + count($nr->typeMismatches);
+            }
         }
         $counts['Field mismatches'] = $fieldIssues;
 
@@ -314,7 +341,7 @@ final class ApiCompatChecker
             $dtoFields = $this->getDtoFields($fullClass);
 
             // Compare
-            $this->compareDtoVsSpec($specFields, $dtoFields, $dtoReport);
+            $this->compareDtoVsSpec($specFields, $dtoFields, $dtoReport, $spec, $specSchemas);
 
             $report->dtoReports[$shortName] = $dtoReport;
         }
@@ -550,6 +577,9 @@ final class ApiCompatChecker
     /**
      * Extracts property information from a DTO class via reflection.
      *
+     * Also parses constructor parameter docblocks to detect typed nested DTO arrays,
+     * e.g. `/** @var WorkLogDTO[]|null ... *\/` → nestedDtoClass = "WorkLogDTO".
+     *
      * @return array<string, DtoFieldInfo>
      */
     private function getDtoFields(string $fullClass): array
@@ -558,6 +588,49 @@ final class ApiCompatChecker
 
         try {
             $rc = new \ReflectionClass($fullClass);
+
+            // Build a map of parameter name → docblock from the constructor,
+            // since promoted constructor parameters carry their docblock on the
+            // parameter, not on the property itself.
+            $constructorParamDocs = [];
+            $constructor = $rc->getConstructor();
+            if ($constructor !== null) {
+                // Parse the raw constructor source for inline docblocks on parameters.
+                // ReflectionParameter does not expose docComments, so we read the source.
+                $fileName  = $rc->getFileName();
+                $startLine = $constructor->getStartLine();
+                $endLine   = $constructor->getEndLine();
+
+                if ($fileName !== false && $startLine !== false && $endLine !== false) {
+                    $allLines = file($fileName);
+                    if ($allLines !== false) {
+                        // Extract only the lines of the constructor signature
+                        $ctorLines = array_slice($allLines, $startLine - 1, $endLine - $startLine + 1);
+                        $ctorSrc   = implode('', $ctorLines);
+
+                        // Match patterns like:
+                        //   /** @var WorkLogDTO[]|null some comment */
+                        //   private ?array $workLogs,
+                        // We find each /** ... */ block that is immediately followed by a
+                        // property declaration ($varName).
+                        if (preg_match_all(
+                            '/\/\*\*\s*(.*?)\s*\*\/\s*(?:private|protected|public|readonly|\s)*\s*\?\s*array\s+\$(\w+)/s',
+                            $ctorSrc,
+                            $matches,
+                            PREG_SET_ORDER,
+                        )) {
+                            foreach ($matches as $m) {
+                                $docContent = $m[1];
+                                $paramName  = $m[2];
+                                // Look for @var SomeDTO[]
+                                if (preg_match('/@var\s+(\w+DTO)\[\]/', $docContent, $varMatch)) {
+                                    $constructorParamDocs[$paramName] = $varMatch[1];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             foreach ($rc->getProperties() as $prop) {
                 // Only properties declared directly on this class
@@ -578,11 +651,18 @@ final class ApiCompatChecker
                     $nullable = in_array('null', $names, true);
                 }
 
+                // Detect nested DTO class from constructor docblock
+                $nestedDtoClass = null;
+                if ($phpType === 'array' && isset($constructorParamDocs[$prop->getName()])) {
+                    $nestedDtoClass = $constructorParamDocs[$prop->getName()];
+                }
+
                 $fields[$prop->getName()] = new DtoFieldInfo(
-                    name:        $prop->getName(),
-                    phpType:     $phpType,
-                    phpNullable: $nullable,
-                    phpReadOnly: $prop->isReadOnly(),
+                    name:           $prop->getName(),
+                    phpType:        $phpType,
+                    phpNullable:    $nullable,
+                    phpReadOnly:    $prop->isReadOnly(),
+                    nestedDtoClass: $nestedDtoClass,
                 );
             }
         } catch (\Throwable) {
@@ -781,13 +861,21 @@ final class ApiCompatChecker
     /**
      * Compares spec fields against DTO fields and populates a DtoReport.
      *
+     * When a DTO ?array field has a typed nested DTO annotation (e.g. @var WorkLogDTO[]|null),
+     * the checker recursively compares the nested DTO against the spec array item schema
+     * instead of emitting a generic "Nested sub-fields" INFO note.
+     *
      * @param array<string, FieldInfo>    $specFields
      * @param array<string, DtoFieldInfo> $dtoFields
+     * @param array                       $spec        Full OpenAPI spec (for recursive checks)
+     * @param array<string, array>        $specSchemas All top-level spec schemas
      */
     private function compareDtoVsSpec(
         array $specFields,
         array $dtoFields,
         DtoReport $report,
+        array $spec = [],
+        array $specSchemas = [],
     ): void {
         // Top-level spec field names only (no nested paths for primary comparison)
         $topLevelSpecFields = array_filter(
@@ -829,17 +917,54 @@ final class ApiCompatChecker
             }
         }
 
-        // Report nested object/array fields that have sub-structure in the spec
-        // but are stored as flat values in the DTO
+        // Determine which array fields have typed nested DTOs, so we can recursively
+        // compare them instead of falling back to the generic INFO note.
+        $typedNestedFields = []; // fieldName → nestedDtoClass
+        foreach ($dtoFields as $fieldName => $dtoField) {
+            if ($dtoField->nestedDtoClass !== null) {
+                $typedNestedFields[$fieldName] = $dtoField->nestedDtoClass;
+            }
+        }
+
+        // Process nested object/array fields that have sub-structure in the spec.
+        // Fields with a typed nested DTO get recursively compared; the rest are
+        // reported as informational "Nested sub-fields".
         foreach ($specFields as $fieldPath => $specField) {
             if (!str_contains($fieldPath, '.') && !str_contains($fieldPath, '[')) {
                 continue; // only nested paths
             }
             // The top-level field name (before first dot or bracket)
             $topLevel = preg_split('/[.\[]/', $fieldPath)[0] ?? $fieldPath;
-            if (array_key_exists($topLevel, $dtoFields)) {
-                // DTO has the field but as a flat type — this is informational
-                $report->nestedObjects[] = $specField;
+            if (!array_key_exists($topLevel, $dtoFields)) {
+                continue;
+            }
+
+            // If this top-level field has a typed nested DTO, skip the INFO note —
+            // recursive comparison is handled below.
+            if (isset($typedNestedFields[$topLevel])) {
+                continue;
+            }
+
+            // DTO has the field but as a flat type — this is informational
+            $report->nestedObjects[] = $specField;
+        }
+
+        // Recursively compare typed nested DTO arrays against their spec item schemas.
+        if ($spec !== [] && $specSchemas !== []) {
+            foreach ($typedNestedFields as $fieldName => $nestedDtoClass) {
+                // Only process if the spec also has this field as an array
+                if (!isset($topLevelSpecFields[$fieldName])) {
+                    continue;
+                }
+                $specField = $topLevelSpecFields[$fieldName];
+                if ($specField->specType !== 'array') {
+                    continue;
+                }
+
+                $nestedResult = $this->compareNestedDto($nestedDtoClass, $spec, $specSchemas);
+                if ($nestedResult !== null) {
+                    $report->nestedDtoResults[$fieldName] = $nestedResult;
+                }
             }
         }
 
@@ -850,6 +975,56 @@ final class ApiCompatChecker
                 $report->extraFields[] = $dtoField;
             }
         }
+    }
+
+    /**
+     * Performs a recursive compatibility check on a nested DTO class against its
+     * corresponding spec schema (resolved via the same findSchemaName() heuristic).
+     *
+     * Returns null when the nested DTO or its schema cannot be resolved.
+     *
+     * @param  array<string, array> $specSchemas
+     * @return array{dtoClass:string, schemaName:string, report:DtoReport}|null
+     */
+    private function compareNestedDto(
+        string $nestedDtoClass,
+        array $spec,
+        array $specSchemas,
+    ): ?array {
+        // Resolve the full class name
+        $fullClass = $this->dtoNamespace . $nestedDtoClass;
+        try {
+            if (!class_exists($fullClass)) {
+                return null;
+            }
+        } catch (\Throwable) {
+            return null;
+        }
+
+        // Find the corresponding spec schema
+        $schemaName = $this->findSchemaName($nestedDtoClass, array_keys($specSchemas));
+        if ($schemaName === null) {
+            return null;
+        }
+
+        // Extract spec fields for the nested schema
+        $visited    = [];
+        $specFields = $this->extractFields($spec, $specSchemas[$schemaName], $visited, '');
+
+        // Extract nested DTO fields
+        $dtoFields = $this->getDtoFields($fullClass);
+
+        // Recursively compare (pass spec/schemas for further nesting if needed)
+        $nestedReport = new DtoReport();
+        $nestedReport->specSchemaName = $schemaName;
+        $nestedReport->schemaFound    = true;
+        $this->compareDtoVsSpec($specFields, $dtoFields, $nestedReport, $spec, $specSchemas);
+
+        return [
+            'dtoClass'   => $nestedDtoClass,
+            'schemaName' => $schemaName,
+            'report'     => $nestedReport,
+        ];
     }
 
     /**
@@ -931,7 +1106,16 @@ final class ApiCompatChecker
             $implementedPatterns[] = (string) $pattern;
         }
 
-        $specPaths = array_keys($spec['paths'] ?? []);
+        // Build a set of top-level entity names that have at least one Resource class.
+        // Used to distinguish "missing entire resource" from "missing sub-resource/action".
+        $implementedTopLevel = [];
+        foreach ($implementedPatterns as $p) {
+            $firstSlash = strpos($p, '/');
+            $topLevel   = $firstSlash !== false ? substr($p, 0, $firstSlash) : $p;
+            $implementedTopLevel[$topLevel] = true;
+        }
+
+        $specPaths = $spec['paths'] ?? [];
 
         // Normalise spec paths — strip known API version prefixes so that
         // the path "v1/customer" matches a resource with endpoint "customer".
@@ -939,7 +1123,7 @@ final class ApiCompatChecker
         $pathPrefixes = ['/restApi/v1/', '/api/v1/', '/v1/', '/'];
         $seen         = [];
 
-        foreach ($specPaths as $path) {
+        foreach ($specPaths as $path => $pathItem) {
             // Strip the common prefix
             $relative = $path;
             foreach ($pathPrefixes as $prefix) {
@@ -950,17 +1134,24 @@ final class ApiCompatChecker
             }
             $relative = ltrim($relative, '/');
 
-            // Extract base segments (remove {id} and trailing segments after it)
-            // "/customer/{id}" → "customer"
-            // "/agreement/{id}/component" → "agreement/*/component"
+            // Normalise path parameters: "/customer/{id}" → "customer/*"
             $normalised = preg_replace('/\{[^}]+\}/', '*', $relative) ?? $relative;
             $normalised = strtolower($normalised);
 
-            // Deduplicate (GET + POST on same path → same base)
+            // Deduplicate (different HTTP methods on the same path share one entry)
             if (isset($seen[$normalised])) {
                 continue;
             }
             $seen[$normalised] = true;
+
+            // Collect the HTTP methods defined for this path in the spec
+            $httpVerbs = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'];
+            $methods   = [];
+            foreach ($httpVerbs as $verb) {
+                if (isset($pathItem[$verb])) {
+                    $methods[] = strtoupper($verb);
+                }
+            }
 
             // Check if any resource covers this pattern
             $covered = false;
@@ -980,13 +1171,33 @@ final class ApiCompatChecker
 
             if ($covered) {
                 $coverage->implemented[] = $relative;
+                continue;
+            }
+
+            // Not covered — categorise
+            $coverage->notImplemented[] = $relative;
+
+            $segments  = explode('/', $normalised);
+            $topLevel  = $segments[0];
+            $entry     = ['path' => $relative, 'methods' => $methods];
+
+            if (!isset($implementedTopLevel[$topLevel])) {
+                // No resource class at all for this entity
+                $coverage->missingResources[] = $entry;
+            } elseif (count($segments) >= 3) {
+                // Parent resource exists; this is a nested sub-path (e.g. agreement/*/component)
+                $coverage->missingSubResources[] = $entry;
             } else {
-                $coverage->notImplemented[] = $relative;
+                // Parent resource exists; path looks like a special action or missing CRUD endpoint
+                $coverage->missingActions[] = $entry;
             }
         }
 
         sort($coverage->implemented);
         sort($coverage->notImplemented);
+        usort($coverage->missingResources,    fn($a, $b) => strcmp($a['path'], $b['path']));
+        usort($coverage->missingSubResources, fn($a, $b) => strcmp($a['path'], $b['path']));
+        usort($coverage->missingActions,      fn($a, $b) => strcmp($a['path'], $b['path']));
 
         return $coverage;
     }
@@ -1148,7 +1359,7 @@ function formatTextReport(CompatReport $report): string
         $issues = count($r->missingFields) + count($r->extraFields)
             + count($r->readonlyMismatches) + count($r->typeMismatches);
 
-        if ($issues === 0 && $r->deprecatedFields === [] && $r->nestedObjects === []) {
+        if ($issues === 0 && $r->deprecatedFields === [] && $r->nestedObjects === [] && $r->nestedDtoResults === []) {
             continue;
         }
         $dtoIssueCount++;
@@ -1201,6 +1412,63 @@ function formatTextReport(CompatReport $report): string
                 $out[] = "      · ... and " . (count($r->nestedObjects) - 10) . " more";
             }
         }
+        if ($r->nestedDtoResults !== []) {
+            foreach ($r->nestedDtoResults as $fieldName => $nested) {
+                $nr = $nested['report'];
+                $dtoClass   = $nested['dtoClass'];
+                $schemaName = $nested['schemaName'];
+                $hasNestedIssues = !empty($nr->missingFields) || !empty($nr->extraFields)
+                    || !empty($nr->readonlyMismatches) || !empty($nr->typeMismatches);
+                $out[] = "    NESTED {$dtoClass} → {$schemaName} schema (field: {$fieldName}[]):";
+                if (!$hasNestedIssues && $nr->deprecatedFields === [] && $nr->nestedObjects === [] && $nr->nestedDtoResults === []) {
+                    $out[] = "      (OK — nested DTO matches spec schema)";
+                }
+                if ($nr->missingFields !== []) {
+                    $out[] = "      MISSING in {$dtoClass} (" . count($nr->missingFields) . " fields — present in spec):";
+                    foreach ($nr->missingFields as $f) {
+                        $ro   = $f->specReadOnly   ? ' [readOnly]'   : '';
+                        $dep  = $f->specDeprecated ? ' [deprecated]' : '';
+                        $type = $f->specType ? " ({$f->specType})" : '';
+                        $out[] = "        - {$f->name}{$type}{$ro}{$dep}";
+                    }
+                }
+                if ($nr->extraFields !== []) {
+                    $out[] = "      EXTRA in {$dtoClass} (" . count($nr->extraFields) . " fields — not in spec):";
+                    foreach ($nr->extraFields as $f) {
+                        $out[] = "        + {$f->name} ({$f->phpType})";
+                    }
+                }
+                if ($nr->readonlyMismatches !== []) {
+                    $out[] = "      READ-ONLY mismatches (" . count($nr->readonlyMismatches) . "):";
+                    foreach ($nr->readonlyMismatches as $m) {
+                        $spec = $m['specReadOnly'] ? 'readOnly' : 'writable';
+                        $dto  = $m['dtoReadOnly']  ? 'readOnly' : 'writable';
+                        $out[] = "        ~ {$m['field']}: spec={$spec}, dto={$dto}";
+                    }
+                }
+                if ($nr->typeMismatches !== []) {
+                    $out[] = "      TYPE mismatches (" . count($nr->typeMismatches) . "):";
+                    foreach ($nr->typeMismatches as $m) {
+                        $out[] = "        ~ {$m['field']}: spec={$m['specType']}, dto={$m['dtoType']}";
+                    }
+                }
+                if ($nr->deprecatedFields !== []) {
+                    $out[] = "      DEPRECATED spec fields (" . count($nr->deprecatedFields) . "):";
+                    foreach ($nr->deprecatedFields as $f) {
+                        $out[] = "        ! {$f->name} (not in DTO)";
+                    }
+                }
+                if ($nr->nestedObjects !== []) {
+                    $out[] = "      INFO — Nested sub-fields in spec (stored flat in {$dtoClass}, " . count($nr->nestedObjects) . "):";
+                    foreach (array_slice($nr->nestedObjects, 0, 5) as $f) {
+                        $out[] = "        · {$f->name}";
+                    }
+                    if (count($nr->nestedObjects) > 5) {
+                        $out[] = "        · ... and " . (count($nr->nestedObjects) - 5) . " more";
+                    }
+                }
+            }
+        }
         $out[] = '';
     }
 
@@ -1232,12 +1500,41 @@ function formatTextReport(CompatReport $report): string
     }
 
     // ---- Endpoint coverage ----
-    if ($report->endpointCoverage->notImplemented !== []) {
-        $out[] = '[ API ENDPOINTS WITHOUT A RESOURCE CLASS (' . count($report->endpointCoverage->notImplemented) . ') ]';
+    $cov = $report->endpointCoverage;
+    if ($cov->notImplemented !== []) {
+        $total = count($cov->notImplemented);
+        $out[] = '[ API ENDPOINTS WITHOUT A RESOURCE CLASS (' . $total . ') ]';
         $out[] = $dash;
-        foreach ($report->endpointCoverage->notImplemented as $p) {
-            $out[] = "  - {$p}";
+
+        /** @param list<array{path:string, methods:list<string>}> $entries */
+        $printEntries = static function (array $entries) use (&$out): void {
+            foreach ($entries as $e) {
+                $methodStr = $e['methods'] !== [] ? '  [' . implode(', ', $e['methods']) . ']' : '';
+                $out[] = "  - {$e['path']}{$methodStr}";
+            }
+        };
+
+        if ($cov->missingResources !== []) {
+            $out[] = '';
+            $out[] = '  -- A) MISSING TOP-LEVEL RESOURCE (' . count($cov->missingResources) . ') --';
+            $out[] = '  No PHP Resource class exists for these API entities.';
+            $printEntries($cov->missingResources);
         }
+
+        if ($cov->missingSubResources !== []) {
+            $out[] = '';
+            $out[] = '  -- B) MISSING SUB-RESOURCE (' . count($cov->missingSubResources) . ') --';
+            $out[] = '  The parent resource is implemented but these nested endpoints are not.';
+            $printEntries($cov->missingSubResources);
+        }
+
+        if ($cov->missingActions !== []) {
+            $out[] = '';
+            $out[] = '  -- C) MISSING ACTIONS / OPERATIONS (' . count($cov->missingActions) . ') --';
+            $out[] = '  The parent resource exists but these special operations are not implemented.';
+            $printEntries($cov->missingActions);
+        }
+
         $out[] = '';
     }
 
@@ -1245,10 +1542,13 @@ function formatTextReport(CompatReport $report): string
     $out[] = $sep;
     $out[] = '  SUMMARY';
     $out[] = $sep;
-    $totalDtos   = count($report->dtoReports);
-    $missingDtos = count($report->dtosMissingSchema);
-    $extraSchemas = count($report->schemasMissingDto);
+    $totalDtos     = count($report->dtoReports);
+    $missingDtos   = count($report->dtosMissingSchema);
+    $extraSchemas  = count($report->schemasMissingDto);
     $unimplemented = count($report->endpointCoverage->notImplemented);
+    $missingRes    = count($report->endpointCoverage->missingResources);
+    $missingSubRes = count($report->endpointCoverage->missingSubResources);
+    $missingAct    = count($report->endpointCoverage->missingActions);
 
     $totalMissing   = array_sum(array_map(fn($r) => count($r->missingFields),       $report->dtoReports));
     $totalExtra     = array_sum(array_map(fn($r) => count($r->extraFields),         $report->dtoReports));
@@ -1256,15 +1556,30 @@ function formatTextReport(CompatReport $report): string
     $totalType      = array_sum(array_map(fn($r) => count($r->typeMismatches),      $report->dtoReports));
     $totalDeprecated = array_sum(array_map(fn($r) => count($r->deprecatedFields),   $report->dtoReports));
 
-    $out[] = sprintf('  %-40s %d', 'DTOs checked:',                  $totalDtos);
-    $out[] = sprintf('  %-40s %d', 'DTOs without spec schema:',       $missingDtos);
-    $out[] = sprintf('  %-40s %d', 'Spec schemas without DTO:',       $extraSchemas);
-    $out[] = sprintf('  %-40s %d', 'Fields missing in DTOs:',         $totalMissing);
-    $out[] = sprintf('  %-40s %d', 'Extra fields in DTOs:',           $totalExtra);
-    $out[] = sprintf('  %-40s %d', 'Read-only mismatches:',           $totalReadonly);
-    $out[] = sprintf('  %-40s %d', 'Type mismatches:',                $totalType);
-    $out[] = sprintf('  %-40s %d', 'Deprecated spec fields:',         $totalDeprecated);
-    $out[] = sprintf('  %-40s %d', 'Unimplemented endpoints:',        $unimplemented);
+    // Include nested DTO issue counts in summary totals
+    foreach ($report->dtoReports as $r) {
+        foreach ($r->nestedDtoResults as $nested) {
+            $nr = $nested['report'];
+            $totalMissing  += count($nr->missingFields);
+            $totalExtra    += count($nr->extraFields);
+            $totalReadonly += count($nr->readonlyMismatches);
+            $totalType     += count($nr->typeMismatches);
+            $totalDeprecated += count($nr->deprecatedFields);
+        }
+    }
+
+    $out[] = sprintf('  %-44s %d', 'DTOs checked:',                      $totalDtos);
+    $out[] = sprintf('  %-44s %d', 'DTOs without spec schema:',           $missingDtos);
+    $out[] = sprintf('  %-44s %d', 'Spec schemas without DTO:',           $extraSchemas);
+    $out[] = sprintf('  %-44s %d', 'Fields missing in DTOs:',             $totalMissing);
+    $out[] = sprintf('  %-44s %d', 'Extra fields in DTOs:',               $totalExtra);
+    $out[] = sprintf('  %-44s %d', 'Read-only mismatches:',               $totalReadonly);
+    $out[] = sprintf('  %-44s %d', 'Type mismatches:',                    $totalType);
+    $out[] = sprintf('  %-44s %d', 'Deprecated spec fields:',             $totalDeprecated);
+    $out[] = sprintf('  %-44s %d', 'Unimplemented endpoints (total):',    $unimplemented);
+    $out[] = sprintf('  %-44s %d', '  · Missing resources:',              $missingRes);
+    $out[] = sprintf('  %-44s %d', '  · Missing sub-resources:',          $missingSubRes);
+    $out[] = sprintf('  %-44s %d', '  · Missing actions/operations:',     $missingAct);
 
     $hasIssues = ($totalMissing + $totalExtra + $totalReadonly + $totalType
         + $missingDtos + $unimplemented) > 0;
@@ -1301,15 +1616,21 @@ function formatJsonReport(CompatReport $report): string
             'totalReadonlyMismatches' => array_sum(array_map(fn($r) => count($r->readonlyMismatches), $report->dtoReports)),
             'totalTypeMismatches' => array_sum(array_map(fn($r) => count($r->typeMismatches),     $report->dtoReports)),
             'totalDeprecated'     => array_sum(array_map(fn($r) => count($r->deprecatedFields),   $report->dtoReports)),
-            'unimplementedEndpoints' => count($report->endpointCoverage->notImplemented),
+            'unimplementedEndpoints'       => count($report->endpointCoverage->notImplemented),
+            'missingResources'             => count($report->endpointCoverage->missingResources),
+            'missingSubResources'          => count($report->endpointCoverage->missingSubResources),
+            'missingActions'               => count($report->endpointCoverage->missingActions),
         ],
         'apiChanges' => null,
         'dtoIssues'  => [],
         'dtosMissingSchema'   => $report->dtosMissingSchema,
         'schemasMissingDto'   => $report->schemasMissingDto,
         'endpointCoverage'    => [
-            'implemented'    => $report->endpointCoverage->implemented,
-            'notImplemented' => $report->endpointCoverage->notImplemented,
+            'implemented'       => $report->endpointCoverage->implemented,
+            'notImplemented'    => $report->endpointCoverage->notImplemented,
+            'missingResources'  => $report->endpointCoverage->missingResources,
+            'missingSubResources' => $report->endpointCoverage->missingSubResources,
+            'missingActions'    => $report->endpointCoverage->missingActions,
         ],
     ];
 
@@ -1343,6 +1664,22 @@ function formatJsonReport(CompatReport $report): string
             'typeMismatches'      => $r->typeMismatches,
             'deprecatedFields'    => array_map(fn(FieldInfo $f) => $f->name, $r->deprecatedFields),
             'nestedObjectFields'  => array_map(fn(FieldInfo $f) => $f->name, $r->nestedObjects),
+            'nestedDtoResults'    => array_map(fn(array $n) => [
+                'dtoClass'   => $n['dtoClass'],
+                'schemaName' => $n['schemaName'],
+                'missingFields' => array_map(fn(FieldInfo $f) => [
+                    'name'       => $f->name,
+                    'type'       => $f->specType,
+                    'readOnly'   => $f->specReadOnly,
+                    'deprecated' => $f->specDeprecated,
+                ], $n['report']->missingFields),
+                'extraFields' => array_map(fn(DtoFieldInfo $f) => [
+                    'name' => $f->name,
+                    'type' => $f->phpType,
+                ], $n['report']->extraFields),
+                'readonlyMismatches' => $n['report']->readonlyMismatches,
+                'typeMismatches'     => $n['report']->typeMismatches,
+            ], $r->nestedDtoResults),
         ];
     }
 
