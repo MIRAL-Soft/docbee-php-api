@@ -55,4 +55,9 @@ final class CustomerContactResource extends AbstractResource
     {
         return $this->list(QueryBuilder::new()->filterIlike('name', "%{$name}%"));
     }
+
+    public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
+    public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
+    public function move(int $id, array $data): CustomerContactDTO { return CustomerContactDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/move", $data)); }
 }

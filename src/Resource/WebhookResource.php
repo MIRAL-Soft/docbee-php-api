@@ -198,4 +198,6 @@ final class WebhookResource extends AbstractResource
     {
         return $this->list(QueryBuilder::new()->filterEq('type', $type));
     }
+
+    public function generateLink(int $webhookId): array { return $this->http->post("v1/webhook/{$webhookId}/generateLink"); }
 }

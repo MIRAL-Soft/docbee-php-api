@@ -17,4 +17,7 @@ final class DocBeeDocumentRecurrenceResource extends AbstractResource
     protected string $endpoint = 'v1/docBeeDocumentRecurrence';
     protected string $dtoClass = DocBeeDocumentRecurrenceDTO::class;
     protected string $listKey  = 'docBeeDocumentRecurrence';
+
+    public function clone(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/clone", []); }
+    public function createPastDocuments(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/createPastDocuments", []); }
 }

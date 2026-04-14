@@ -17,4 +17,6 @@ final class CustomerProfileResource extends AbstractResource
     protected string $endpoint = 'v1/customerProfile';
     protected string $dtoClass = CustomerProfileDTO::class;
     protected string $listKey  = 'customerProfile';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

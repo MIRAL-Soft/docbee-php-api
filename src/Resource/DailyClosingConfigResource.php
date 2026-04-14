@@ -17,4 +17,6 @@ final class DailyClosingConfigResource extends AbstractResource
     protected string $endpoint = 'v1/dailyClosingConfig';
     protected string $dtoClass = DailyClosingConfigDTO::class;
     protected string $listKey  = 'dailyClosingConfig';
+
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

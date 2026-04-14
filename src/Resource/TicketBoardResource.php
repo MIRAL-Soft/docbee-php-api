@@ -17,4 +17,7 @@ final class TicketBoardResource extends AbstractResource
     protected string $endpoint = 'v1/ticketBoard';
     protected string $dtoClass = TicketBoardDTO::class;
     protected string $listKey  = 'ticketBoard';
+
+    public function setFavorite(int $id): void { $this->http->put("{$this->endpoint}/{$id}/setFavorite", []); }
+    public function unsetFavorite(int $id): void { $this->http->put("{$this->endpoint}/{$id}/unsetFavorite", []); }
 }

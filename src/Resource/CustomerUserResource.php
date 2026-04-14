@@ -17,4 +17,6 @@ final class CustomerUserResource extends AbstractResource
     protected string $endpoint = 'v1/customerUser';
     protected string $dtoClass = CustomerUserDTO::class;
     protected string $listKey  = 'customerUser';
+
+    public function reset2FA(int $id): void { $this->http->put("{$this->endpoint}/{$id}/reset2FA", []); }
 }

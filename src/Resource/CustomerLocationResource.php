@@ -28,4 +28,8 @@ final class CustomerLocationResource extends AbstractResource
     {
         return $this->list(QueryBuilder::new()->filterEq('customer', $customerId));
     }
+
+    public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
+    public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
+    public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

@@ -59,4 +59,52 @@ final class UserResource extends AbstractResource
     {
         return $this->list(QueryBuilder::new()->filterEq('active', true));
     }
+
+    /** Returns the currently authenticated user. */
+    public function me(): UserDTO
+    {
+        return UserDTO::fromArray($this->http->get('v1/user/me'));
+    }
+
+    /** Reset 2FA for a specific user (admin). */
+    public function resetPasswordForUser(int $id): void
+    {
+        $this->http->put("{$this->endpoint}/{$id}/reset2FA", []);
+    }
+
+    /** Find user by email address via API endpoint. */
+    public function findFirstByEmail(string $email): UserDTO
+    {
+        return UserDTO::fromArray($this->http->get("{$this->endpoint}/findFirstByEmail/{$email}"));
+    }
+
+    /** Find user by external ERP number. */
+    public function findFirstByExternalErpNumber(string $number): UserDTO
+    {
+        return UserDTO::fromArray($this->http->get("{$this->endpoint}/findFirstByExternalErpNumber/{$number}"));
+    }
+
+    /** Get user settings for current user. */
+    public function getSettings(): array
+    {
+        return $this->http->get('v1/user/me/settings');
+    }
+
+    /** Update user settings for current user. */
+    public function updateSettings(array $data): array
+    {
+        return $this->http->put('v1/user/me/settings', $data);
+    }
+
+    /** Update profile image for current user. */
+    public function updateProfileImage(array $data): void
+    {
+        $this->http->put('v1/user/me/profileImage', $data);
+    }
+
+    /** Change password for current user. */
+    public function changeMyPassword(array $data): void
+    {
+        $this->http->post('v1/user/me/changePassword', $data);
+    }
 }

@@ -37,4 +37,7 @@ final class DocumentTemplateResource extends AbstractResource
         }
         return $results[0];
     }
+
+    public function clone(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/clone", []); }
+    public function createPayloadForDocBeeDocument(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/createPayloadForDocBeeDocument"); }
 }

@@ -17,4 +17,7 @@ final class CostEstimationResource extends AbstractResource
     protected string $endpoint = 'v1/costEstimation';
     protected string $dtoClass = CostEstimationDTO::class;
     protected string $listKey  = 'costEstimation';
+
+    public function approve(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/approve", []); }
+    public function finish(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/finish", []); }
 }
