@@ -23,4 +23,6 @@ final class ProtocolGroupDataResource extends AbstractResource
         $this->endpoint = "v1/protocol/{$protocolId}/groupData";
         parent::__construct($http);
     }
+
+    public function markFinish(): void { $this->http->put("{$this->endpoint}/markFinish", []); }
 }

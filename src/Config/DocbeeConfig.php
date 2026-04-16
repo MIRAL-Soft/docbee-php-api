@@ -69,6 +69,9 @@ final class DocbeeConfig
         if ($token === '') {
             throw new InvalidArgumentException('DocbeeConfig: token must not be empty.');
         }
+        if (str_contains($token, "\n") || str_contains($token, "\r")) {
+            throw new InvalidArgumentException('DocbeeConfig: token must not contain line breaks (potential header injection).');
+        }
         if ($timeout <= 0) {
             throw new InvalidArgumentException('DocbeeConfig: timeout must be greater than 0.');
         }

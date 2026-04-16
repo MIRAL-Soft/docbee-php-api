@@ -71,4 +71,16 @@ final class ProtocolResource extends AbstractResource
     {
         return ProtocolDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/instantFinish", $data));
     }
+
+    /** Export protocols for the given export profile. */
+    public function export(int $exportProfileId): array
+    {
+        return $this->http->get("{$this->endpoint}/export/{$exportProfileId}");
+    }
+
+    /** Export specific protocols (by IDs) for the given export profile. */
+    public function exportByIds(int $exportProfileId, array $ids): array
+    {
+        return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);
+    }
 }

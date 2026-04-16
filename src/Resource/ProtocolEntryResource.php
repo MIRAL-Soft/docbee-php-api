@@ -9,7 +9,10 @@ use miralsoft\docbee\api\DTO\ProtocolEntryDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
 /**
- * Provides access to Docbee ProtocolEntry records (sub-resource).
+ * Provides access to Docbee ProtocolEntry records for a Protocol (sub-resource).
+ *
+ * Supports standard CRUD via inherited methods plus lookup by entry mapping,
+ * group index, and placeholder name.
  *
  * @extends AbstractResource<ProtocolEntryDTO>
  */
@@ -20,7 +23,55 @@ final class ProtocolEntryResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $protocolId)
     {
-        $this->endpoint = "v1/protocol/{$protocolId}/entry";
+        $this->endpoint = "v1/protocol/{$protocolId}/protocolEntry";
         parent::__construct($http);
+    }
+
+    /** Get a protocol entry by its entry mapping ID. */
+    public function getByEntryMapping(int $entryMappingId): ProtocolEntryDTO
+    {
+        return ProtocolEntryDTO::fromArray(
+            $this->http->get("{$this->endpoint}/byEntryMapping/{$entryMappingId}")
+        );
+    }
+
+    /** Update a protocol entry by its entry mapping ID. */
+    public function updateByEntryMapping(int $entryMappingId, array $data): ProtocolEntryDTO
+    {
+        return ProtocolEntryDTO::fromArray(
+            $this->http->put("{$this->endpoint}/byEntryMapping/{$entryMappingId}", $data)
+        );
+    }
+
+    /** Get a protocol entry by entry mapping ID and group index (for multi-groups). */
+    public function getByEntryMappingAndGroupIdx(int $entryMappingId, int $groupIdx): ProtocolEntryDTO
+    {
+        return ProtocolEntryDTO::fromArray(
+            $this->http->get("{$this->endpoint}/byEntryMapping/{$entryMappingId}/{$groupIdx}")
+        );
+    }
+
+    /** Update a protocol entry by entry mapping ID and group index (for multi-groups). */
+    public function updateByEntryMappingAndGroupIdx(int $entryMappingId, int $groupIdx, array $data): ProtocolEntryDTO
+    {
+        return ProtocolEntryDTO::fromArray(
+            $this->http->put("{$this->endpoint}/byEntryMapping/{$entryMappingId}/{$groupIdx}", $data)
+        );
+    }
+
+    /** Find a protocol entry by its template placeholder name. */
+    public function findByPlaceholderName(string $name): ProtocolEntryDTO
+    {
+        return ProtocolEntryDTO::fromArray(
+            $this->http->get("{$this->endpoint}/findByPlaceholderName/{$name}")
+        );
+    }
+
+    /** Update a protocol entry by its template placeholder name. */
+    public function updateByPlaceholderName(string $name, array $data): ProtocolEntryDTO
+    {
+        return ProtocolEntryDTO::fromArray(
+            $this->http->put("{$this->endpoint}/updateByPlaceholderName/{$name}", $data)
+        );
     }
 }

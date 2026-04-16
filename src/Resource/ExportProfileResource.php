@@ -19,9 +19,17 @@ final class ExportProfileResource extends AbstractResource
     protected string $listKey  = 'exportProfile';
 
     public function getExportEncodings(): array { return $this->http->get("{$this->endpoint}/exportEncoding")['exportEncoding'] ?? []; }
-    public function getExportFormats(): array { return $this->http->get("{$this->endpoint}/exportFormat")['exportFormat'] ?? []; }
-    public function getExportTypes(): array { return $this->http->get("{$this->endpoint}/exportType")['exportType'] ?? []; }
-    public function getFieldDomains(): array { return $this->http->get("{$this->endpoint}/fieldDomain")['fieldDomain'] ?? []; }
-    public function getFieldDomainProperties(): array { return $this->http->get("{$this->endpoint}/fieldDomainProperty")['fieldDomainProperty'] ?? []; }
-    public function getFieldDomainPropertyDataFormatters(): array { return $this->http->get("{$this->endpoint}/fieldDomainPropertyDataFormatter")['fieldDomainPropertyDataFormatter'] ?? []; }
+    public function getExportFormats(): array   { return $this->http->get("{$this->endpoint}/exportFormat")['exportFormat'] ?? []; }
+    public function getExportTypes(): array     { return $this->http->get("{$this->endpoint}/exportType")['exportType'] ?? []; }
+    public function getFieldDomains(): array    { return $this->http->get("{$this->endpoint}/fieldDomain")['fieldDomain'] ?? []; }
+    public function getFieldDomainProperties(): array                { return $this->http->get("{$this->endpoint}/fieldDomainProperty")['fieldDomainProperty'] ?? []; }
+    public function getFieldDomainPropertyDataFormatters(): array    { return $this->http->get("{$this->endpoint}/fieldDomainPropertyDataFormatter")['fieldDomainPropertyDataFormatter'] ?? []; }
+
+    // By-ID lookup methods (spec uses ${id} notation — treated as standard {id})
+    public function getExportEncoding(int $id): array                        { return $this->http->get("{$this->endpoint}/exportEncoding/{$id}"); }
+    public function getExportFormat(int $id): array                          { return $this->http->get("{$this->endpoint}/exportFormat/{$id}"); }
+    public function getExportType(int $id): array                            { return $this->http->get("{$this->endpoint}/exportType/{$id}"); }
+    public function getFieldDomain(int $id): array                           { return $this->http->get("{$this->endpoint}/fieldDomain/{$id}"); }
+    public function getFieldDomainProperty(int $id): array                   { return $this->http->get("{$this->endpoint}/fieldDomainProperty/{$id}"); }
+    public function getFieldDomainPropertyDataFormatter(int $id): array      { return $this->http->get("{$this->endpoint}/fieldDomainPropertyDataFormatter/{$id}"); }
 }
