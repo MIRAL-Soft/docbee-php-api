@@ -12,10 +12,18 @@ use miralsoft\docbee\api\DTO\ContingentItemDTO;
 use miralsoft\docbee\api\DTO\CostEstimationTaskDTO;
 use miralsoft\docbee\api\DTO\DashboardWidgetDTO;
 use miralsoft\docbee\api\DTO\DocBeeDocumentMessageDTO;
+use miralsoft\docbee\api\DTO\DocBeeDocumentTaskDTO;
+use miralsoft\docbee\api\DTO\ElementDTO;
+use miralsoft\docbee\api\DTO\MaterialDTO;
+use miralsoft\docbee\api\DTO\PlanningTimeDTO;
+use miralsoft\docbee\api\DTO\ProtocolEntryDTO;
 use miralsoft\docbee\api\DTO\RuleEngineConditionDTO;
 use miralsoft\docbee\api\DTO\SelectionValueDTO;
 use miralsoft\docbee\api\DTO\SlaProfileSpecializationDTO;
+use miralsoft\docbee\api\DTO\TaskTemplateDTO;
 use miralsoft\docbee\api\DTO\TicketMessageDTO;
+use miralsoft\docbee\api\DTO\TravelLogDTO;
+use miralsoft\docbee\api\DTO\WorkLogDTO;
 use miralsoft\docbee\api\Resource\AgreementComponentResource;
 use miralsoft\docbee\api\Resource\AgreementInvoiceResource;
 use miralsoft\docbee\api\Resource\AgreementPeriodResource;
@@ -23,6 +31,19 @@ use miralsoft\docbee\api\Resource\ContingentItemResource;
 use miralsoft\docbee\api\Resource\CostEstimationTaskResource;
 use miralsoft\docbee\api\Resource\DashboardWidgetResource;
 use miralsoft\docbee\api\Resource\DocBeeDocumentMessageResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTaskMaterialResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTaskPlanningTimeResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTaskResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTaskWorkLogResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTravelLogTemplateResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentTravelLogResource;
+use miralsoft\docbee\api\Resource\ProtocolGroupEntriesResource;
+use miralsoft\docbee\api\Resource\ProtocolPlanningTimeResource;
+use miralsoft\docbee\api\Resource\ProtocolTemplateEntryElementResource;
 use miralsoft\docbee\api\Resource\RuleEngineConditionResource;
 use miralsoft\docbee\api\Resource\SelectionValueResource;
 use miralsoft\docbee\api\Resource\SlaProfileSpecializationResource;
@@ -213,6 +234,205 @@ final class SubResourceTest extends TestCase
 
         $this->assertInstanceOf(SelectionValueDTO::class, $dto);
         $this->assertSame(55, $dto->getId());
+    }
+
+    // ── New sub-resources (Groups C, D, E, F, G) ─────────────────────────────
+
+    public function testDocBeeDocumentTravelLogEndpointContainsParentId(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocument/5/travelLog'))
+            ->willReturn(['totalCount' => 0, 'travelLog' => []]);
+
+        (new DocBeeDocumentTravelLogResource($this->http, 5))->list();
+    }
+
+    public function testDocBeeDocumentTemplateTaskTemplateEndpointContainsParentId(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate'))
+            ->willReturn(['totalCount' => 0, 'taskTemplate' => []]);
+
+        (new DocBeeDocumentTemplateTaskTemplateResource($this->http, 10))->list();
+    }
+
+    public function testDocBeeDocumentTemplateTaskTemplateMaterialEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate/3/materialTemplate'))
+            ->willReturn(['totalCount' => 0, 'materialTemplate' => []]);
+
+        (new DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource($this->http, 10, 3))->list();
+    }
+
+    public function testDocBeeDocumentTemplateTaskTemplatePlanningTimeEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate/3/planningTimeTemplate'))
+            ->willReturn(['totalCount' => 0, 'planningTimeTemplate' => []]);
+
+        (new DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource($this->http, 10, 3))->list();
+    }
+
+    public function testDocBeeDocumentTemplateTaskTemplateWorkLogEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate/3/workLogTemplate'))
+            ->willReturn(['totalCount' => 0, 'workLogTemplate' => []]);
+
+        (new DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource($this->http, 10, 3))->list();
+    }
+
+    public function testDocBeeDocumentTemplateTravelLogTemplateEndpointContainsParentId(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocumentTemplate/7/travelLogTemplate'))
+            ->willReturn(['totalCount' => 0, 'travelLogTemplate' => []]);
+
+        (new DocBeeDocumentTemplateTravelLogTemplateResource($this->http, 7))->list();
+    }
+
+    public function testProtocolTemplateEntryElementEndpointContainsParentId(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/protocolTemplateEntry/9/element'))
+            ->willReturn(['totalCount' => 0, 'element' => []]);
+
+        (new ProtocolTemplateEntryElementResource($this->http, 9))->list();
+    }
+
+    public function testDocBeeDocumentTaskEndpointContainsParentId(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocument/3/task'))
+            ->willReturn(['totalCount' => 0, 'docBeeDocumentTask' => []]);
+
+        (new DocBeeDocumentTaskResource($this->http, 3))->list();
+    }
+
+    public function testDocBeeDocumentTaskMaterialEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocument/3/task/7/material'))
+            ->willReturn(['totalCount' => 0, 'material' => []]);
+
+        (new DocBeeDocumentTaskMaterialResource($this->http, 3, 7))->list();
+    }
+
+    public function testDocBeeDocumentTaskPlanningTimeEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocument/3/task/7/planningTime'))
+            ->willReturn(['totalCount' => 0, 'planningTime' => []]);
+
+        (new DocBeeDocumentTaskPlanningTimeResource($this->http, 3, 7))->list();
+    }
+
+    public function testDocBeeDocumentTaskWorkLogEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/docBeeDocument/3/task/7/workLog'))
+            ->willReturn(['totalCount' => 0, 'workLog' => []]);
+
+        (new DocBeeDocumentTaskWorkLogResource($this->http, 3, 7))->list();
+    }
+
+    public function testProtocolGroupEntriesEndpointContainsBothIds(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/protocol/2/protocolGroupEntries/5'))
+            ->willReturn(['totalCount' => 0, 'protocolEntry' => []]);
+
+        (new ProtocolGroupEntriesResource($this->http, 2, 5))->list();
+    }
+
+    public function testProtocolPlanningTimeEndpointContainsParentId(): void
+    {
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->stringContains('v1/protocol/6/planningTime'))
+            ->willReturn(['totalCount' => 0, 'planningTime' => []]);
+
+        (new ProtocolPlanningTimeResource($this->http, 6))->list();
+    }
+
+    // ── DTO mapping for new sub-resources ─────────────────────────────────────
+
+    public function testDocBeeDocumentTravelLogListReturnsDTOArray(): void
+    {
+        $this->http->method('get')->willReturn([
+            'totalCount' => 1,
+            'travelLog'  => [['id' => 1]],
+        ]);
+
+        $results = (new DocBeeDocumentTravelLogResource($this->http, 1))->list();
+
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(TravelLogDTO::class, $results[0]);
+    }
+
+    public function testDocBeeDocumentTaskListReturnsDTOArray(): void
+    {
+        $this->http->method('get')->willReturn([
+            'totalCount'         => 1,
+            'docBeeDocumentTask' => [['id' => 42]],
+        ]);
+
+        $results = (new DocBeeDocumentTaskResource($this->http, 1))->list();
+
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(DocBeeDocumentTaskDTO::class, $results[0]);
+    }
+
+    public function testDocBeeDocumentTemplateTaskTemplateListReturnsDTOArray(): void
+    {
+        $this->http->method('get')->willReturn([
+            'totalCount'   => 1,
+            'taskTemplate' => [['id' => 5]],
+        ]);
+
+        $results = (new DocBeeDocumentTemplateTaskTemplateResource($this->http, 1))->list();
+
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(TaskTemplateDTO::class, $results[0]);
+    }
+
+    public function testProtocolGroupEntriesListReturnsDTOArray(): void
+    {
+        $this->http->method('get')->willReturn([
+            'totalCount'    => 2,
+            'protocolEntry' => [['id' => 10], ['id' => 11]],
+        ]);
+
+        $results = (new ProtocolGroupEntriesResource($this->http, 1, 2))->list();
+
+        $this->assertCount(2, $results);
+        $this->assertInstanceOf(ProtocolEntryDTO::class, $results[0]);
     }
 
     // ── Different parent IDs produce different endpoints ──────────────────────

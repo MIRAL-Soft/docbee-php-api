@@ -16,4 +16,9 @@ final class ReportResource extends AbstractResource
     protected string $endpoint = 'v1/report';
     protected string $dtoClass = ReportDTO::class;
     protected string $listKey  = 'report';
+
+    public function getElementTypes(): array    { return $this->http->get("{$this->endpoint}/elementType"); }
+    public function getElementType(int $id): array    { return $this->http->get("{$this->endpoint}/elementType/{$id}"); }
+    public function getParameterTypes(): array  { return $this->http->get("{$this->endpoint}/parameterType"); }
+    public function getParameterType(int $id): array  { return $this->http->get("{$this->endpoint}/parameterType/{$id}"); }
 }

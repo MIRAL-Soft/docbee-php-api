@@ -14,7 +14,6 @@ final class ContingentItemRecurrenceDTO extends AbstractDTO
         private readonly ?int    $id,
         /** REST API Link */
         private readonly ?string $link,
-        private ?string          $name,
         /** money */
         private ?float           $money,
         /** time in milliseconds */
@@ -29,7 +28,6 @@ final class ContingentItemRecurrenceDTO extends AbstractDTO
         return new self(
             id:          self::toInt($data['id'] ?? null),
             link:        self::toString($data['link'] ?? null),
-            name:        self::toString($data['name'] ?? null),
             money:       isset($data['money']) ? (float) $data['money'] : null,
             time:        self::toInt($data['time'] ?? null),
             description: self::toString($data['description'] ?? null),
@@ -40,7 +38,6 @@ final class ContingentItemRecurrenceDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'name'        => $this->name,
             'money'       => $this->money,
             'time'        => $this->time,
             'description' => $this->description,
@@ -49,7 +46,6 @@ final class ContingentItemRecurrenceDTO extends AbstractDTO
 
     public function getId(): ?int             { return $this->id; }
     public function getLink(): ?string        { return $this->link; }
-    public function getName(): ?string        { return $this->name; }
     public function getMoney(): ?float        { return $this->money; }
     public function getTime(): ?int           { return $this->time; }
     public function getDescription(): ?string { return $this->description; }
