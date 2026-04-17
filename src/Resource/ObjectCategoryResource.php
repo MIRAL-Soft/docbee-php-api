@@ -19,4 +19,7 @@ final class ObjectCategoryResource extends AbstractResource
     protected string $listKey  = 'objectCategory';
 
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
+
+    public function getCustomFields(int $id): array           { return $this->http->get("{$this->endpoint}/{$id}/customFields"); }
+    public function updateCustomFields(int $id, array $data): array { return $this->http->put("{$this->endpoint}/{$id}/customFields", $data); }
 }

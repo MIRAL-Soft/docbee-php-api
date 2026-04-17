@@ -107,4 +107,22 @@ final class UserResource extends AbstractResource
     {
         $this->http->post('v1/user/me/changePassword', $data);
     }
+
+    /** Change password for a specific user (admin). */
+    public function changePassword(array $data): void
+    {
+        $this->http->post("{$this->endpoint}/changePassword", $data);
+    }
+
+    /** Disable 2FA for the currently authenticated user. */
+    public function disableMe2FA(): void
+    {
+        $this->http->put('v1/user/me/disable2FA', []);
+    }
+
+    /** Register 2FA for the currently authenticated user. */
+    public function registerMe2FA(array $data = []): void
+    {
+        $this->http->put('v1/user/me/register2FA', $data);
+    }
 }

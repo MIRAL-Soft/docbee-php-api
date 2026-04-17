@@ -21,4 +21,6 @@ final class CustomerObjectResource extends AbstractResource
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
     public function move(int $id, array $data): array { return $this->http->put("{$this->endpoint}/{$id}/move", $data); }
     public function findByScanCode(string $scanCode): array { return $this->http->get("{$this->endpoint}/findByScanCode/{$scanCode}"); }
+    public function export(int $exportProfileId): array { return $this->http->get("{$this->endpoint}/export/{$exportProfileId}"); }
+    public function exportByIds(int $exportProfileId, array $ids): array { return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
 }

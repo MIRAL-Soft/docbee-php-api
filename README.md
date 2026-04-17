@@ -130,6 +130,7 @@ Access via the `DocbeeClient` instance. All resources support `find()`, `list()`
 | `$client->exportProfiles()` | Export profiles |
 | `$client->invoices()` | Invoices |
 | `$client->materialItems()` | Material items / products |
+| `$client->messages()` | Send e-mails (`sendMail()`) |
 | `$client->messageTemplates()` | Message templates |
 | `$client->notes()` | Notes |
 | `$client->notifications()` | Notifications |
@@ -196,7 +197,7 @@ Sub-resources are scoped to a parent record. Each call returns a fresh resource 
 | `$client->docBeeScriptParameters(int $scriptId)` | `v1/docBeeScript/{id}/param` |
 | `$client->paymentProfileMappings(int $paymentProfileId)` | `v1/paymentProfile/{id}/mapping` |
 | `$client->presetValues(int $presetProfileId)` | `v1/presetProfile/{id}/value` |
-| `$client->protocolEntries(int $protocolId)` | `v1/protocol/{id}/entry` |
+| `$client->protocolEntries(int $protocolId)` | `v1/protocol/{id}/protocolEntry` |
 | `$client->protocolGroupData(int $protocolId)` | `v1/protocol/{id}/groupData` |
 | `$client->protocolDocumentTemplates(int $protocolTemplateId)` | `v1/protocolTemplate/{id}/documentTemplate` |
 | `$client->ruleEngineConditions(int $actionId)` | `v1/ruleEngineAction/{id}/condition` |
@@ -210,6 +211,20 @@ Sub-resources are scoped to a parent record. Each call returns a fresh resource 
 | `$client->ticketBoardFilters(int $boardId)` | `v1/ticketBoard/{id}/filter` |
 | `$client->ticketLinks(int $ticketId)` | `v1/ticket/{id}/link` |
 | `$client->ticketMessages(int $ticketId)` | `v1/ticket/{id}/message` |
+| `$client->documentTravelLogs(int $documentId)` | `v1/docBeeDocument/{id}/travelLog` |
+| `$client->documentTemplateTaskTemplates(int $documentId)` | `v1/docBeeDocumentTemplate/{id}/taskTemplate` |
+| `$client->documentTemplateTaskTemplateMaterials(int $documentId, int $taskTemplateId)` | `v1/docBeeDocumentTemplate/{id}/taskTemplate/{taskTemplateId}/materialTemplate` |
+| `$client->documentTemplateTaskTemplatePlanningTimes(int $documentId, int $taskTemplateId)` | `v1/docBeeDocumentTemplate/{id}/taskTemplate/{taskTemplateId}/planningTimeTemplate` |
+| `$client->documentTemplateTaskTemplateWorkLogs(int $documentId, int $taskTemplateId)` | `v1/docBeeDocumentTemplate/{id}/taskTemplate/{taskTemplateId}/workLogTemplate` |
+| `$client->documentTemplateTravelLogTemplates(int $documentId)` | `v1/docBeeDocumentTemplate/{id}/travelLogTemplate` |
+| `$client->docBeeDocumentTasks(int $documentId)` | `v1/docBeeDocument/{id}/task` |
+| `$client->docBeeDocumentTaskMaterials(int $documentId, int $taskId)` | `v1/docBeeDocument/{id}/task/{taskId}/material` |
+| `$client->docBeeDocumentTaskPlanningTimes(int $documentId, int $taskId)` | `v1/docBeeDocument/{id}/task/{taskId}/planningTime` |
+| `$client->docBeeDocumentTaskWorkLogs(int $documentId, int $taskId)` | `v1/docBeeDocument/{id}/task/{taskId}/workLog` |
+| `$client->protocolGroupEntries(int $protocolId, int $groupId)` | `v1/protocol/{id}/protocolGroupEntries/{groupId}` |
+| `$client->protocolGroup(int $protocolId)` | `v1/protocol/{id}/group/{templateGroupId}/…` |
+| `$client->protocolPlanningTimes(int $protocolId)` | `v1/protocol/{id}/planningTime` |
+| `$client->protocolTemplateEntryElements(int $entryId)` | `v1/protocolTemplateEntry/{id}/element` |
 
 **Example:**
 

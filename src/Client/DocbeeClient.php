@@ -83,6 +83,7 @@ use miralsoft\docbee\api\Resource\UserActivityResource;
 use miralsoft\docbee\api\Resource\UserProfileResource;
 use miralsoft\docbee\api\Resource\UserResource;
 use miralsoft\docbee\api\Resource\WebhookResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentSiteConfigResource;
 use miralsoft\docbee\api\Resource\WorkPipeResource;
 use Psr\Log\LoggerInterface;
 
@@ -199,6 +200,7 @@ final class DocbeeClient
     private ?UserProfileResource         $userProfiles         = null;
     private ?WebhookResource             $webhooks             = null;
     private ?WorkPipeResource            $workPipes            = null;
+    private ?DocBeeDocumentSiteConfigResource $docBeeDocumentSiteConfig = null;
 
     /**
      * @param DocbeeConfig         $config An immutable configuration object.
@@ -917,5 +919,113 @@ final class DocbeeClient
     public function presetValues(int $presetProfileId): \miralsoft\docbee\api\Resource\PresetValueResource
     {
         return new \miralsoft\docbee\api\Resource\PresetValueResource($this->http, $presetProfileId);
+    }
+
+    // ── Messaging ─────────────────────────────────────────────────────────────
+
+    /** Returns the message resource (e.g. for sending e-mails via sendMail()). */
+    public function messages(): \miralsoft\docbee\api\Resource\MessageResource
+    {
+        return new \miralsoft\docbee\api\Resource\MessageResource($this->http);
+    }
+
+    // ── Document travel logs ───────────────────────────────────────────────────
+
+    /** Returns the travel-log sub-resource for a specific document. */
+    public function documentTravelLogs(int $documentId): \miralsoft\docbee\api\Resource\DocBeeDocumentTravelLogResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTravelLogResource($this->http, $documentId);
+    }
+
+    // ── Document-template task templates (and their nested sub-resources) ─────
+
+    /** Returns the task-template sub-resource for a specific document template. */
+    public function documentTemplateTaskTemplates(int $documentId): \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateResource($this->http, $documentId);
+    }
+
+    /** Returns the material-template sub-resource for a task template inside a document template. */
+    public function documentTemplateTaskTemplateMaterials(int $documentId, int $taskTemplateId): \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource($this->http, $documentId, $taskTemplateId);
+    }
+
+    /** Returns the planning-time-template sub-resource for a task template inside a document template. */
+    public function documentTemplateTaskTemplatePlanningTimes(int $documentId, int $taskTemplateId): \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource($this->http, $documentId, $taskTemplateId);
+    }
+
+    /** Returns the work-log-template sub-resource for a task template inside a document template. */
+    public function documentTemplateTaskTemplateWorkLogs(int $documentId, int $taskTemplateId): \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource($this->http, $documentId, $taskTemplateId);
+    }
+
+    /** Returns the travel-log-template sub-resource for a specific document template. */
+    public function documentTemplateTravelLogTemplates(int $documentId): \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTravelLogTemplateResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTemplateTravelLogTemplateResource($this->http, $documentId);
+    }
+
+    // ── Document tasks (nested under a specific document) ─────────────────────
+
+    /** Returns the task sub-resource for a specific document (nested endpoint). */
+    public function docBeeDocumentTasks(int $documentId): \miralsoft\docbee\api\Resource\DocBeeDocumentTaskResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTaskResource($this->http, $documentId);
+    }
+
+    /** Returns the material sub-resource for a task inside a document. */
+    public function docBeeDocumentTaskMaterials(int $documentId, int $taskId): \miralsoft\docbee\api\Resource\DocBeeDocumentTaskMaterialResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTaskMaterialResource($this->http, $documentId, $taskId);
+    }
+
+    /** Returns the planning-time sub-resource for a task inside a document. */
+    public function docBeeDocumentTaskPlanningTimes(int $documentId, int $taskId): \miralsoft\docbee\api\Resource\DocBeeDocumentTaskPlanningTimeResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTaskPlanningTimeResource($this->http, $documentId, $taskId);
+    }
+
+    /** Returns the work-log sub-resource for a task inside a document. */
+    public function docBeeDocumentTaskWorkLogs(int $documentId, int $taskId): \miralsoft\docbee\api\Resource\DocBeeDocumentTaskWorkLogResource
+    {
+        return new \miralsoft\docbee\api\Resource\DocBeeDocumentTaskWorkLogResource($this->http, $documentId, $taskId);
+    }
+
+    // ── Protocol group entries ─────────────────────────────────────────────────
+
+    /** Returns the group-entries resource for a specific protocol + template group. */
+    public function protocolGroupEntries(int $protocolId, int $groupId): \miralsoft\docbee\api\Resource\ProtocolGroupEntriesResource
+    {
+        return new \miralsoft\docbee\api\Resource\ProtocolGroupEntriesResource($this->http, $protocolId, $groupId);
+    }
+
+    /** Returns the DocBeeDocument site configuration resource handler. */
+    public function docBeeDocumentSiteConfig(): DocBeeDocumentSiteConfigResource
+    {
+        return $this->docBeeDocumentSiteConfig ??= new DocBeeDocumentSiteConfigResource($this->http);
+    }
+
+    /** Returns the standalone group-actions resource for managing entries/mappings across all groups of a protocol. */
+    public function protocolGroup(int $protocolId): \miralsoft\docbee\api\Resource\ProtocolGroupResource
+    {
+        return new \miralsoft\docbee\api\Resource\ProtocolGroupResource($this->http, $protocolId);
+    }
+
+    /** Returns the planning-time sub-resource for a specific protocol. */
+    public function protocolPlanningTimes(int $protocolId): \miralsoft\docbee\api\Resource\ProtocolPlanningTimeResource
+    {
+        return new \miralsoft\docbee\api\Resource\ProtocolPlanningTimeResource($this->http, $protocolId);
+    }
+
+    // ── Protocol template entry elements ──────────────────────────────────────
+
+    /** Returns the element sub-resource for a specific protocol template entry. */
+    public function protocolTemplateEntryElements(int $entryId): \miralsoft\docbee\api\Resource\ProtocolTemplateEntryElementResource
+    {
+        return new \miralsoft\docbee\api\Resource\ProtocolTemplateEntryElementResource($this->http, $entryId);
     }
 }

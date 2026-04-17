@@ -720,9 +720,9 @@ final class ApiCompatChecker
                     $endpoint = $this->extractEndpointFromSource($filePath);
                 }
 
-                if ($endpoint === '') {
-                    continue;
-                }
+                // Note: standalone Resource classes (no $endpoint property, e.g. MessageResource)
+                // are intentionally kept with endpoint = '' so that their method bodies can
+                // still be scanned for explicit HTTP paths in checkEndpointCoverage().
             } catch (\Throwable) {
                 continue;
             }
@@ -730,6 +730,7 @@ final class ApiCompatChecker
             $resources[$shortName] = [
                 'class'    => $fullClass,
                 'endpoint' => $endpoint,
+                'filePath' => $filePath,
             ];
         }
 
@@ -762,6 +763,132 @@ final class ApiCompatChecker
         }
 
         return '';
+    }
+
+    /**
+     * Scans a resource PHP source file for all direct `$this->http->*()` call
+     * sites and returns the path strings used as the first argument.
+     *
+     * Two patterns are handled:
+     *  - Double-quoted strings: `"{$this->endpoint}/foo/{$id}"`
+     *    → `{$this->endpoint}` (and `{$this->base}`) are substituted with
+     *      $baseEndpoint; all remaining `{$...}` interpolations become `*`.
+     *  - Single-quoted literals: `'v1/message/sendMail'`
+     *    → returned as-is.
+     *
+     * Paths that still contain unresolved PHP expressions after substitution
+     * are silently skipped.
+     *
+     * @return list<string>
+     */
+    private function extractMethodEndpointsFromSource(string $filePath, string $baseEndpoint): array
+    {
+        try {
+            $src = @file_get_contents($filePath);
+            if ($src === false) {
+                return [];
+            }
+
+            $paths = [];
+
+            // Extract endpoint strings from constructor assignments, including ternary form:
+            //   simple:  $this->endpoint = 'v1/foo';
+            //   ternary: $this->endpoint = $x !== null ? "v1/foo/{$x}/bar" : 'v1/foo';
+            // This ensures sub-resources with optional-constructor patterns are discovered.
+            if (preg_match_all('/\$this->endpoint\s*=([^;]+);/', $src, $assignMatches) !== false) {
+                foreach ($assignMatches[1] as $assignment) {
+                    if (preg_match_all('/["\']([^"\']{4,})["\']/', $assignment, $strMatches) !== false) {
+                        foreach ($strMatches[1] as $ep) {
+                            if (!str_contains($ep, '/')) {
+                                continue; // not a path string
+                            }
+                            $ep = preg_replace('/\{\$[^}]+\}/', '*', $ep) ?? $ep;
+                            if (!str_contains($ep, '$')) {
+                                $paths[] = $ep;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Double-quoted first argument: $this->http->get("{$this->endpoint}/foo/{$id}", ...)
+            if (preg_match_all('/\$this->http->\w+\s*\(\s*"([^"]+)"/', $src, $matches) !== false) {
+                foreach ($matches[1] as $path) {
+                    // Resolve the most common self-referential placeholders
+                    $path = str_replace(
+                        ['{$this->endpoint}', '{$this->base}'],
+                        $baseEndpoint,
+                        $path
+                    );
+                    // Replace any remaining PHP variable interpolations with wildcard
+                    $path = preg_replace('/\{\$[^}]+\}/', '*', $path) ?? $path;
+                    // Skip if unresolved dollar-signs remain (complex dynamic construction)
+                    if (str_contains($path, '$')) {
+                        continue;
+                    }
+                    $paths[] = $path;
+                }
+            }
+
+            // Single-quoted first argument (literal, no interpolation):
+            // $this->http->post('v1/message/sendMail', $data)
+            if (preg_match_all('/\$this->http->\w+\s*\(\s*\'([^\']+)\'/', $src, $matches) !== false) {
+                foreach ($matches[1] as $path) {
+                    $paths[] = $path;
+                }
+            }
+
+            // Helper-method + concatenation:
+            //   private function base(int $x): string { return "v1/proto/{$id}/group/{$x}"; }
+            //   $this->http->get($this->base($x) . '/entries')
+            //   $this->http->put($this->base($x) . "/{$idx}/mapping", $data)
+            //
+            // 1. Extract private helper methods that return a URL template.
+            $helperMethods = [];
+            // Note: [^}]{0,2000} – no /s flag needed (character classes match newlines by default);
+            // the upper bound prevents excessive backtracking on pathological input.
+            if (preg_match_all(
+                '/private\s+function\s+(\w+)\s*\([^)]*\)\s*:\s*string\s*\{[^}]{0,2000}return\s*"([^"]+)"\s*;/',
+                $src, $helperMatches, PREG_SET_ORDER
+            ) !== false) {
+                foreach ($helperMatches as $hm) {
+                    $tpl = str_replace(['{$this->endpoint}', '{$this->base}'], $baseEndpoint, $hm[2]);
+                    $tpl = preg_replace('/\{\$[^}]+\}/', '*', $tpl) ?? $tpl;
+                    if (!str_contains($tpl, '$')) {
+                        $helperMethods[$hm[1]] = $tpl;
+                    }
+                }
+            }
+            // 2. Combine helper return-template with the concatenated suffix from each HTTP call.
+            foreach ($helperMethods as $helperName => $helperBase) {
+                $hp = preg_quote($helperName, '/');
+                // Single-quoted suffix: . '/entries'
+                if (preg_match_all(
+                    '/\$this->http->\w+\s*\(\s*\$this->' . $hp . '\s*\([^)]*\)\s*\.\s*\'([^\']+)\'/',
+                    $src, $sfxMatches
+                ) !== false) {
+                    foreach ($sfxMatches[1] as $sfx) {
+                        $paths[] = $helperBase . $sfx;
+                    }
+                }
+                // Double-quoted suffix (may contain variables): . "/{$groupIdx}/entries"
+                if (preg_match_all(
+                    '/\$this->http->\w+\s*\(\s*\$this->' . $hp . '\s*\([^)]*\)\s*\.\s*"([^"]+)"/',
+                    $src, $sfxMatches
+                ) !== false) {
+                    foreach ($sfxMatches[1] as $sfx) {
+                        $sfx = preg_replace('/\{\$[^}]+\}/', '*', $sfx) ?? $sfx;
+                        if (!str_contains($sfx, '$')) {
+                            $paths[] = $helperBase . $sfx;
+                        }
+                    }
+                }
+            }
+
+            return $paths;
+        } catch (\Throwable) {
+            return [];
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -1091,10 +1218,14 @@ final class ApiCompatChecker
         // to match the normalised spec paths.
         // Sub-resources store endpoints like "agreement/42/component" — normalise to
         // "agreement/*/component".
-        $versionPrefixes    = ['restapi/v1/', 'api/v1/', 'v1/'];
+        // Additionally, each resource's method bodies are scanned for explicit
+        // $this->http->*() calls so that action methods (export, getCustomFields, …)
+        // and standalone Resource classes are also counted as covered.
+        $versionPrefixes     = ['restapi/v1/', 'api/v1/', 'v1/'];
         $implementedPatterns = [];
-        foreach ($resources as $info) {
-            $ep = strtolower($info['endpoint']);
+
+        $normaliseEp = static function (string $ep) use ($versionPrefixes): string {
+            $ep = strtolower($ep);
             foreach ($versionPrefixes as $prefix) {
                 if (str_starts_with($ep, $prefix)) {
                     $ep = substr($ep, strlen($prefix));
@@ -1103,7 +1234,26 @@ final class ApiCompatChecker
             }
             $pattern = preg_replace('/\{[^}]+\}/', '*', $ep);
             $pattern = preg_replace('/\/\d+\//', '/*/', (string) $pattern);
-            $implementedPatterns[] = (string) $pattern;
+            return rtrim((string) $pattern, '/');   // strip meaningless trailing slash
+        };
+
+        foreach ($resources as $info) {
+            // 1. Base endpoint pattern (e.g. "protocol", "agreement/*/component")
+            if ($info['endpoint'] !== '') {
+                $implementedPatterns[] = $normaliseEp($info['endpoint']);
+            }
+
+            // 2. Method-level paths discovered by scanning HTTP call sites
+            $methodPaths = $this->extractMethodEndpointsFromSource(
+                $info['filePath'],
+                $info['endpoint']
+            );
+            foreach ($methodPaths as $mp) {
+                $p = $normaliseEp($mp);
+                if ($p !== '') {
+                    $implementedPatterns[] = $p;
+                }
+            }
         }
 
         // Build a set of top-level entity names that have at least one Resource class.
@@ -1135,7 +1285,9 @@ final class ApiCompatChecker
             $relative = ltrim($relative, '/');
 
             // Normalise path parameters: "/customer/{id}" → "customer/*"
-            $normalised = preg_replace('/\{[^}]+\}/', '*', $relative) ?? $relative;
+            // Also handles the spec typo pattern "${id}" (dollar sign before the brace)
+            // where the $ sits outside the braces: "foo/${id}" → "foo/*"
+            $normalised = preg_replace('/\$?\{[^}]+\}/', '*', $relative) ?? $relative;
             $normalised = strtolower($normalised);
 
             // Deduplicate (different HTTP methods on the same path share one entry)
@@ -1155,17 +1307,30 @@ final class ApiCompatChecker
 
             // Check if any resource covers this pattern
             $covered = false;
+            $stripped = preg_replace('#/\*$#', '', $normalised) ?? $normalised;
             foreach ($implementedPatterns as $p) {
-                // Exact or prefix match
+                // 1. Exact or prefix match
                 if ($p === $normalised || $p === rtrim($normalised, '/*')) {
                     $covered = true;
                     break;
                 }
-                // Match ignoring trailing /{id}
-                $stripped = preg_replace('#/\*$#', '', $normalised) ?? $normalised;
+                // 2. Match ignoring trailing /{id}
                 if ($p === $stripped) {
                     $covered = true;
                     break;
+                }
+                // 3. Wildcard-segment matching:
+                //    A '*' in the implemented pattern matches any single path segment.
+                //    E.g. the pattern '*/*/filter' (from MapViewFilterResource whose
+                //    endpoint is 'v1/{$type}/{$id}/filter') should match the spec path
+                //    'docbeedocumentmapview/*/filter'.
+                if (str_contains($p, '*')) {
+                    $escapedParts = array_map(static fn($s) => preg_quote($s, '#'), explode('*', $p));
+                    $rx = '#^' . implode('[^/]+', $escapedParts) . '$#';
+                    if (preg_match($rx, $normalised) || preg_match($rx, $stripped)) {
+                        $covered = true;
+                        break;
+                    }
                 }
             }
 

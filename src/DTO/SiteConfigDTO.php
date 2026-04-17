@@ -13,15 +13,18 @@ final class SiteConfigDTO extends AbstractDTO
         /** REST API Link */
         private readonly ?string $link,
         /** configuration data */
-        private ?array $config
+        private ?array $config,
+        /** forced flag (UserSiteConfig extension, readOnly) */
+        private readonly ?bool $forced = null,
     ) {}
 
     #[Override]
     public static function fromArray(array $data): static
     {
         return new self(
-            link: self::toString($data['link'] ?? null),
-            config: isset($data['config']) && is_array($data['config']) ? $data['config'] : null
+            link:   self::toString($data['link'] ?? null),
+            config: isset($data['config']) && is_array($data['config']) ? $data['config'] : null,
+            forced: isset($data['forced']) ? self::toBool($data['forced']) : null,
         );
     }
 
@@ -36,4 +39,5 @@ final class SiteConfigDTO extends AbstractDTO
     public function getId(): ?int { return null; }
     public function getLink(): ?string { return $this->link; }
     public function getConfig(): ?array { return $this->config; }
+    public function getForcedConfig(): ?bool { return $this->forced; }
 }

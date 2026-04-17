@@ -92,4 +92,16 @@ final class CustomerResource extends AbstractResource
     {
         return $this->http->post("{$this->endpoint}/guess", $data);
     }
+
+    /** Export customers for the given export profile. */
+    public function export(int $exportProfileId): array
+    {
+        return $this->http->get("{$this->endpoint}/export/{$exportProfileId}");
+    }
+
+    /** Export specific customers (by IDs) for the given export profile. */
+    public function exportByIds(int $exportProfileId, array $ids): array
+    {
+        return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);
+    }
 }

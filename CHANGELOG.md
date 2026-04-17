@@ -9,6 +9,89 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **15 new Resource classes** for previously unimplemented endpoint groups:
+  - **Group C — Protocol entry / group variants**: `ProtocolGroupEntriesResource`
+    (indexed group instance entries, `v1/protocol/{id}/protocolGroupEntries/{groupId}`),
+    `ProtocolGroupResource` (standalone class covering entries + mapping at both the
+    all-instances and per-`groupIdx` level), `ProtocolPlanningTimeResource`
+    (`v1/protocol/{id}/planningTime`).
+  - **Group D — Document tasks**: `DocBeeDocumentTaskResource`, `DocBeeDocumentTaskMaterialResource`,
+    `DocBeeDocumentTaskPlanningTimeResource`, `DocBeeDocumentTaskWorkLogResource`
+    (all nested under `v1/docBeeDocument/{id}/task/…`).
+  - **Group E — Document travel logs**: `DocBeeDocumentTravelLogResource`
+    (`v1/docBeeDocument/{id}/travelLog`).
+  - **Group F — Document-template task templates**: `DocBeeDocumentTemplateTaskTemplateResource`,
+    `DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource`,
+    `DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource`,
+    `DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource`,
+    `DocBeeDocumentTemplateTravelLogTemplateResource`.
+  - **Group G — Protocol template entry elements**: `ProtocolTemplateEntryElementResource`
+    (`v1/protocolTemplateEntry/{id}/element`).
+  - **Messaging**: `MessageResource` (standalone class, `POST v1/message/sendMail`).
+- **Action methods** added to existing resource classes:
+  - `UserResource`: `changePassword()`, `disableMe2FA()`, `registerMe2FA()`.
+  - `ProtocolTemplateTypeResource`: `getNavigationItems()`.
+  - `ReportResource`: `getElementTypes()`, `getElementType(int $id)`,
+    `getParameterTypes()`, `getParameterType(int $id)`.
+  - `ProtocolTemplateResource`: `getComponent()`, `updateComponent()`,
+    `getGroupComponent()`, `updateGroupComponent()`.
+  - `ProtocolGroupDataResource`: `markFinish()`.
+  - `ProtocolResource`: `export(int $exportProfileId)`, `exportByIds(int $exportProfileId, array $ids)`.
+  - `ObjectCategoryResource`: `getCustomFields(int $id)`, `updateCustomFields(int $id, array $data)`.
+  - `ExportProfileResource`: by-ID lookup methods for all six reference types
+    (`getExportEncoding`, `getExportFormat`, `getExportType`, `getFieldDomain`,
+    `getFieldDomainProperty`, `getFieldDomainPropertyDataFormatter`).
+  - `CustomerResource`, `CustomerContactResource`, `CustomerObjectResource`:
+    `export(int $exportProfileId)`, `exportByIds(int $exportProfileId, array $ids)`.
+  - `ObjectResource`, `ObserverResource`: `guess(array $data)`.
+- **Optional-constructor pattern** for `PaymentProfileMappingResource` and
+  `ProtocolDocumentTemplateResource`: omitting the parent ID gives the standalone
+  top-level endpoint; passing it gives the nested sub-resource endpoint.
+- **`DocbeeClient` factory methods** for all new resource classes:
+  `messages()`, `documentTravelLogs()`, `documentTemplateTaskTemplates()`,
+  `documentTemplateTaskTemplateMaterials()`, `documentTemplateTaskTemplatePlanningTimes()`,
+  `documentTemplateTaskTemplateWorkLogs()`, `documentTemplateTravelLogTemplates()`,
+  `protocolTemplateEntryElements()`, `docBeeDocumentTasks()`,
+  `docBeeDocumentTaskMaterials()`, `docBeeDocumentTaskPlanningTimes()`,
+  `docBeeDocumentTaskWorkLogs()`, `protocolGroupEntries()`, `protocolGroup()`,
+  `protocolPlanningTimes()`.
+- **26 new unit tests** in `SubResourceTest` covering the new sub-resource
+  constructor-injection pattern, endpoint construction, and DTO mapping.
+- **API compatibility checker improvements** (`bin/ApiCompatChecker.php`):
+  - Method-body scanning — `extractMethodEndpointsFromSource()` now scans every
+    `$this->http->*()` call site for the path argument, resolving `{$this->endpoint}`
+    and `{$this->base}` placeholders against the resource's discovered base endpoint.
+  - Ternary constructor detection — endpoints set via a ternary expression
+    (`$this->endpoint = $x ? 'a' : 'b'`) are now detected correctly.
+  - Spec `${id}` normalization — the spec occasionally uses `${id}` (dollar sign
+    before the brace); the normaliser now treats this identically to `{id}`.
+  - Wildcard-segment matching — a `*` in an implemented pattern now matches any
+    single path segment in the spec path, enabling MapView-filter coverage detection.
+  - Standalone-resource support — resource classes without an `$endpoint` property
+    (e.g. `MessageResource`, `ProtocolGroupResource`) are no longer silently skipped;
+    their method bodies are scanned for explicit path literals.
+  - Private helper-method extraction — URL-builder methods (e.g. `private function
+    base(int $x): string { return "v1/…/{$x}"; }`) are detected and their return
+    templates combined with the concatenated suffix in each HTTP call site.
+  - These improvements reduce the false-positive "unimplemented" count from **262 to 1**
+    (one known spec/implementation discrepancy: `protocol/findByNumber` uses a path
+    parameter in the implementation vs. a query parameter in the spec).
+
+### Fixed
+- `ProtocolEntryResource`: endpoint corrected from `v1/protocol/{id}/entry`
+  (non-existent path) to `v1/protocol/{id}/protocolEntry`; added six action methods:
+  `getByEntryMapping()`, `updateByEntryMapping()`, `getByEntryMappingAndGroupIdx()`,
+  `updateByEntryMappingAndGroupIdx()`, `findByPlaceholderName()`,
+  `updateByPlaceholderName()`.
+- `ContingentItemRecurrenceDTO`: removed spurious `name` field that is not present
+  in the OpenAPI specification.
+
+### Changed
+- `README.md`: sub-resource table updated with all new factory methods and corrected
+  `protocolEntries` endpoint (`v1/protocol/{id}/protocolEntry`).
+
+---
+
 - **Complete API coverage** — 98 new DTO classes and 93 new Resource classes covering every
   endpoint in the Docbee OpenAPI specification (v1).
 - **Sub-resource pattern** — 29 sub-resource classes for nested endpoints (e.g.

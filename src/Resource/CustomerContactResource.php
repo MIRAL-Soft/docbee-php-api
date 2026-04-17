@@ -60,4 +60,6 @@ final class CustomerContactResource extends AbstractResource
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
     public function move(int $id, array $data): CustomerContactDTO { return CustomerContactDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/move", $data)); }
+    public function export(int $exportProfileId): array { return $this->http->get("{$this->endpoint}/export/{$exportProfileId}"); }
+    public function exportByIds(int $exportProfileId, array $ids): array { return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
 }

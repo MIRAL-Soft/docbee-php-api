@@ -16,4 +16,6 @@ final class ProtocolTemplateTypeResource extends AbstractResource
     protected string $endpoint = 'v1/protocolTemplateType';
     protected string $dtoClass = ProtocolTemplateTypeDTO::class;
     protected string $listKey  = 'protocolTemplateType';
+
+    public function getNavigationItems(): array { return $this->http->get("{$this->endpoint}/navigationItems"); }
 }
