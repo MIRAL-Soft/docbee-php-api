@@ -20,6 +20,7 @@ use miralsoft\docbee\api\DTO\ProtocolEntryDTO;
 use miralsoft\docbee\api\DTO\RuleEngineConditionDTO;
 use miralsoft\docbee\api\DTO\SelectionValueDTO;
 use miralsoft\docbee\api\DTO\SlaProfileSpecializationDTO;
+use miralsoft\docbee\api\DTO\DocBeeDocumentTemplateTaskTemplateDTO;
 use miralsoft\docbee\api\DTO\TaskTemplateDTO;
 use miralsoft\docbee\api\DTO\TicketMessageDTO;
 use miralsoft\docbee\api\DTO\TravelLogDTO;
@@ -399,8 +400,8 @@ final class SubResourceTest extends TestCase
     public function testDocBeeDocumentTaskListReturnsDTOArray(): void
     {
         $this->http->method('get')->willReturn([
-            'totalCount'         => 1,
-            'docBeeDocumentTask' => [['id' => 42]],
+            'totalCount' => 1,
+            'task'       => [['id' => 42]],
         ]);
 
         $results = (new DocBeeDocumentTaskResource($this->http, 1))->list();
@@ -419,7 +420,7 @@ final class SubResourceTest extends TestCase
         $results = (new DocBeeDocumentTemplateTaskTemplateResource($this->http, 1))->list();
 
         $this->assertCount(1, $results);
-        $this->assertInstanceOf(TaskTemplateDTO::class, $results[0]);
+        $this->assertInstanceOf(DocBeeDocumentTemplateTaskTemplateDTO::class, $results[0]);
     }
 
     public function testProtocolGroupEntriesListReturnsDTOArray(): void

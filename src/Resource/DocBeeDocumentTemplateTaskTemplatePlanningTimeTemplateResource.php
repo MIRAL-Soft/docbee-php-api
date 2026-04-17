@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\Client\HttpClientInterface;
-use miralsoft\docbee\api\DTO\PlanningTimeDTO;
+use miralsoft\docbee\api\DTO\PlanningTimeTemplateDTO;
 
 /**
  * Provides access to Docbee PlanningTimeTemplate records for a DocBeeDocumentTemplate TaskTemplate (sub-resource).
  *
- * @extends AbstractResource<PlanningTimeDTO>
+ * @extends AbstractResource<PlanningTimeTemplateDTO>
  */
 final class DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource extends AbstractResource
 {
-    protected string $dtoClass = PlanningTimeDTO::class;
+    protected string $dtoClass = PlanningTimeTemplateDTO::class;
     protected string $listKey  = 'planningTimeTemplate';
 
     public function __construct(HttpClientInterface $http, int $documentTemplateId, int $taskTemplateId)

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\Client\HttpClientInterface;
-use miralsoft\docbee\api\DTO\TravelLogDTO;
+use miralsoft\docbee\api\DTO\TravelLogTemplateDTO;
 
 /**
  * Provides access to Docbee TravelLogTemplate records for a DocBeeDocumentTemplate (sub-resource).
  *
- * @extends AbstractResource<TravelLogDTO>
+ * @extends AbstractResource<TravelLogTemplateDTO>
  */
 final class DocBeeDocumentTemplateTravelLogTemplateResource extends AbstractResource
 {
-    protected string $dtoClass = TravelLogDTO::class;
+    protected string $dtoClass = TravelLogTemplateDTO::class;
     protected string $listKey  = 'travelLogTemplate';
 
     public function __construct(HttpClientInterface $http, int $documentTemplateId)

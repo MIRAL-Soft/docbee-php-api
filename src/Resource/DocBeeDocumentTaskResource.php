@@ -15,7 +15,7 @@ use miralsoft\docbee\api\DTO\DocBeeDocumentTaskDTO;
 final class DocBeeDocumentTaskResource extends AbstractResource
 {
     protected string $dtoClass = DocBeeDocumentTaskDTO::class;
-    protected string $listKey  = 'docBeeDocumentTask';
+    protected string $listKey  = 'task';
 
     public function __construct(HttpClientInterface $http, int $docBeeDocumentId)
     {

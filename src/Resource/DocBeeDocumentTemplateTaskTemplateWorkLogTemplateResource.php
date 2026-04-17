@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\Client\HttpClientInterface;
-use miralsoft\docbee\api\DTO\WorkLogDTO;
+use miralsoft\docbee\api\DTO\WorkLogTemplateDTO;
 
 /**
  * Provides access to Docbee WorkLogTemplate records for a DocBeeDocumentTemplate TaskTemplate (sub-resource).
  *
- * @extends AbstractResource<WorkLogDTO>
+ * @extends AbstractResource<WorkLogTemplateDTO>
  */
 final class DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource extends AbstractResource
 {
-    protected string $dtoClass = WorkLogDTO::class;
+    protected string $dtoClass = WorkLogTemplateDTO::class;
     protected string $listKey  = 'workLogTemplate';
 
     public function __construct(HttpClientInterface $http, int $documentTemplateId, int $taskTemplateId)

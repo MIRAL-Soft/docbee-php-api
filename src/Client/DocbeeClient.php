@@ -83,6 +83,7 @@ use miralsoft\docbee\api\Resource\UserActivityResource;
 use miralsoft\docbee\api\Resource\UserProfileResource;
 use miralsoft\docbee\api\Resource\UserResource;
 use miralsoft\docbee\api\Resource\WebhookResource;
+use miralsoft\docbee\api\Resource\DocBeeDocumentSiteConfigResource;
 use miralsoft\docbee\api\Resource\WorkPipeResource;
 use Psr\Log\LoggerInterface;
 
@@ -199,6 +200,7 @@ final class DocbeeClient
     private ?UserProfileResource         $userProfiles         = null;
     private ?WebhookResource             $webhooks             = null;
     private ?WorkPipeResource            $workPipes            = null;
+    private ?DocBeeDocumentSiteConfigResource $docBeeDocumentSiteConfig = null;
 
     /**
      * @param DocbeeConfig         $config An immutable configuration object.
@@ -999,6 +1001,12 @@ final class DocbeeClient
     public function protocolGroupEntries(int $protocolId, int $groupId): \miralsoft\docbee\api\Resource\ProtocolGroupEntriesResource
     {
         return new \miralsoft\docbee\api\Resource\ProtocolGroupEntriesResource($this->http, $protocolId, $groupId);
+    }
+
+    /** Returns the DocBeeDocument site configuration resource handler. */
+    public function docBeeDocumentSiteConfig(): DocBeeDocumentSiteConfigResource
+    {
+        return $this->docBeeDocumentSiteConfig ??= new DocBeeDocumentSiteConfigResource($this->http);
     }
 
     /** Returns the standalone group-actions resource for managing entries/mappings across all groups of a protocol. */
