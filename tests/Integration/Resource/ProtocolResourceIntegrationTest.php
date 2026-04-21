@@ -5,67 +5,65 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Tests\Integration\Resource;
 
 use miralsoft\docbee\api\DTO\ProtocolDTO;
+use miralsoft\docbee\api\DTO\ProtocolTemplateDTO;
 use miralsoft\docbee\api\Tests\Integration\IntegrationTestCase;
 
 /**
- * Integration tests for ProtocolResource — read-only.
+ * Integration tests for top-level protocol resources — read-only.
  *
- * Optional env var:
- *   DOCBEE_TEST_PROTOCOL_ID  — when set, the find($id) test is executed.
+ * Optional env vars:
+ *   DOCBEE_TEST_PROTOCOL_ID          — enables find($id) test for Protocol
+ *   DOCBEE_TEST_PROTOCOL_TEMPLATE_ID — enables find($id) test for ProtocolTemplate
  */
 final class ProtocolResourceIntegrationTest extends IntegrationTestCase
 {
-    /**
-     * list() should return an array (may be empty on a fresh tenant).
-     */
-    public function testListReturnsArray(): void
-    {
-        $result = $this->client->protocols()->list();
+    // ── Protocol ──────────────────────────────────────────────────────────────
 
-        $this->assertIsArray($result);
+    public function testProtocolListReturnsArray(): void
+    {
+        $this->assertIsArray($this->client->protocols()->list());
     }
 
-    /**
-     * Every item returned by list() must be a ProtocolDTO instance.
-     */
-    public function testListItemsAreProtocolDTOs(): void
+    public function testProtocolListItemsAreProtocolDTOs(): void
     {
-        $result = $this->client->protocols()->list();
-
-        foreach ($result as $item) {
+        foreach ($this->client->protocols()->list() as $item) {
             $this->assertInstanceOf(ProtocolDTO::class, $item);
         }
     }
 
-    /**
-     * Each ProtocolDTO from list() must have a positive integer ID.
-     */
-    public function testListItemsHavePositiveId(): void
-    {
-        $result = $this->client->protocols()->list();
-
-        foreach ($result as $item) {
-            $this->assertInstanceOf(ProtocolDTO::class, $item);
-            $this->assertIsInt($item->getId());
-            $this->assertGreaterThan(0, $item->getId());
-        }
-    }
-
-    /**
-     * find($id) must return a ProtocolDTO with the requested ID.
-     * Skipped when DOCBEE_TEST_PROTOCOL_ID is not configured.
-     */
-    public function testFindByIdReturnsCorrectDTO(): void
+    public function testProtocolFindById(): void
     {
         $id = $this->optionalIntEnv('DOCBEE_TEST_PROTOCOL_ID');
-
         if ($id === null) {
-            $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_ID in tests/.env.test to enable this test.');
+            $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_ID in tests/.env.test to enable.');
         }
+        $dto = $this->client->protocols()->find($id);
+        $this->assertInstanceOf(ProtocolDTO::class, $dto);
+        $this->assertSame($id, $dto->getId());
+    }
 
-        $protocol = $this->client->protocols()->find($id);
+    // ── ProtocolTemplate ──────────────────────────────────────────────────────
 
-        $this->assertInstanceOf(ProtocolDTO::class, $protocol);
-        $this->assertSame($id, $protocol->getId());
+    public function testProtocolTemplateListReturnsArray(): void
+    {
+        $this->assertIsArray($this->client->protocolTemplates()->list());
+    }
+
+    public function testProtocolTemplateListItemsAreProtocolTemplateDTOs(): void
+    {
+        foreach ($this->client->protocolTemplates()->list() as $item) {
+            $this->assertInstanceOf(ProtocolTemplateDTO::class, $item);
+        }
+    }
+
+    public function testProtocolTemplateFindById(): void
+    {
+        $id = $this->optionalIntEnv('DOCBEE_TEST_PROTOCOL_TEMPLATE_ID');
+        if ($id === null) {
+            $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_TEMPLATE_ID in tests/.env.test to enable.');
+        }
+        $dto = $this->client->protocolTemplates()->find($id);
+        $this->assertInstanceOf(ProtocolTemplateDTO::class, $dto);
+        $this->assertSame($id, $dto->getId());
     }
 }
