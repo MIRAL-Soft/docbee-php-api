@@ -21,12 +21,15 @@ final class ProtocolResourceIntegrationTest extends IntegrationTestCase
 
     public function testProtocolListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->protocols()->list());
+        $result = $this->callApi(fn() => $this->client->protocols()->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolListItemsAreProtocolDTOs(): void
     {
-        foreach ($this->client->protocols()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocols()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ProtocolDTO::class, $item);
         }
     }
@@ -37,7 +40,7 @@ final class ProtocolResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->protocols()->find($id);
+        $dto = $this->callApi(fn() => $this->client->protocols()->find($id));
         $this->assertInstanceOf(ProtocolDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -46,12 +49,15 @@ final class ProtocolResourceIntegrationTest extends IntegrationTestCase
 
     public function testProtocolTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->protocolTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->protocolTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolTemplateListItemsAreProtocolTemplateDTOs(): void
     {
-        foreach ($this->client->protocolTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ProtocolTemplateDTO::class, $item);
         }
     }
@@ -62,7 +68,7 @@ final class ProtocolResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_TEMPLATE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->protocolTemplates()->find($id);
+        $dto = $this->callApi(fn() => $this->client->protocolTemplates()->find($id));
         $this->assertInstanceOf(ProtocolTemplateDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }

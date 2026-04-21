@@ -36,12 +36,15 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
 
     public function testContingentListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->contingents()->list());
+        $result = $this->callApi(fn() => $this->client->contingents()->list());
+        $this->assertIsArray($result);
     }
 
     public function testContingentListItemsAreContingentDTOs(): void
     {
-        foreach ($this->client->contingents()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->contingents()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ContingentDTO::class, $item);
         }
     }
@@ -52,7 +55,7 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->contingents()->find($id);
+        $dto = $this->callApi(fn() => $this->client->contingents()->find($id));
         $this->assertInstanceOf(ContingentDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -65,7 +68,8 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->contingentElements($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->contingentElements($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testContingentElementListItemsAreContingentElementDTOs(): void
@@ -74,7 +78,9 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->contingentElements($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->contingentElements($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ContingentElementDTO::class, $item);
         }
     }
@@ -87,7 +93,8 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->contingentItems($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->contingentItems($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testContingentItemListItemsAreContingentItemDTOs(): void
@@ -96,7 +103,9 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->contingentItems($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->contingentItems($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ContingentItemDTO::class, $item);
         }
     }
@@ -109,7 +118,8 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->contingentItemRecurrences($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->contingentItemRecurrences($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testContingentItemRecurrenceListItemsAreContingentItemRecurrenceDTOs(): void
@@ -118,7 +128,9 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CONTINGENT_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->contingentItemRecurrences($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->contingentItemRecurrences($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ContingentItemRecurrenceDTO::class, $item);
         }
     }
@@ -127,12 +139,15 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
 
     public function testCostEstimationListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->costEstimations()->list());
+        $result = $this->callApi(fn() => $this->client->costEstimations()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCostEstimationListItemsAreCostEstimationDTOs(): void
     {
-        foreach ($this->client->costEstimations()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->costEstimations()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CostEstimationDTO::class, $item);
         }
     }
@@ -143,7 +158,7 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_COST_ESTIMATION_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->costEstimations()->find($id);
+        $dto = $this->callApi(fn() => $this->client->costEstimations()->find($id));
         $this->assertInstanceOf(CostEstimationDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -156,7 +171,8 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_COST_ESTIMATION_TASKS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->costEstimationTasks($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->costEstimationTasks($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testCostEstimationTaskListItemsAreCostEstimationTaskDTOs(): void
@@ -165,7 +181,9 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_COST_ESTIMATION_TASKS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->costEstimationTasks($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->costEstimationTasks($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CostEstimationTaskDTO::class, $item);
         }
     }
@@ -174,12 +192,15 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
 
     public function testCostEstimationTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->costEstimationTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->costEstimationTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCostEstimationTemplateListItemsAreCostEstimationTemplateDTOs(): void
     {
-        foreach ($this->client->costEstimationTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->costEstimationTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CostEstimationTemplateDTO::class, $item);
         }
     }
@@ -190,7 +211,7 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_COST_ESTIMATION_TEMPLATE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->costEstimationTemplates()->find($id);
+        $dto = $this->callApi(fn() => $this->client->costEstimationTemplates()->find($id));
         $this->assertInstanceOf(CostEstimationTemplateDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -203,7 +224,8 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_COST_ESTIMATION_TASK_TEMPLATES_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->costEstimationTaskTemplates($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->costEstimationTaskTemplates($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testCostEstimationTaskTemplateListItemsAreCostEstimationTaskTemplateDTOs(): void
@@ -212,7 +234,9 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_COST_ESTIMATION_TASK_TEMPLATES_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->costEstimationTaskTemplates($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->costEstimationTaskTemplates($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CostEstimationTaskTemplateDTO::class, $item);
         }
     }
@@ -221,12 +245,15 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
 
     public function testTaskTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->taskTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->taskTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTaskTemplateListItemsAreTaskTemplateDTOs(): void
     {
-        foreach ($this->client->taskTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->taskTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TaskTemplateDTO::class, $item);
         }
     }
@@ -235,12 +262,15 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
 
     public function testDashboardListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->dashboards()->list());
+        $result = $this->callApi(fn() => $this->client->dashboards()->list());
+        $this->assertIsArray($result);
     }
 
     public function testDashboardListItemsAreDashboardDTOs(): void
     {
-        foreach ($this->client->dashboards()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->dashboards()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DashboardDTO::class, $item);
         }
     }
@@ -251,7 +281,7 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DASHBOARD_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->dashboards()->find($id);
+        $dto = $this->callApi(fn() => $this->client->dashboards()->find($id));
         $this->assertInstanceOf(DashboardDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -264,7 +294,8 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DASHBOARD_WIDGETS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->dashboardWidgets($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->dashboardWidgets($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDashboardWidgetListItemsAreDashboardWidgetDTOs(): void
@@ -273,7 +304,9 @@ final class PlanningResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DASHBOARD_WIDGETS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->dashboardWidgets($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->dashboardWidgets($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DashboardWidgetDTO::class, $item);
         }
     }

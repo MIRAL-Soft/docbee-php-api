@@ -25,12 +25,15 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
 
     public function testInvoiceListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->invoices()->list());
+        $result = $this->callApi(fn() => $this->client->invoices()->list());
+        $this->assertIsArray($result);
     }
 
     public function testInvoiceListItemsAreInvoiceDTOs(): void
     {
-        foreach ($this->client->invoices()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->invoices()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(InvoiceDTO::class, $item);
         }
     }
@@ -39,12 +42,15 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
 
     public function testPaymentProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->paymentProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->paymentProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testPaymentProfileListItemsArePaymentProfileDTOs(): void
     {
-        foreach ($this->client->paymentProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->paymentProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PaymentProfileDTO::class, $item);
         }
     }
@@ -55,7 +61,7 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PAYMENT_PROFILE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->paymentProfiles()->find($id);
+        $dto = $this->callApi(fn() => $this->client->paymentProfiles()->find($id));
         $this->assertInstanceOf(PaymentProfileDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -68,7 +74,8 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PAYMENT_PROFILE_MAPPINGS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->paymentProfileMappings($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->paymentProfileMappings($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testPaymentProfileMappingListItemsArePaymentProfileMappingDTOs(): void
@@ -77,7 +84,9 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PAYMENT_PROFILE_MAPPINGS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->paymentProfileMappings($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->paymentProfileMappings($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PaymentProfileMappingDTO::class, $item);
         }
     }
@@ -86,12 +95,15 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
 
     public function testExportProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->exportProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->exportProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testExportProfileListItemsAreExportProfileDTOs(): void
     {
-        foreach ($this->client->exportProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->exportProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ExportProfileDTO::class, $item);
         }
     }
@@ -102,7 +114,7 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_EXPORT_PROFILE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->exportProfiles()->find($id);
+        $dto = $this->callApi(fn() => $this->client->exportProfiles()->find($id));
         $this->assertInstanceOf(ExportProfileDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -111,12 +123,15 @@ final class FinanceResourceIntegrationTest extends IntegrationTestCase
 
     public function testPdfLayoutListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->pdfLayouts()->list());
+        $result = $this->callApi(fn() => $this->client->pdfLayouts()->list());
+        $this->assertIsArray($result);
     }
 
     public function testPdfLayoutListItemsArePdfLayoutDTOs(): void
     {
-        foreach ($this->client->pdfLayouts()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->pdfLayouts()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PdfLayoutDTO::class, $item);
         }
     }

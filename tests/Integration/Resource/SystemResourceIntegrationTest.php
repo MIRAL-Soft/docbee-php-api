@@ -33,12 +33,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testEnvVariableListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->envVariables()->list());
+        $result = $this->callApi(fn() => $this->client->envVariables()->list());
+        $this->assertIsArray($result);
     }
 
     public function testEnvVariableListItemsAreEnvVariableDTOs(): void
     {
-        foreach ($this->client->envVariables()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->envVariables()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(EnvVariableDTO::class, $item);
         }
     }
@@ -47,12 +50,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testErrorLogListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->errorLogs()->list());
+        $result = $this->callApi(fn() => $this->client->errorLogs()->list());
+        $this->assertIsArray($result);
     }
 
     public function testErrorLogListItemsAreErrorLogDTOs(): void
     {
-        foreach ($this->client->errorLogs()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->errorLogs()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ErrorLogDTO::class, $item);
         }
     }
@@ -61,12 +67,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testWebhookListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->webhooks()->list());
+        $result = $this->callApi(fn() => $this->client->webhooks()->list());
+        $this->assertIsArray($result);
     }
 
     public function testWebhookListItemsAreWebhookDTOs(): void
     {
-        foreach ($this->client->webhooks()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->webhooks()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(WebhookDTO::class, $item);
         }
     }
@@ -75,12 +84,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testWorkPipeListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->workPipes()->list());
+        $result = $this->callApi(fn() => $this->client->workPipes()->list());
+        $this->assertIsArray($result);
     }
 
     public function testWorkPipeListItemsAreWorkPipeDTOs(): void
     {
-        foreach ($this->client->workPipes()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->workPipes()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(WorkPipeDTO::class, $item);
         }
     }
@@ -89,12 +101,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testNotificationListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->notifications()->list());
+        $result = $this->callApi(fn() => $this->client->notifications()->list());
+        $this->assertIsArray($result);
     }
 
     public function testNotificationListItemsAreNotificationDTOs(): void
     {
-        foreach ($this->client->notifications()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->notifications()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(NotificationDTO::class, $item);
         }
     }
@@ -103,12 +118,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testMessageTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->messageTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->messageTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testMessageTemplateListItemsAreMessageTemplateDTOs(): void
     {
-        foreach ($this->client->messageTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->messageTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(MessageTemplateDTO::class, $item);
         }
     }
@@ -117,12 +135,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocBeeScriptListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->docBeeScripts()->list());
+        $result = $this->callApi(fn() => $this->client->docBeeScripts()->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocBeeScriptListItemsAreDocBeeScriptDTOs(): void
     {
-        foreach ($this->client->docBeeScripts()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->docBeeScripts()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeScriptDTO::class, $item);
         }
     }
@@ -133,7 +154,7 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DOC_BEE_SCRIPT_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->docBeeScripts()->find($id);
+        $dto = $this->callApi(fn() => $this->client->docBeeScripts()->find($id));
         $this->assertInstanceOf(DocBeeScriptDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -146,7 +167,8 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DOC_BEE_SCRIPT_PARAMS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->docBeeScriptParameters($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->docBeeScriptParameters($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocBeeScriptParameterListItemsAreDocBeeScriptParameterDTOs(): void
@@ -155,7 +177,9 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DOC_BEE_SCRIPT_PARAMS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->docBeeScriptParameters($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->docBeeScriptParameters($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeScriptParameterDTO::class, $item);
         }
     }
@@ -164,12 +188,15 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
 
     public function testRuleEngineActionListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ruleEngineActions()->list());
+        $result = $this->callApi(fn() => $this->client->ruleEngineActions()->list());
+        $this->assertIsArray($result);
     }
 
     public function testRuleEngineActionListItemsAreRuleEngineActionDTOs(): void
     {
-        foreach ($this->client->ruleEngineActions()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ruleEngineActions()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(RuleEngineActionDTO::class, $item);
         }
     }
@@ -180,7 +207,7 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_ACTION_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->ruleEngineActions()->find($id);
+        $dto = $this->callApi(fn() => $this->client->ruleEngineActions()->find($id));
         $this->assertInstanceOf(RuleEngineActionDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -193,7 +220,8 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ruleEngineConditions($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ruleEngineConditions($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testRuleEngineConditionListItemsAreRuleEngineConditionDTOs(): void
@@ -202,7 +230,9 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ruleEngineConditions($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ruleEngineConditions($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(RuleEngineConditionDTO::class, $item);
         }
     }
@@ -215,7 +245,8 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ruleEngineReactions($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ruleEngineReactions($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testRuleEngineReactionListItemsAreRuleEngineReactionDTOs(): void
@@ -224,7 +255,9 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ruleEngineReactions($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ruleEngineReactions($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(RuleEngineReactionDTO::class, $item);
         }
     }
@@ -237,7 +270,8 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ruleEngineSettings($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ruleEngineSettings($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testRuleEngineSettingListItemsAreRuleEngineSettingDTOs(): void
@@ -246,7 +280,9 @@ final class SystemResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_RULE_ENGINE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ruleEngineSettings($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ruleEngineSettings($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(RuleEngineSettingDTO::class, $item);
         }
     }

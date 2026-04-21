@@ -36,12 +36,15 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testProtocolEntryListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->protocolEntries($this->protocolId())->list());
+        $result = $this->callApi(fn() => $this->client->protocolEntries($this->protocolId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolEntryListItemsAreProtocolEntryDTOs(): void
     {
-        foreach ($this->client->protocolEntries($this->protocolId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolEntries($this->protocolId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ProtocolEntryDTO::class, $item);
         }
     }
@@ -50,12 +53,15 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testProtocolGroupDataListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->protocolGroupData($this->protocolId())->list());
+        $result = $this->callApi(fn() => $this->client->protocolGroupData($this->protocolId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolGroupDataListItemsAreProtocolGroupDataDTOs(): void
     {
-        foreach ($this->client->protocolGroupData($this->protocolId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolGroupData($this->protocolId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ProtocolGroupDataDTO::class, $item);
         }
     }
@@ -64,12 +70,15 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testProtocolPlanningTimeListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->protocolPlanningTimes($this->protocolId())->list());
+        $result = $this->callApi(fn() => $this->client->protocolPlanningTimes($this->protocolId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolPlanningTimeListItemsArePlanningTimeDTOs(): void
     {
-        foreach ($this->client->protocolPlanningTimes($this->protocolId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolPlanningTimes($this->protocolId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PlanningTimeDTO::class, $item);
         }
     }
@@ -85,7 +94,8 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         if ($protocolId === null || $groupId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_SUB_PARENT_ID and DOCBEE_TEST_PROTOCOL_GROUP_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->protocolGroupEntries($protocolId, $groupId)->list());
+        $result = $this->callApi(fn() => $this->client->protocolGroupEntries($protocolId, $groupId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolGroupEntriesListItemsAreProtocolEntryDTOs(): void
@@ -97,7 +107,9 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         if ($protocolId === null || $groupId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_SUB_PARENT_ID and DOCBEE_TEST_PROTOCOL_GROUP_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->protocolGroupEntries($protocolId, $groupId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolGroupEntries($protocolId, $groupId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ProtocolEntryDTO::class, $item);
         }
     }
@@ -110,7 +122,8 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_TEMPLATE_DOC_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->protocolDocumentTemplates($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->protocolDocumentTemplates($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolDocumentTemplateListItemsAreProtocolDocumentTemplateDTOs(): void
@@ -119,7 +132,9 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_TEMPLATE_DOC_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->protocolDocumentTemplates($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolDocumentTemplates($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ProtocolDocumentTemplateDTO::class, $item);
         }
     }
@@ -132,7 +147,8 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_TEMPLATE_ENTRY_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->protocolTemplateEntryElements($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->protocolTemplateEntryElements($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testProtocolTemplateEntryElementListItemsAreElementDTOs(): void
@@ -141,7 +157,9 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PROTOCOL_TEMPLATE_ENTRY_ELEMENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->protocolTemplateEntryElements($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->protocolTemplateEntryElements($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ElementDTO::class, $item);
         }
     }

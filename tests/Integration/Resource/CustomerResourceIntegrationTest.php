@@ -25,12 +25,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customers()->list());
+        $result = $this->callApi(fn() => $this->client->customers()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerListItemsAreCustomerDTOs(): void
     {
-        foreach ($this->client->customers()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customers()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerDTO::class, $item);
         }
     }
@@ -41,7 +44,7 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->customers()->find($id);
+        $dto = $this->callApi(fn() => $this->client->customers()->find($id));
         $this->assertInstanceOf(CustomerDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -50,12 +53,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerContactListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customerContacts()->list());
+        $result = $this->callApi(fn() => $this->client->customerContacts()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerContactListItemsAreCustomerContactDTOs(): void
     {
-        foreach ($this->client->customerContacts()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customerContacts()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerContactDTO::class, $item);
         }
     }
@@ -64,12 +70,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerLocationListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customerLocations()->list());
+        $result = $this->callApi(fn() => $this->client->customerLocations()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerLocationListItemsAreCustomerLocationDTOs(): void
     {
-        foreach ($this->client->customerLocations()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customerLocations()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerLocationDTO::class, $item);
         }
     }
@@ -78,12 +87,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerObjectListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customerObjects()->list());
+        $result = $this->callApi(fn() => $this->client->customerObjects()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerObjectListItemsAreCustomerObjectDTOs(): void
     {
-        foreach ($this->client->customerObjects()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customerObjects()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerObjectDTO::class, $item);
         }
     }
@@ -92,12 +104,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customerProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->customerProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerProfileListItemsAreCustomerProfileDTOs(): void
     {
-        foreach ($this->client->customerProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customerProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerProfileDTO::class, $item);
         }
     }
@@ -106,12 +121,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerStatusListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customerStatuses()->list());
+        $result = $this->callApi(fn() => $this->client->customerStatuses()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerStatusListItemsAreCustomerStatusDTOs(): void
     {
-        foreach ($this->client->customerStatuses()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customerStatuses()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerStatusDTO::class, $item);
         }
     }
@@ -120,12 +138,15 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerUserListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->customerUsers()->list());
+        $result = $this->callApi(fn() => $this->client->customerUsers()->list());
+        $this->assertIsArray($result);
     }
 
     public function testCustomerUserListItemsAreCustomerUserDTOs(): void
     {
-        foreach ($this->client->customerUsers()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->customerUsers()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(CustomerUserDTO::class, $item);
         }
     }

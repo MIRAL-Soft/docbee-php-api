@@ -35,12 +35,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->tickets()->list());
+        $result = $this->callApi(fn() => $this->client->tickets()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketListItemsAreTicketDTOs(): void
     {
-        foreach ($this->client->tickets()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->tickets()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketDTO::class, $item);
         }
     }
@@ -51,7 +54,7 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->tickets()->find($id);
+        $dto = $this->callApi(fn() => $this->client->tickets()->find($id));
         $this->assertInstanceOf(TicketDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -60,12 +63,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketStatusListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketStatuses()->list());
+        $result = $this->callApi(fn() => $this->client->ticketStatuses()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketStatusListItemsAreTicketStatusDTOs(): void
     {
-        foreach ($this->client->ticketStatuses()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketStatuses()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketStatusDTO::class, $item);
         }
     }
@@ -74,12 +80,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketCategoryListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketCategories()->list());
+        $result = $this->callApi(fn() => $this->client->ticketCategories()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketCategoryListItemsAreTicketCategoryDTOs(): void
     {
-        foreach ($this->client->ticketCategories()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketCategories()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketCategoryDTO::class, $item);
         }
     }
@@ -88,12 +97,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->ticketTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketTemplateListItemsAreTicketTemplateDTOs(): void
     {
-        foreach ($this->client->ticketTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketTemplateDTO::class, $item);
         }
     }
@@ -102,12 +114,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketLinkTypeListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketLinkTypes()->list());
+        $result = $this->callApi(fn() => $this->client->ticketLinkTypes()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketLinkTypeListItemsAreTicketLinkTypeDTOs(): void
     {
-        foreach ($this->client->ticketLinkTypes()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketLinkTypes()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketLinkTypeDTO::class, $item);
         }
     }
@@ -116,12 +131,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketBoardProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketBoardProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->ticketBoardProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketBoardProfileListItemsAreTicketBoardProfileDTOs(): void
     {
-        foreach ($this->client->ticketBoardProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketBoardProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketBoardProfileDTO::class, $item);
         }
     }
@@ -130,12 +148,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketBoardListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketBoards()->list());
+        $result = $this->callApi(fn() => $this->client->ticketBoards()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketBoardListItemsAreTicketBoardDTOs(): void
     {
-        foreach ($this->client->ticketBoards()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketBoards()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketBoardDTO::class, $item);
         }
     }
@@ -146,7 +167,7 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->ticketBoards()->find($id);
+        $dto = $this->callApi(fn() => $this->client->ticketBoards()->find($id));
         $this->assertInstanceOf(TicketBoardDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -155,12 +176,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketMailParserConfigListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketMailParserConfigs()->list());
+        $result = $this->callApi(fn() => $this->client->ticketMailParserConfigs()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketMailParserConfigListItemsAreTicketMailParserConfigDTOs(): void
     {
-        foreach ($this->client->ticketMailParserConfigs()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketMailParserConfigs()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketMailParserConfigDTO::class, $item);
         }
     }
@@ -169,12 +193,15 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
 
     public function testTicketRecurrenceListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->ticketRecurrences()->list());
+        $result = $this->callApi(fn() => $this->client->ticketRecurrences()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketRecurrenceListItemsAreTicketRecurrenceDTOs(): void
     {
-        foreach ($this->client->ticketRecurrences()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketRecurrences()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketRecurrenceDTO::class, $item);
         }
     }
@@ -187,7 +214,8 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ticketLinks($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ticketLinks($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketLinkListItemsAreTicketLinkDTOs(): void
@@ -196,7 +224,9 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ticketLinks($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketLinks($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketLinkDTO::class, $item);
         }
     }
@@ -209,7 +239,8 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ticketMessages($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ticketMessages($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketMessageListItemsAreTicketMessageDTOs(): void
@@ -218,7 +249,9 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ticketMessages($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketMessages($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketMessageDTO::class, $item);
         }
     }
@@ -231,7 +264,8 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ticketBoardColumns($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ticketBoardColumns($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketBoardColumnListItemsAreTicketBoardColumnDTOs(): void
@@ -240,7 +274,9 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ticketBoardColumns($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketBoardColumns($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketBoardColumnDTO::class, $item);
         }
     }
@@ -253,7 +289,8 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ticketBoardFields($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ticketBoardFields($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketBoardFieldListItemsAreTicketBoardFieldDTOs(): void
@@ -262,7 +299,9 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ticketBoardFields($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketBoardFields($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketBoardFieldDTO::class, $item);
         }
     }
@@ -275,7 +314,8 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->ticketBoardFilters($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->ticketBoardFilters($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testTicketBoardFilterListItemsAreTicketBoardFilterDTOs(): void
@@ -284,7 +324,9 @@ final class TicketResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_TICKET_BOARD_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->ticketBoardFilters($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->ticketBoardFilters($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TicketBoardFilterDTO::class, $item);
         }
     }

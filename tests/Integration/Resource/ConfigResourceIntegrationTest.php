@@ -37,12 +37,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testObjectCategoryListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->objectCategories()->list());
+        $result = $this->callApi(fn() => $this->client->objectCategories()->list());
+        $this->assertIsArray($result);
     }
 
     public function testObjectCategoryListItemsAreObjectCategoryDTOs(): void
     {
-        foreach ($this->client->objectCategories()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->objectCategories()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ObjectCategoryDTO::class, $item);
         }
     }
@@ -51,12 +54,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testObserverCategoryListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->observerCategories()->list());
+        $result = $this->callApi(fn() => $this->client->observerCategories()->list());
+        $this->assertIsArray($result);
     }
 
     public function testObserverCategoryListItemsAreObserverCategoryDTOs(): void
     {
-        foreach ($this->client->observerCategories()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->observerCategories()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ObserverCategoryDTO::class, $item);
         }
     }
@@ -65,12 +71,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testObserverTypeListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->observerTypes()->list());
+        $result = $this->callApi(fn() => $this->client->observerTypes()->list());
+        $this->assertIsArray($result);
     }
 
     public function testObserverTypeListItemsAreObserverTypeDTOs(): void
     {
-        foreach ($this->client->observerTypes()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->observerTypes()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ObserverTypeDTO::class, $item);
         }
     }
@@ -79,12 +88,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testObserverUserListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->observerUsers()->list());
+        $result = $this->callApi(fn() => $this->client->observerUsers()->list());
+        $this->assertIsArray($result);
     }
 
     public function testObserverUserListItemsAreObserverUserDTOs(): void
     {
-        foreach ($this->client->observerUsers()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->observerUsers()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ObserverUserDTO::class, $item);
         }
     }
@@ -93,12 +105,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testConfidentialTagListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->confidentialTags()->list());
+        $result = $this->callApi(fn() => $this->client->confidentialTags()->list());
+        $this->assertIsArray($result);
     }
 
     public function testConfidentialTagListItemsAreConfidentialTagDTOs(): void
     {
-        foreach ($this->client->confidentialTags()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->confidentialTags()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(ConfidentialTagDTO::class, $item);
         }
     }
@@ -107,12 +122,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testPermissionGroupListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->permissionGroups()->list());
+        $result = $this->callApi(fn() => $this->client->permissionGroups()->list());
+        $this->assertIsArray($result);
     }
 
     public function testPermissionGroupListItemsArePermissionGroupDTOs(): void
     {
-        foreach ($this->client->permissionGroups()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->permissionGroups()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PermissionGroupDTO::class, $item);
         }
     }
@@ -121,12 +139,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testDailyClosingConfigListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->dailyClosingConfigs()->list());
+        $result = $this->callApi(fn() => $this->client->dailyClosingConfigs()->list());
+        $this->assertIsArray($result);
     }
 
     public function testDailyClosingConfigListItemsAreDailyClosingConfigDTOs(): void
     {
-        foreach ($this->client->dailyClosingConfigs()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->dailyClosingConfigs()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DailyClosingConfigDTO::class, $item);
         }
     }
@@ -135,12 +156,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testTableConfigStorageListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->tableConfigStorages()->list());
+        $result = $this->callApi(fn() => $this->client->tableConfigStorages()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTableConfigStorageListItemsAreTableConfigStorageDTOs(): void
     {
-        foreach ($this->client->tableConfigStorages()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->tableConfigStorages()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TableConfigStorageDTO::class, $item);
         }
     }
@@ -149,12 +173,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testSelectionCategoryListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->selectionCategories()->list());
+        $result = $this->callApi(fn() => $this->client->selectionCategories()->list());
+        $this->assertIsArray($result);
     }
 
     public function testSelectionCategoryListItemsAreSelectionCategoryDTOs(): void
     {
-        foreach ($this->client->selectionCategories()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->selectionCategories()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(SelectionCategoryDTO::class, $item);
         }
     }
@@ -167,7 +194,8 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SELECTION_VALUES_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->selectionValues($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->selectionValues($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testSelectionValueListItemsAreSelectionValueDTOs(): void
@@ -176,7 +204,9 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SELECTION_VALUES_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->selectionValues($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->selectionValues($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(SelectionValueDTO::class, $item);
         }
     }
@@ -185,12 +215,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testPresetProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->presetProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->presetProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testPresetProfileListItemsArePresetProfileDTOs(): void
     {
-        foreach ($this->client->presetProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->presetProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PresetProfileDTO::class, $item);
         }
     }
@@ -201,7 +234,7 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PRESET_PROFILE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->presetProfiles()->find($id);
+        $dto = $this->callApi(fn() => $this->client->presetProfiles()->find($id));
         $this->assertInstanceOf(PresetProfileDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -214,7 +247,8 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PRESET_VALUES_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->presetValues($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->presetValues($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testPresetValueListItemsArePresetValueDTOs(): void
@@ -223,7 +257,9 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_PRESET_VALUES_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->presetValues($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->presetValues($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PresetValueDTO::class, $item);
         }
     }
@@ -232,12 +268,15 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
 
     public function testSlaProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->slaProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->slaProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testSlaProfileListItemsAreSlaProfileDTOs(): void
     {
-        foreach ($this->client->slaProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->slaProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(SlaProfileDTO::class, $item);
         }
     }
@@ -248,7 +287,7 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SLA_PROFILE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->slaProfiles()->find($id);
+        $dto = $this->callApi(fn() => $this->client->slaProfiles()->find($id));
         $this->assertInstanceOf(SlaProfileDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -261,7 +300,8 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SLA_PROFILE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->slaProfileSpecializations($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->slaProfileSpecializations($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testSlaProfileSpecializationListItemsAreSlaProfileSpecializationDTOs(): void
@@ -270,7 +310,9 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SLA_PROFILE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->slaProfileSpecializations($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->slaProfileSpecializations($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(SlaProfileSpecializationDTO::class, $item);
         }
     }
@@ -283,7 +325,8 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SLA_PROFILE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->slaProfileWorkingHours($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->slaProfileWorkingHours($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testSlaProfileWorkingHourListItemsAreSlaProfileWorkingHourDTOs(): void
@@ -292,7 +335,9 @@ final class ConfigResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_SLA_PROFILE_SUB_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->slaProfileWorkingHours($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->slaProfileWorkingHours($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(SlaProfileWorkingHourDTO::class, $item);
         }
     }

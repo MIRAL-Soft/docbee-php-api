@@ -23,12 +23,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testUserListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->users()->list());
+        $result = $this->callApi(fn() => $this->client->users()->list());
+        $this->assertIsArray($result);
     }
 
     public function testUserListItemsAreUserDTOs(): void
     {
-        foreach ($this->client->users()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->users()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(UserDTO::class, $item);
         }
     }
@@ -37,12 +40,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testUserProfileListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->userProfiles()->list());
+        $result = $this->callApi(fn() => $this->client->userProfiles()->list());
+        $this->assertIsArray($result);
     }
 
     public function testUserProfileListItemsAreUserProfileDTOs(): void
     {
-        foreach ($this->client->userProfiles()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->userProfiles()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(UserProfileDTO::class, $item);
         }
     }
@@ -51,12 +57,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testUserActivityListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->userActivities()->list());
+        $result = $this->callApi(fn() => $this->client->userActivities()->list());
+        $this->assertIsArray($result);
     }
 
     public function testUserActivityListItemsAreUserActivityDTOs(): void
     {
-        foreach ($this->client->userActivities()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->userActivities()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(UserActivityDTO::class, $item);
         }
     }
@@ -65,12 +74,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testAwayListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->away()->list());
+        $result = $this->callApi(fn() => $this->client->away()->list());
+        $this->assertIsArray($result);
     }
 
     public function testAwayListItemsAreAwayDTOs(): void
     {
-        foreach ($this->client->away()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->away()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AwayDTO::class, $item);
         }
     }
@@ -79,12 +91,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testAwayReasonListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->awayReasons()->list());
+        $result = $this->callApi(fn() => $this->client->awayReasons()->list());
+        $this->assertIsArray($result);
     }
 
     public function testAwayReasonListItemsAreAwayReasonDTOs(): void
     {
-        foreach ($this->client->awayReasons()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->awayReasons()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AwayReasonDTO::class, $item);
         }
     }
@@ -93,12 +108,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testNoteListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->notes()->list());
+        $result = $this->callApi(fn() => $this->client->notes()->list());
+        $this->assertIsArray($result);
     }
 
     public function testNoteListItemsAreNoteDTOs(): void
     {
-        foreach ($this->client->notes()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->notes()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(NoteDTO::class, $item);
         }
     }
@@ -107,12 +125,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testTimerListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->timers()->list());
+        $result = $this->callApi(fn() => $this->client->timers()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTimerListItemsAreTimerDTOs(): void
     {
-        foreach ($this->client->timers()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->timers()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TimerDTO::class, $item);
         }
     }
@@ -121,12 +142,15 @@ final class UserResourceIntegrationTest extends IntegrationTestCase
 
     public function testTimeRecordListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->timeRecords()->list());
+        $result = $this->callApi(fn() => $this->client->timeRecords()->list());
+        $this->assertIsArray($result);
     }
 
     public function testTimeRecordListItemsAreTimeRecordDTOs(): void
     {
-        foreach ($this->client->timeRecords()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->timeRecords()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TimeRecordDTO::class, $item);
         }
     }
