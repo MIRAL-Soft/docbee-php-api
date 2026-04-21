@@ -20,6 +20,8 @@ use miralsoft\docbee\api\Tests\Integration\IntegrationTestCase;
  *                                                   (reuses PROTOCOL_SUB_PARENT_ID if not set separately)
  *   DOCBEE_TEST_PROTOCOL_TEMPLATE_DOC_PARENT_ID  — ProtocolTemplate ID for protocolDocumentTemplates
  *   DOCBEE_TEST_PROTOCOL_TEMPLATE_ENTRY_ELEMENTS_PARENT_ID — ProtocolTemplateEntry ID for elements
+ *   DOCBEE_TEST_PROTOCOL_GROUP_PROTOCOL_ID     — Protocol ID for protocolGroup tests
+ *   DOCBEE_TEST_PROTOCOL_GROUP_TEMPLATE_ID     — TemplateGroup ID within that protocol
  */
 final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
 {
@@ -162,5 +164,33 @@ final class ProtocolSubResourceIntegrationTest extends IntegrationTestCase
         foreach ($result as $item) {
             $this->assertInstanceOf(ElementDTO::class, $item);
         }
+    }
+
+    // ── ProtocolGroup (entries + mapping) ────────────────────────────────────
+
+    private function protocolGroupIds(): array
+    {
+        $protocolId       = $this->optionalIntEnv('DOCBEE_TEST_PROTOCOL_GROUP_PROTOCOL_ID');
+        $templateGroupId  = $this->optionalIntEnv('DOCBEE_TEST_PROTOCOL_GROUP_TEMPLATE_ID');
+        if ($protocolId === null || $templateGroupId === null) {
+            $this->markTestSkipped(
+                'Set DOCBEE_TEST_PROTOCOL_GROUP_PROTOCOL_ID and DOCBEE_TEST_PROTOCOL_GROUP_TEMPLATE_ID in tests/.env.test to enable.'
+            );
+        }
+        return [$protocolId, $templateGroupId];
+    }
+
+    public function testProtocolGroupGetEntriesReturnsArray(): void
+    {
+        [$protocolId, $templateGroupId] = $this->protocolGroupIds();
+        $result = $this->callApi(fn() => $this->client->protocolGroup($protocolId)->getEntries($templateGroupId));
+        $this->assertIsArray($result);
+    }
+
+    public function testProtocolGroupGetMappingReturnsArray(): void
+    {
+        [$protocolId, $templateGroupId] = $this->protocolGroupIds();
+        $result = $this->callApi(fn() => $this->client->protocolGroup($protocolId)->getMapping($templateGroupId));
+        $this->assertIsArray($result);
     }
 }

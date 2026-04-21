@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace miralsoft\docbee\api\Tests\Integration\Resource;
 
+use miralsoft\docbee\api\DTO\CompanyDataDTO;
 use miralsoft\docbee\api\DTO\CustomColorDTO;
 use miralsoft\docbee\api\DTO\CustomFieldDTO;
 use miralsoft\docbee\api\DTO\DepartmentDTO;
@@ -296,6 +297,23 @@ final class OrganizationResourceIntegrationTest extends IntegrationTestCase
         $this->assertIsArray($result);
         foreach ($result as $item) {
             $this->assertInstanceOf(MaterialItemDTO::class, $item);
+        }
+    }
+
+    // ── CompanyData ───────────────────────────────────────────────────────────
+
+    public function testCompanyDataListReturnsArray(): void
+    {
+        $result = $this->callApi(fn() => $this->client->companyData()->list());
+        $this->assertIsArray($result);
+    }
+
+    public function testCompanyDataListItemsAreCompanyDataDTOs(): void
+    {
+        $result = $this->callApi(fn() => $this->client->companyData()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
+            $this->assertInstanceOf(CompanyDataDTO::class, $item);
         }
     }
 }
