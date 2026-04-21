@@ -23,12 +23,15 @@ final class DocumentResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documents()->list());
+        $result = $this->callApi(fn() => $this->client->documents()->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentListItemsAreDocBeeDocumentDTOs(): void
     {
-        foreach ($this->client->documents()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documents()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentDTO::class, $item);
         }
     }
@@ -39,7 +42,7 @@ final class DocumentResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_DOCUMENT_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->documents()->find($id);
+        $dto = $this->callApi(fn() => $this->client->documents()->find($id));
         $this->assertInstanceOf(DocBeeDocumentDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -48,12 +51,15 @@ final class DocumentResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->documentTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTemplateListItemsAreDocBeeDocumentTemplateDTOs(): void
     {
-        foreach ($this->client->documentTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentTemplateDTO::class, $item);
         }
     }
@@ -62,12 +68,15 @@ final class DocumentResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentRecurrenceListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentRecurrences()->list());
+        $result = $this->callApi(fn() => $this->client->documentRecurrences()->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentRecurrenceListItemsAreDocBeeDocumentRecurrenceDTOs(): void
     {
-        foreach ($this->client->documentRecurrences()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentRecurrences()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentRecurrenceDTO::class, $item);
         }
     }

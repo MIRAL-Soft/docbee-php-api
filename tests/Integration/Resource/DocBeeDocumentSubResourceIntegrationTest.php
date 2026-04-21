@@ -54,12 +54,15 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocBeeDocumentTaskListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->docBeeDocumentTasks($this->documentId())->list());
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTasks($this->documentId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocBeeDocumentTaskListItemsAreDocBeeDocumentTaskDTOs(): void
     {
-        foreach ($this->client->docBeeDocumentTasks($this->documentId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTasks($this->documentId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentTaskDTO::class, $item);
         }
     }
@@ -69,13 +72,16 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
     public function testDocBeeDocumentTaskMaterialListReturnsArray(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        $this->assertIsArray($this->client->docBeeDocumentTaskMaterials($docId, $taskId)->list());
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTaskMaterials($docId, $taskId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocBeeDocumentTaskMaterialListItemsAreMaterialDTOs(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        foreach ($this->client->docBeeDocumentTaskMaterials($docId, $taskId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTaskMaterials($docId, $taskId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(MaterialDTO::class, $item);
         }
     }
@@ -85,13 +91,16 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
     public function testDocBeeDocumentTaskPlanningTimeListReturnsArray(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        $this->assertIsArray($this->client->docBeeDocumentTaskPlanningTimes($docId, $taskId)->list());
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTaskPlanningTimes($docId, $taskId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocBeeDocumentTaskPlanningTimeListItemsArePlanningTimeDTOs(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        foreach ($this->client->docBeeDocumentTaskPlanningTimes($docId, $taskId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTaskPlanningTimes($docId, $taskId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PlanningTimeDTO::class, $item);
         }
     }
@@ -101,13 +110,16 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
     public function testDocBeeDocumentTaskWorkLogListReturnsArray(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        $this->assertIsArray($this->client->docBeeDocumentTaskWorkLogs($docId, $taskId)->list());
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTaskWorkLogs($docId, $taskId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocBeeDocumentTaskWorkLogListItemsAreWorkLogDTOs(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        foreach ($this->client->docBeeDocumentTaskWorkLogs($docId, $taskId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->docBeeDocumentTaskWorkLogs($docId, $taskId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(WorkLogDTO::class, $item);
         }
     }
@@ -116,12 +128,15 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentTravelLogListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentTravelLogs($this->documentId())->list());
+        $result = $this->callApi(fn() => $this->client->documentTravelLogs($this->documentId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTravelLogListItemsAreTravelLogDTOs(): void
     {
-        foreach ($this->client->documentTravelLogs($this->documentId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTravelLogs($this->documentId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TravelLogDTO::class, $item);
         }
     }
@@ -130,12 +145,15 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentMessageListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentMessages($this->documentId())->list());
+        $result = $this->callApi(fn() => $this->client->documentMessages($this->documentId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentMessageListItemsAreDocBeeDocumentMessageDTOs(): void
     {
-        foreach ($this->client->documentMessages($this->documentId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentMessages($this->documentId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentMessageDTO::class, $item);
         }
     }
@@ -144,12 +162,15 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentConflictListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentConflicts($this->documentId())->list());
+        $result = $this->callApi(fn() => $this->client->documentConflicts($this->documentId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentConflictListItemsAreDocBeeDocumentConflictDTOs(): void
     {
-        foreach ($this->client->documentConflicts($this->documentId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentConflicts($this->documentId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentConflictDTO::class, $item);
         }
     }
@@ -158,12 +179,15 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentTemplateTaskTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentTemplateTaskTemplates($this->documentId())->list());
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplates($this->documentId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTemplateTaskTemplateListItemsAreDocBeeDocumentTemplateTaskTemplateDTOs(): void
     {
-        foreach ($this->client->documentTemplateTaskTemplates($this->documentId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplates($this->documentId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(DocBeeDocumentTemplateTaskTemplateDTO::class, $item);
         }
     }
@@ -172,12 +196,15 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
 
     public function testDocumentTemplateTravelLogTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->documentTemplateTravelLogTemplates($this->documentId())->list());
+        $result = $this->callApi(fn() => $this->client->documentTemplateTravelLogTemplates($this->documentId())->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTemplateTravelLogTemplateListItemsAreTravelLogTemplateDTOs(): void
     {
-        foreach ($this->client->documentTemplateTravelLogTemplates($this->documentId())->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTemplateTravelLogTemplates($this->documentId())->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(TravelLogTemplateDTO::class, $item);
         }
     }
@@ -187,13 +214,16 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
     public function testDocumentTemplateTaskTemplateMaterialListReturnsArray(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        $this->assertIsArray($this->client->documentTemplateTaskTemplateMaterials($docId, $taskId)->list());
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplateMaterials($docId, $taskId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTemplateTaskTemplateMaterialListItemsAreMaterialTemplateDTOs(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        foreach ($this->client->documentTemplateTaskTemplateMaterials($docId, $taskId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplateMaterials($docId, $taskId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(MaterialTemplateDTO::class, $item);
         }
     }
@@ -203,13 +233,16 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
     public function testDocumentTemplateTaskTemplatePlanningTimeListReturnsArray(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        $this->assertIsArray($this->client->documentTemplateTaskTemplatePlanningTimes($docId, $taskId)->list());
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplatePlanningTimes($docId, $taskId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTemplateTaskTemplatePlanningTimeListItemsArePlanningTimeTemplateDTOs(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        foreach ($this->client->documentTemplateTaskTemplatePlanningTimes($docId, $taskId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplatePlanningTimes($docId, $taskId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(PlanningTimeTemplateDTO::class, $item);
         }
     }
@@ -219,13 +252,16 @@ final class DocBeeDocumentSubResourceIntegrationTest extends IntegrationTestCase
     public function testDocumentTemplateTaskTemplateWorkLogListReturnsArray(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        $this->assertIsArray($this->client->documentTemplateTaskTemplateWorkLogs($docId, $taskId)->list());
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplateWorkLogs($docId, $taskId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testDocumentTemplateTaskTemplateWorkLogListItemsAreWorkLogTemplateDTOs(): void
     {
         [$docId, $taskId] = $this->documentIdAndTaskId();
-        foreach ($this->client->documentTemplateTaskTemplateWorkLogs($docId, $taskId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->documentTemplateTaskTemplateWorkLogs($docId, $taskId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(WorkLogTemplateDTO::class, $item);
         }
     }

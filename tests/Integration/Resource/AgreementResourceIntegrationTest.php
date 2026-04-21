@@ -28,12 +28,15 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
 
     public function testAgreementListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->agreements()->list());
+        $result = $this->callApi(fn() => $this->client->agreements()->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementListItemsAreAgreementDTOs(): void
     {
-        foreach ($this->client->agreements()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreements()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementDTO::class, $item);
         }
     }
@@ -44,7 +47,7 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->agreements()->find($id);
+        $dto = $this->callApi(fn() => $this->client->agreements()->find($id));
         $this->assertInstanceOf(AgreementDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -53,12 +56,15 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
 
     public function testAgreementCategoryListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->agreementCategories()->list());
+        $result = $this->callApi(fn() => $this->client->agreementCategories()->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementCategoryListItemsAreAgreementCategoryDTOs(): void
     {
-        foreach ($this->client->agreementCategories()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreementCategories()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementCategoryDTO::class, $item);
         }
     }
@@ -67,12 +73,15 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
 
     public function testAgreementTemplateListReturnsArray(): void
     {
-        $this->assertIsArray($this->client->agreementTemplates()->list());
+        $result = $this->callApi(fn() => $this->client->agreementTemplates()->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementTemplateListItemsAreAgreementTemplateDTOs(): void
     {
-        foreach ($this->client->agreementTemplates()->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreementTemplates()->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementTemplateDTO::class, $item);
         }
     }
@@ -83,7 +92,7 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($id === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_TEMPLATE_ID in tests/.env.test to enable.');
         }
-        $dto = $this->client->agreementTemplates()->find($id);
+        $dto = $this->callApi(fn() => $this->client->agreementTemplates()->find($id));
         $this->assertInstanceOf(AgreementTemplateDTO::class, $dto);
         $this->assertSame($id, $dto->getId());
     }
@@ -96,7 +105,8 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->agreementComponents($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->agreementComponents($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementComponentListItemsAreAgreementComponentDTOs(): void
@@ -105,7 +115,9 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->agreementComponents($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreementComponents($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementComponentDTO::class, $item);
         }
     }
@@ -118,7 +130,8 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->agreementPeriods($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->agreementPeriods($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementPeriodListItemsAreAgreementPeriodDTOs(): void
@@ -127,7 +140,9 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->agreementPeriods($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreementPeriods($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementPeriodDTO::class, $item);
         }
     }
@@ -140,7 +155,8 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->agreementInvoices($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->agreementInvoices($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementInvoiceListItemsAreAgreementInvoiceDTOs(): void
@@ -149,7 +165,9 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENTS_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->agreementInvoices($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreementInvoices($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementInvoiceDTO::class, $item);
         }
     }
@@ -162,7 +180,8 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENT_TEMPLATES_PARENT_ID in tests/.env.test to enable.');
         }
-        $this->assertIsArray($this->client->agreementComponentTemplates($parentId)->list());
+        $result = $this->callApi(fn() => $this->client->agreementComponentTemplates($parentId)->list());
+        $this->assertIsArray($result);
     }
 
     public function testAgreementComponentTemplateListItemsAreAgreementComponentTemplateDTOs(): void
@@ -171,7 +190,9 @@ final class AgreementResourceIntegrationTest extends IntegrationTestCase
         if ($parentId === null) {
             $this->markTestSkipped('Set DOCBEE_TEST_AGREEMENT_COMPONENT_TEMPLATES_PARENT_ID in tests/.env.test to enable.');
         }
-        foreach ($this->client->agreementComponentTemplates($parentId)->list() as $item) {
+        $result = $this->callApi(fn() => $this->client->agreementComponentTemplates($parentId)->list());
+        $this->assertIsArray($result);
+        foreach ($result as $item) {
             $this->assertInstanceOf(AgreementComponentTemplateDTO::class, $item);
         }
     }
