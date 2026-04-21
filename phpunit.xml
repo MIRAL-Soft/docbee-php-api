@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          colors="true"
-         stopOnFailure="false">
+         stopOnFailure="false"
+         defaultTestSuite="Unit">
 
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
     </testsuites>
+
+    <!-- Integration tests: run "composer test:integration" or "phpunit -testsuite Integration -testdox" -->
 
     <source>
         <include>
