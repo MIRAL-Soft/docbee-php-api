@@ -250,6 +250,9 @@ foreach ($client->ruleEngineConditions(3)->cursor() as $condition) {
 ```php
 $ticket   = $client->tickets()->find(42);
 $customer = $client->customers()->find(7);
+
+// Restrict the returned fields to reduce payload size
+$ticket = $client->tickets()->find(42, fields: ['id', 'ticketNumber', 'customer']);
 ```
 
 ### List with filters

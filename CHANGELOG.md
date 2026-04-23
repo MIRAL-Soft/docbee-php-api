@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`AbstractResource::find(int $id, array $fields = [])`** — optional `$fields` parameter
+  appends `?fields=f1,f2,...` to the request URL, allowing callers to restrict which fields
+  the API returns.  Fully backward-compatible; existing calls without a second argument are
+  unaffected.
 - **Integration test infrastructure** — full read-only live-API test suite:
   - `tests/bootstrap.php` — PHPUnit bootstrap that loads `tests/.env.test` automatically
     (dependency-free parser; skips gracefully when the file is absent).
@@ -120,10 +124,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `updateByPlaceholderName()`.
 - `ContingentItemRecurrenceDTO`: removed spurious `name` field that is not present
   in the OpenAPI specification.
+- **`DocumentTaskResource::create()`** — overrides the inherited `create()` with an
+  immediate `\LogicException`.  `POST /docBeeDocumentTask` returns HTTP 500 from the
+  Docbee server; tasks must be created via the sub-resource endpoint
+  `docBeeDocument/{id}/task` (`$client->docBeeDocumentTasks($id)->create([...])`).
+  The exception message contains the correct alternative.
 
 ### Changed
 - `README.md`: sub-resource table updated with all new factory methods and corrected
   `protocolEntries` endpoint (`v1/protocol/{id}/protocolEntry`).
+- **Documented known Docbee API limitations** in resource class DocBlocks (no behaviour change):
+  - `AbstractResource::find()`: several ticket fields are absent in `GET /ticket/{id}`
+    responses (`description`, `erpReferenceNumber`, `internalDescription`, `priority`,
+    `ticketStatus`) — server-side limitation, cannot be worked around via `$fields`.
+  - `TicketResource::findByErpReferenceNumber()`: filter is a broad/fuzzy match, not an
+    exact match; callers must filter the result client-side.
+  - `TicketResource` and `CustomerContactResource`: `filterEq('id', …)` acts as a
+    foreign-key (customer ID) filter, not a primary-key filter — use `find(int $id)`
+    for single-record lookup.
+  - `DocumentResource`: `filterEq('ticket', $ticketId)` is silently ignored by the API;
+    workaround documented (fetch by customer, filter client-side).
 
 ---
 
