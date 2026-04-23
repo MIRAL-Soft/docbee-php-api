@@ -9,6 +9,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **Integration test infrastructure** — full read-only live-API test suite:
+  - `tests/bootstrap.php` — PHPUnit bootstrap that loads `tests/.env.test` automatically
+    (dependency-free parser; skips gracefully when the file is absent).
+  - `tests/.env.test.example` — template with `DOCBEE_TENANT`, `DOCBEE_TOKEN`, and all
+    ~25 optional parent-ID variables for sub-resource tests.
+  - `tests/Integration/IntegrationTestCase` — base class that auto-skips all tests when
+    credentials are missing; `callApi()` helper converts HTTP 403/404 responses to skipped
+    tests instead of errors; `optionalIntEnv()` for conditional per-test parent IDs.
+  - **13 integration test classes** (262 tests) covering every readable resource and
+    sub-resource exposed by `DocbeeClient`:
+    `AgreementResourceIntegrationTest`, `ConfigResourceIntegrationTest`,
+    `CustomerResourceIntegrationTest`, `DocBeeDocumentSubResourceIntegrationTest`,
+    `DocumentResourceIntegrationTest`, `FinanceResourceIntegrationTest`,
+    `OrganizationResourceIntegrationTest`, `PlanningResourceIntegrationTest`,
+    `ProtocolResourceIntegrationTest`, `ProtocolSubResourceIntegrationTest`,
+    `SystemResourceIntegrationTest`, `TicketResourceIntegrationTest`,
+    `UserResourceIntegrationTest`.
+  - `phpunit.xml` — new `Integration` test suite; `defaultTestSuite="Unit"` ensures
+    integration tests never run accidentally during normal `composer test`.
+  - `composer.json` — `"test:integration"` script added.
+  - `.gitignore` — `tests/.env.test` excluded to prevent credential commits.
 - **15 new Resource classes** for previously unimplemented endpoint groups:
   - **Group C — Protocol entry / group variants**: `ProtocolGroupEntriesResource`
     (indexed group instance entries, `v1/protocol/{id}/protocolGroupEntries/{groupId}`),
@@ -78,6 +99,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     parameter in the implementation vs. a query parameter in the spec).
 
 ### Fixed
+- **Double `v1/` URL prefix** — `DocbeeConfig::BASE_URL_TEMPLATE` already includes
+  `/v1/`; ~177 resource files had endpoint strings starting with `'v1/…'`, resulting in
+  URLs like `restApi/v1/v1/agreement`.  All endpoint strings stripped to their bare path
+  (e.g. `'agreement'`, `'invoice'`).  `SubResourceTest` expectations updated accordingly.
+- **camelCase endpoint names** — eight resources used lowercase-compound endpoint strings
+  that the API does not recognise (HTTP 404):
+  - `DocumentResource`: `'docbeedocument'` → `'docBeeDocument'`
+  - `DocumentTaskResource`: `'docbeedocumenttask'` → `'docBeeDocumentTask'`
+  - `DocumentTemplateResource`: `'docbeedocumenttemplate'` → `'docBeeDocumentTemplate'`
+  - `TicketStatusResource`: `'ticketstatus'` → `'ticketStatus'`
+  - `RequestTypeResource`: `'requesttype'` → `'requestType'`
+  - `ServiceTypeResource`: `'servicetype'` → `'serviceType'`
+  - `CustomerContactResource`: `'customercontact'` → `'customerContact'`
+  - `CustomerLocationResource`: `'customerlocation'` → `'customerLocation'`
 - `ProtocolEntryResource`: endpoint corrected from `v1/protocol/{id}/entry`
   (non-existent path) to `v1/protocol/{id}/protocolEntry`; added six action methods:
   `getByEntryMapping()`, `updateByEntryMapping()`, `getByEntryMappingAndGroupIdx()`,

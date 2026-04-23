@@ -555,12 +555,41 @@ The spec URL and all paths are configured in `config/api-compat.php`.  This file
 
 ## Testing
 
+### Unit tests
+
 ```bash
 composer install
 composer test
 ```
 
-Run static analysis:
+### Integration tests (live API)
+
+Integration tests make real HTTP requests to a Docbee tenant and verify that every resource and DTO works correctly against the live API.
+
+**Setup:**
+
+```bash
+cp tests/.env.test.example tests/.env.test
+# edit tests/.env.test and set DOCBEE_TENANT and DOCBEE_TOKEN
+```
+
+**Run:**
+
+```bash
+composer test:integration
+# or
+php vendor/bin/phpunit --testsuite Integration --testdox
+```
+
+**Behaviour:**
+
+- If `tests/.env.test` is missing or `DOCBEE_TENANT` / `DOCBEE_TOKEN` are not set, every integration test is **automatically skipped** — the regular unit tests are never affected.
+- HTTP 403 responses (feature not licensed or insufficient permissions) are converted to **skipped** tests.
+- HTTP 404 responses (optional module not installed on the tenant) are also **skipped**.
+- Only read-only (GET) calls are made — live data is never modified.
+- Optional env vars in `.env.test` unlock additional `find($id)` and sub-resource tests (see `tests/.env.test.example` for the full list).
+
+### Static analysis
 
 ```bash
 composer analyse
