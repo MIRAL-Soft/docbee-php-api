@@ -14,11 +14,11 @@ final class SchedulerSiteConfigResource
 
     public function get(): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->get('v1/schedulerSiteConfig'));
+        return SiteConfigDTO::fromArray($this->http->get('schedulerSiteConfig'));
     }
 
     public function update(array $data): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->put('v1/schedulerSiteConfig', $data));
+        return SiteConfigDTO::fromArray($this->http->put('schedulerSiteConfig', $data));
     }
 }

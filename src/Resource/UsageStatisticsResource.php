@@ -14,16 +14,16 @@ final class UsageStatisticsResource
 
     public function get(): UsageStatisticDTO
     {
-        return UsageStatisticDTO::fromArray($this->http->get('v1/usageStatistics'));
+        return UsageStatisticDTO::fromArray($this->http->get('usageStatistics'));
     }
 
     public function update(array $data): UsageStatisticDTO
     {
-        return UsageStatisticDTO::fromArray($this->http->put('v1/usageStatistics', $data));
+        return UsageStatisticDTO::fromArray($this->http->put('usageStatistics', $data));
     }
 
     public function getStatistic(): array
     {
-        return $this->http->get('v1/usageStatistics/statistic');
+        return $this->http->get('usageStatistics/statistic');
     }
 }

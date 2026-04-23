@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class QueueResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/queue';
+    protected string $endpoint = 'queue';
     protected string $dtoClass = QueueDTO::class;
     protected string $listKey  = 'queue';
 

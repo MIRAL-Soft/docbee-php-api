@@ -19,7 +19,7 @@ final class ProtocolTemplateConditionCollectionResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId, int $actionId)
     {
-        $this->endpoint = "v1/protocolTemplate/{$templateId}/action/{$actionId}/conditionCollection";
+        $this->endpoint = "protocolTemplate/{$templateId}/action/{$actionId}/conditionCollection";
         parent::__construct($http);
     }
 }

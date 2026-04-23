@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class WorkPipeResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/workPipe';
+    protected string $endpoint = 'workPipe';
     protected string $dtoClass = WorkPipeDTO::class;
     protected string $listKey  = 'workPipe';
 }

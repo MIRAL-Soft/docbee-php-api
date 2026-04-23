@@ -20,7 +20,7 @@ final class MapViewFilterResource extends AbstractResource
     public function __construct(HttpClientInterface $http, string $mapViewType, int $mapViewId)
     {
         // mapViewType: ticketMapView, protocolMapView, docBeeDocumentMapView
-        $this->endpoint = "v1/{$mapViewType}/{$mapViewId}/filter";
+        $this->endpoint = "{$mapViewType}/{$mapViewId}/filter";
         parent::__construct($http);
     }
 }

@@ -14,11 +14,11 @@ final class CustomerSettingsResource
 
     public function get(): CustomerSettingsDTO
     {
-        return CustomerSettingsDTO::fromArray($this->http->get('v1/customerSettings'));
+        return CustomerSettingsDTO::fromArray($this->http->get('customerSettings'));
     }
 
     public function update(array $data): CustomerSettingsDTO
     {
-        return CustomerSettingsDTO::fromArray($this->http->put('v1/customerSettings', $data));
+        return CustomerSettingsDTO::fromArray($this->http->put('customerSettings', $data));
     }
 }

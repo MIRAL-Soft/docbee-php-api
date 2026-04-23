@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class UserProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/userProfile';
+    protected string $endpoint = 'userProfile';
     protected string $dtoClass = UserProfileDTO::class;
     protected string $listKey  = 'userProfile';
 }

@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class RuleEngineActionResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/ruleEngineAction';
+    protected string $endpoint = 'ruleEngineAction';
     protected string $dtoClass = RuleEngineActionDTO::class;
     protected string $listKey  = 'ruleEngineAction';
 }

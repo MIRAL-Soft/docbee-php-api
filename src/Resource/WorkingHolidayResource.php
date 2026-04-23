@@ -19,7 +19,7 @@ final class WorkingHolidayResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http)
     {
-        $this->endpoint = 'v1/mandantSettings/workingDays/workingHoliday';
+        $this->endpoint = 'mandantSettings/workingDays/workingHoliday';
         parent::__construct($http);
     }
 }

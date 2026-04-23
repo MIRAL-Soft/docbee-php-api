@@ -63,7 +63,7 @@ final class UserResource extends AbstractResource
     /** Returns the currently authenticated user. */
     public function me(): UserDTO
     {
-        return UserDTO::fromArray($this->http->get('v1/user/me'));
+        return UserDTO::fromArray($this->http->get('user/me'));
     }
 
     /** Reset 2FA for a specific user (admin). */
@@ -87,25 +87,25 @@ final class UserResource extends AbstractResource
     /** Get user settings for current user. */
     public function getSettings(): array
     {
-        return $this->http->get('v1/user/me/settings');
+        return $this->http->get('user/me/settings');
     }
 
     /** Update user settings for current user. */
     public function updateSettings(array $data): array
     {
-        return $this->http->put('v1/user/me/settings', $data);
+        return $this->http->put('user/me/settings', $data);
     }
 
     /** Update profile image for current user. */
     public function updateProfileImage(array $data): void
     {
-        $this->http->put('v1/user/me/profileImage', $data);
+        $this->http->put('user/me/profileImage', $data);
     }
 
     /** Change password for current user. */
     public function changeMyPassword(array $data): void
     {
-        $this->http->post('v1/user/me/changePassword', $data);
+        $this->http->post('user/me/changePassword', $data);
     }
 
     /** Change password for a specific user (admin). */
@@ -117,12 +117,12 @@ final class UserResource extends AbstractResource
     /** Disable 2FA for the currently authenticated user. */
     public function disableMe2FA(): void
     {
-        $this->http->put('v1/user/me/disable2FA', []);
+        $this->http->put('user/me/disable2FA', []);
     }
 
     /** Register 2FA for the currently authenticated user. */
     public function registerMe2FA(array $data = []): void
     {
-        $this->http->put('v1/user/me/register2FA', $data);
+        $this->http->put('user/me/register2FA', $data);
     }
 }

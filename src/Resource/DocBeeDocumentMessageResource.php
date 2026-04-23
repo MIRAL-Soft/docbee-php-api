@@ -20,7 +20,7 @@ final class DocBeeDocumentMessageResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $documentId)
     {
-        $this->endpoint = "v1/docBeeDocument/{$documentId}/message";
+        $this->endpoint = "docBeeDocument/{$documentId}/message";
         parent::__construct($http);
     }
 }

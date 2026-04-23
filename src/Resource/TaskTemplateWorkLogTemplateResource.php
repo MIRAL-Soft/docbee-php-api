@@ -19,7 +19,7 @@ final class TaskTemplateWorkLogTemplateResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $taskTemplateId)
     {
-        $this->endpoint = "v1/taskTemplate/{$taskTemplateId}/workLogTemplate";
+        $this->endpoint = "taskTemplate/{$taskTemplateId}/workLogTemplate";
         parent::__construct($http);
     }
 }

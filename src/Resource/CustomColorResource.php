@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class CustomColorResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/customColor';
+    protected string $endpoint = 'customColor';
     protected string $dtoClass = CustomColorDTO::class;
     protected string $listKey  = 'customColor';
 }

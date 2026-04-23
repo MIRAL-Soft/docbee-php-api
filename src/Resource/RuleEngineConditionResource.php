@@ -20,7 +20,7 @@ final class RuleEngineConditionResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $actionId)
     {
-        $this->endpoint = "v1/ruleEngineAction/{$actionId}/condition";
+        $this->endpoint = "ruleEngineAction/{$actionId}/condition";
         parent::__construct($http);
     }
 }

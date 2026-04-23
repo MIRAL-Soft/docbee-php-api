@@ -20,7 +20,7 @@ final class SlaProfileWorkingHourResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $slaProfileId)
     {
-        $this->endpoint = "v1/slaProfile/{$slaProfileId}/workingHour";
+        $this->endpoint = "slaProfile/{$slaProfileId}/workingHour";
         parent::__construct($http);
     }
 }

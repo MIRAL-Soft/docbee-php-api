@@ -19,7 +19,7 @@ final class EntryStyleResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId)
     {
-        $this->endpoint = "v1/protocolTemplate/{$templateId}/entryStyle";
+        $this->endpoint = "protocolTemplate/{$templateId}/entryStyle";
         parent::__construct($http);
     }
 }

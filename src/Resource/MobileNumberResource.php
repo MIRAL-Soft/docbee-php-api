@@ -14,6 +14,6 @@ final class MobileNumberResource
     /** Returns a list of mobile numbers. */
     public function list(): array
     {
-        return $this->http->get('v1/mobileNumber/list')['mobileNumber'] ?? [];
+        return $this->http->get('mobileNumber/list')['mobileNumber'] ?? [];
     }
 }

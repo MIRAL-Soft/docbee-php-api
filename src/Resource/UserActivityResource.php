@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class UserActivityResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/userActivity';
+    protected string $endpoint = 'userActivity';
     protected string $dtoClass = UserActivityDTO::class;
     protected string $listKey  = 'userActivity';
 }

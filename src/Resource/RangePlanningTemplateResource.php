@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\RangePlanningTemplateDTO;
  */
 final class RangePlanningTemplateResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/rangePlanningTemplate';
+    protected string $endpoint = 'rangePlanningTemplate';
     protected string $dtoClass = RangePlanningTemplateDTO::class;
     protected string $listKey  = 'rangePlanningTemplate';
 }

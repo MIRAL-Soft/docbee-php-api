@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class PaymentProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/paymentProfile';
+    protected string $endpoint = 'paymentProfile';
     protected string $dtoClass = PaymentProfileDTO::class;
     protected string $listKey  = 'paymentProfile';
 }

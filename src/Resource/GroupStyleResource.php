@@ -19,7 +19,7 @@ final class GroupStyleResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId)
     {
-        $this->endpoint = "v1/protocolTemplate/{$templateId}/groupStyle";
+        $this->endpoint = "protocolTemplate/{$templateId}/groupStyle";
         parent::__construct($http);
     }
 }

@@ -19,7 +19,7 @@ final class UserAccessTokenResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http)
     {
-        $this->endpoint = 'v1/user/me/accessToken';
+        $this->endpoint = 'user/me/accessToken';
         parent::__construct($http);
     }
 

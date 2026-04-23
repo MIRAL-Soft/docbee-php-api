@@ -23,7 +23,7 @@ final class ProtocolEntryResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $protocolId)
     {
-        $this->endpoint = "v1/protocol/{$protocolId}/protocolEntry";
+        $this->endpoint = "protocol/{$protocolId}/protocolEntry";
         parent::__construct($http);
     }
 

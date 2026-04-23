@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DashboardResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/dashboard';
+    protected string $endpoint = 'dashboard';
     protected string $dtoClass = DashboardDTO::class;
     protected string $listKey  = 'dashboard';
 

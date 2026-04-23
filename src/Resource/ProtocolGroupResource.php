@@ -22,7 +22,7 @@ final class ProtocolGroupResource
 
     private function base(int $templateGroupId): string
     {
-        return "v1/protocol/{$this->protocolId}/group/{$templateGroupId}";
+        return "protocol/{$this->protocolId}/group/{$templateGroupId}";
     }
 
     // ── Entries (all instances) ────────────────────────────────────────────────

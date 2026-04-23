@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class AwayResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/away';
+    protected string $endpoint = 'away';
     protected string $dtoClass = AwayDTO::class;
     protected string $listKey  = 'away';
 

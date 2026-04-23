@@ -20,7 +20,7 @@ final class DocBeeScriptParameterResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $scriptId)
     {
-        $this->endpoint = "v1/docBeeScript/{$scriptId}/param";
+        $this->endpoint = "docBeeScript/{$scriptId}/param";
         parent::__construct($http);
     }
 }

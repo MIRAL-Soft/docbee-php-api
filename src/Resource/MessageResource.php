@@ -16,6 +16,6 @@ final class MessageResource
     /** Send a mail message. */
     public function sendMail(array $data): array
     {
-        return $this->http->post('v1/message/sendMail', $data);
+        return $this->http->post('message/sendMail', $data);
     }
 }

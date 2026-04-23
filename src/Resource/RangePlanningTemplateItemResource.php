@@ -19,7 +19,7 @@ final class RangePlanningTemplateItemResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId)
     {
-        $this->endpoint = "v1/rangePlanningTemplate/{$templateId}/item";
+        $this->endpoint = "rangePlanningTemplate/{$templateId}/item";
         parent::__construct($http);
     }
 }

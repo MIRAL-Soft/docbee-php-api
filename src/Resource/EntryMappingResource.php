@@ -19,7 +19,7 @@ final class EntryMappingResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId, int $groupId)
     {
-        $this->endpoint = "v1/protocolTemplate/{$templateId}/group/{$groupId}/entryMapping";
+        $this->endpoint = "protocolTemplate/{$templateId}/group/{$groupId}/entryMapping";
         parent::__construct($http);
     }
 }

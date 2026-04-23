@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\TaskTemplateProfileDTO;
  */
 final class TaskTemplateProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/taskTemplateProfile';
+    protected string $endpoint = 'taskTemplateProfile';
     protected string $dtoClass = TaskTemplateProfileDTO::class;
     protected string $listKey  = 'taskTemplateProfile';
 }

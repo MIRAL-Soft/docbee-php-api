@@ -19,7 +19,7 @@ final class ReportElementResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $reportId)
     {
-        $this->endpoint = "v1/report/{$reportId}/element";
+        $this->endpoint = "report/{$reportId}/element";
         parent::__construct($http);
     }
 

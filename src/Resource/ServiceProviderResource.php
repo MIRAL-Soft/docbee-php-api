@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ServiceProviderResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/serviceProvider';
+    protected string $endpoint = 'serviceProvider';
     protected string $dtoClass = ServiceProviderDTO::class;
     protected string $listKey  = 'serviceProvider';
 

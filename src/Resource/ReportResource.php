@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\ReportDTO;
  */
 final class ReportResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/report';
+    protected string $endpoint = 'report';
     protected string $dtoClass = ReportDTO::class;
     protected string $listKey  = 'report';
 

@@ -23,7 +23,7 @@ final class ProtocolGroupEntriesResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $protocolId, int $groupId)
     {
-        $this->endpoint = "v1/protocol/{$protocolId}/protocolGroupEntries/{$groupId}";
+        $this->endpoint = "protocol/{$protocolId}/protocolGroupEntries/{$groupId}";
         parent::__construct($http);
     }
 

@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\ProtocolTemplateProfileDTO;
  */
 final class ProtocolTemplateProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/protocolTemplateProfile';
+    protected string $endpoint = 'protocolTemplateProfile';
     protected string $dtoClass = ProtocolTemplateProfileDTO::class;
     protected string $listKey  = 'protocolTemplateProfile';
 }

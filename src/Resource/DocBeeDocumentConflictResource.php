@@ -20,7 +20,7 @@ final class DocBeeDocumentConflictResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $documentId)
     {
-        $this->endpoint = "v1/docBeeDocument/{$documentId}/conflict";
+        $this->endpoint = "docBeeDocument/{$documentId}/conflict";
         parent::__construct($http);
     }
 }

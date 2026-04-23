@@ -19,7 +19,7 @@ final class TableConfigStorageFilterResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $storageId)
     {
-        $this->endpoint = "v1/tableConfigStorage/{$storageId}/filter";
+        $this->endpoint = "tableConfigStorage/{$storageId}/filter";
         parent::__construct($http);
     }
 }

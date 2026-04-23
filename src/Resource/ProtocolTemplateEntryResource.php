@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\ProtocolTemplateEntryDTO;
  */
 final class ProtocolTemplateEntryResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/protocolTemplateEntry';
+    protected string $endpoint = 'protocolTemplateEntry';
     protected string $dtoClass = ProtocolTemplateEntryDTO::class;
     protected string $listKey  = 'protocolTemplateEntry';
 

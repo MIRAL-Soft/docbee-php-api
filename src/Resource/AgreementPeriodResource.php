@@ -20,7 +20,7 @@ final class AgreementPeriodResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $agreementId)
     {
-        $this->endpoint = "v1/agreement/{$agreementId}/period";
+        $this->endpoint = "agreement/{$agreementId}/period";
         parent::__construct($http);
     }
 }

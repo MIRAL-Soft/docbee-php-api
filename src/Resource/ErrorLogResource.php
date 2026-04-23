@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ErrorLogResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/errorLog';
+    protected string $endpoint = 'errorLog';
     protected string $dtoClass = ErrorLogDTO::class;
     protected string $listKey  = 'errorLog';
 

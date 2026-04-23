@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\MailParserConfigDTO;
  */
 final class MailParserConfigResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/mailParserConfig';
+    protected string $endpoint = 'mailParserConfig';
     protected string $dtoClass = MailParserConfigDTO::class;
     protected string $listKey  = 'mailParserConfig';
 }

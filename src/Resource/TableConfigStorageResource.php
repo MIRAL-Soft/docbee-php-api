@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class TableConfigStorageResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/tableConfigStorage';
+    protected string $endpoint = 'tableConfigStorage';
     protected string $dtoClass = TableConfigStorageDTO::class;
     protected string $listKey  = 'tableConfigStorage';
 

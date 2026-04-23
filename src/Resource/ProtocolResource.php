@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ProtocolResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/protocol';
+    protected string $endpoint = 'protocol';
     protected string $dtoClass = ProtocolDTO::class;
     protected string $listKey  = 'protocol';
 

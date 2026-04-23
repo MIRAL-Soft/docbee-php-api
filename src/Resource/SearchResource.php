@@ -14,6 +14,6 @@ final class SearchResource
 
     public function search(string $query): SearchDTO
     {
-        return SearchDTO::fromArray($this->http->get('v1/search/' . urlencode($query)));
+        return SearchDTO::fromArray($this->http->get('search/' . urlencode($query)));
     }
 }

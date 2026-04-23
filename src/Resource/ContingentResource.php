@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ContingentResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/contingent';
+    protected string $endpoint = 'contingent';
     protected string $dtoClass = ContingentDTO::class;
     protected string $listKey  = 'contingent';
 }

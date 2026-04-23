@@ -20,7 +20,7 @@ final class PresetValueResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $presetProfileId)
     {
-        $this->endpoint = "v1/presetProfile/{$presetProfileId}/value";
+        $this->endpoint = "presetProfile/{$presetProfileId}/value";
         parent::__construct($http);
     }
 }

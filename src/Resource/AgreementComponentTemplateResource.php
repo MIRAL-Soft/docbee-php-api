@@ -20,7 +20,7 @@ final class AgreementComponentTemplateResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $agreementTemplateId)
     {
-        $this->endpoint = "v1/agreementTemplate/{$agreementTemplateId}/componentTemplate";
+        $this->endpoint = "agreementTemplate/{$agreementTemplateId}/componentTemplate";
         parent::__construct($http);
     }
 }

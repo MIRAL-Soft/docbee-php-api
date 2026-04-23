@@ -19,7 +19,7 @@ final class ObserverCategoryObserverTypeResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $observerCategoryId)
     {
-        $this->endpoint = "v1/observerCategory/{$observerCategoryId}/observerType";
+        $this->endpoint = "observerCategory/{$observerCategoryId}/observerType";
         parent::__construct($http);
     }
 }

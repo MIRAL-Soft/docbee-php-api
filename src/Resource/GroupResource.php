@@ -19,7 +19,7 @@ final class GroupResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId)
     {
-        $this->endpoint = "v1/protocolTemplate/{$templateId}/group";
+        $this->endpoint = "protocolTemplate/{$templateId}/group";
         parent::__construct($http);
     }
 }

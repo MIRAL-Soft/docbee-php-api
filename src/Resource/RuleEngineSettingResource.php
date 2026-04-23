@@ -20,7 +20,7 @@ final class RuleEngineSettingResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $actionId)
     {
-        $this->endpoint = "v1/ruleEngineAction/{$actionId}/setting";
+        $this->endpoint = "ruleEngineAction/{$actionId}/setting";
         parent::__construct($http);
     }
 }

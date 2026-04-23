@@ -19,7 +19,7 @@ final class DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource extends A
 
     public function __construct(HttpClientInterface $http, int $documentTemplateId, int $taskTemplateId)
     {
-        $this->endpoint = "v1/docBeeDocumentTemplate/{$documentTemplateId}/taskTemplate/{$taskTemplateId}/materialTemplate";
+        $this->endpoint = "docBeeDocumentTemplate/{$documentTemplateId}/taskTemplate/{$taskTemplateId}/materialTemplate";
         parent::__construct($http);
     }
 }

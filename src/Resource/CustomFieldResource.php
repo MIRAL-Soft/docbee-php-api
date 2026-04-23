@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class CustomFieldResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/customField';
+    protected string $endpoint = 'customField';
     protected string $dtoClass = CustomFieldDTO::class;
     protected string $listKey  = 'customField';
 }

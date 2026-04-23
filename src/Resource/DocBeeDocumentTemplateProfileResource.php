@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\DocBeeDocumentTemplateProfileDTO;
  */
 final class DocBeeDocumentTemplateProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/docBeeDocumentTemplateProfile';
+    protected string $endpoint = 'docBeeDocumentTemplateProfile';
     protected string $dtoClass = DocBeeDocumentTemplateProfileDTO::class;
     protected string $listKey  = 'docBeeDocumentTemplateProfile';
 }

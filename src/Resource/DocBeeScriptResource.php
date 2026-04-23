@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DocBeeScriptResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/docBeeScript';
+    protected string $endpoint = 'docBeeScript';
     protected string $dtoClass = DocBeeScriptDTO::class;
     protected string $listKey  = 'docBeeScript';
 

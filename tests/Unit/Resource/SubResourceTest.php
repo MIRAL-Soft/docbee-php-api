@@ -76,7 +76,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/agreement/7/component'))
+            ->with($this->stringContains('agreement/7/component'))
             ->willReturn(['totalCount' => 0, 'agreementComponent' => []]);
 
         (new AgreementComponentResource($this->http, 7))->list();
@@ -87,7 +87,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/agreement/12/period'))
+            ->with($this->stringContains('agreement/12/period'))
             ->willReturn(['totalCount' => 0, 'agreementPeriod' => []]);
 
         (new AgreementPeriodResource($this->http, 12))->list();
@@ -98,7 +98,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/agreement/3/invoice'))
+            ->with($this->stringContains('agreement/3/invoice'))
             ->willReturn(['totalCount' => 0, 'agreementInvoice' => []]);
 
         (new AgreementInvoiceResource($this->http, 3))->list();
@@ -109,7 +109,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/contingent/99/item'))
+            ->with($this->stringContains('contingent/99/item'))
             ->willReturn(['totalCount' => 0, 'contingentItem' => []]);
 
         (new ContingentItemResource($this->http, 99))->list();
@@ -120,7 +120,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/costEstimation/5/task'))
+            ->with($this->stringContains('costEstimation/5/task'))
             ->willReturn(['totalCount' => 0, 'costEstimationTask' => []]);
 
         (new CostEstimationTaskResource($this->http, 5))->list();
@@ -131,7 +131,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/dashboard/20/widget'))
+            ->with($this->stringContains('dashboard/20/widget'))
             ->willReturn(['totalCount' => 0, 'dashboardWidget' => []]);
 
         (new DashboardWidgetResource($this->http, 20))->list();
@@ -142,7 +142,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocument/8/message'))
+            ->with($this->stringContains('docBeeDocument/8/message'))
             ->willReturn(['totalCount' => 0, 'docBeeDocumentMessage' => []]);
 
         (new DocBeeDocumentMessageResource($this->http, 8))->list();
@@ -153,7 +153,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/ruleEngineAction/4/condition'))
+            ->with($this->stringContains('ruleEngineAction/4/condition'))
             ->willReturn(['totalCount' => 0, 'ruleEngineCondition' => []]);
 
         (new RuleEngineConditionResource($this->http, 4))->list();
@@ -164,7 +164,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/selectionCategory/11/selectionValue'))
+            ->with($this->stringContains('selectionCategory/11/selectionValue'))
             ->willReturn(['totalCount' => 0, 'selectionValue' => []]);
 
         (new SelectionValueResource($this->http, 11))->list();
@@ -175,7 +175,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/slaProfile/2/specialization'))
+            ->with($this->stringContains('slaProfile/2/specialization'))
             ->willReturn(['totalCount' => 0, 'slaProfileSpecialization' => []]);
 
         (new SlaProfileSpecializationResource($this->http, 2))->list();
@@ -186,7 +186,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/ticket/42/message'))
+            ->with($this->stringContains('ticket/42/message'))
             ->willReturn(['totalCount' => 0, 'ticketMessage' => []]);
 
         (new TicketMessageResource($this->http, 42))->list();
@@ -228,7 +228,7 @@ final class SubResourceTest extends TestCase
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('v1/selectionCategory/3/selectionValue/55'))
+            ->with($this->stringContains('selectionCategory/3/selectionValue/55'))
             ->willReturn(['id' => 55]);
 
         $dto = (new SelectionValueResource($this->http, 3))->find(55);
@@ -244,7 +244,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocument/5/travelLog'))
+            ->with($this->stringContains('docBeeDocument/5/travelLog'))
             ->willReturn(['totalCount' => 0, 'travelLog' => []]);
 
         (new DocBeeDocumentTravelLogResource($this->http, 5))->list();
@@ -255,7 +255,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate'))
+            ->with($this->stringContains('docBeeDocumentTemplate/10/taskTemplate'))
             ->willReturn(['totalCount' => 0, 'taskTemplate' => []]);
 
         (new DocBeeDocumentTemplateTaskTemplateResource($this->http, 10))->list();
@@ -266,7 +266,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate/3/materialTemplate'))
+            ->with($this->stringContains('docBeeDocumentTemplate/10/taskTemplate/3/materialTemplate'))
             ->willReturn(['totalCount' => 0, 'materialTemplate' => []]);
 
         (new DocBeeDocumentTemplateTaskTemplateMaterialTemplateResource($this->http, 10, 3))->list();
@@ -277,7 +277,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate/3/planningTimeTemplate'))
+            ->with($this->stringContains('docBeeDocumentTemplate/10/taskTemplate/3/planningTimeTemplate'))
             ->willReturn(['totalCount' => 0, 'planningTimeTemplate' => []]);
 
         (new DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource($this->http, 10, 3))->list();
@@ -288,7 +288,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocumentTemplate/10/taskTemplate/3/workLogTemplate'))
+            ->with($this->stringContains('docBeeDocumentTemplate/10/taskTemplate/3/workLogTemplate'))
             ->willReturn(['totalCount' => 0, 'workLogTemplate' => []]);
 
         (new DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource($this->http, 10, 3))->list();
@@ -299,7 +299,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocumentTemplate/7/travelLogTemplate'))
+            ->with($this->stringContains('docBeeDocumentTemplate/7/travelLogTemplate'))
             ->willReturn(['totalCount' => 0, 'travelLogTemplate' => []]);
 
         (new DocBeeDocumentTemplateTravelLogTemplateResource($this->http, 7))->list();
@@ -310,7 +310,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/protocolTemplateEntry/9/element'))
+            ->with($this->stringContains('protocolTemplateEntry/9/element'))
             ->willReturn(['totalCount' => 0, 'element' => []]);
 
         (new ProtocolTemplateEntryElementResource($this->http, 9))->list();
@@ -321,7 +321,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocument/3/task'))
+            ->with($this->stringContains('docBeeDocument/3/task'))
             ->willReturn(['totalCount' => 0, 'docBeeDocumentTask' => []]);
 
         (new DocBeeDocumentTaskResource($this->http, 3))->list();
@@ -332,7 +332,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocument/3/task/7/material'))
+            ->with($this->stringContains('docBeeDocument/3/task/7/material'))
             ->willReturn(['totalCount' => 0, 'material' => []]);
 
         (new DocBeeDocumentTaskMaterialResource($this->http, 3, 7))->list();
@@ -343,7 +343,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocument/3/task/7/planningTime'))
+            ->with($this->stringContains('docBeeDocument/3/task/7/planningTime'))
             ->willReturn(['totalCount' => 0, 'planningTime' => []]);
 
         (new DocBeeDocumentTaskPlanningTimeResource($this->http, 3, 7))->list();
@@ -354,7 +354,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/docBeeDocument/3/task/7/workLog'))
+            ->with($this->stringContains('docBeeDocument/3/task/7/workLog'))
             ->willReturn(['totalCount' => 0, 'workLog' => []]);
 
         (new DocBeeDocumentTaskWorkLogResource($this->http, 3, 7))->list();
@@ -365,7 +365,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/protocol/2/protocolGroupEntries/5'))
+            ->with($this->stringContains('protocol/2/protocolGroupEntries/5'))
             ->willReturn(['totalCount' => 0, 'protocolEntry' => []]);
 
         (new ProtocolGroupEntriesResource($this->http, 2, 5))->list();
@@ -376,7 +376,7 @@ final class SubResourceTest extends TestCase
         $this->http
             ->expects($this->once())
             ->method('get')
-            ->with($this->stringContains('v1/protocol/6/planningTime'))
+            ->with($this->stringContains('protocol/6/planningTime'))
             ->willReturn(['totalCount' => 0, 'planningTime' => []]);
 
         (new ProtocolPlanningTimeResource($this->http, 6))->list();

@@ -19,7 +19,7 @@ final class PriceResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $paymentProfileId)
     {
-        $this->endpoint = "v1/paymentProfile/{$paymentProfileId}/price";
+        $this->endpoint = "paymentProfile/{$paymentProfileId}/price";
         parent::__construct($http);
     }
 }

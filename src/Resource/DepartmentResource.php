@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DepartmentResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/department';
+    protected string $endpoint = 'department';
     protected string $dtoClass = DepartmentDTO::class;
     protected string $listKey  = 'department';
 }

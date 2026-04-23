@@ -20,7 +20,7 @@ final class TicketBoardFilterResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $boardId)
     {
-        $this->endpoint = "v1/ticketBoard/{$boardId}/filter";
+        $this->endpoint = "ticketBoard/{$boardId}/filter";
         parent::__construct($http);
     }
 }

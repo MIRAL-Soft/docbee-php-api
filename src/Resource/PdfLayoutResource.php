@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class PdfLayoutResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/pdfLayout';
+    protected string $endpoint = 'pdfLayout';
     protected string $dtoClass = PdfLayoutDTO::class;
     protected string $listKey  = 'pdfLayout';
 }

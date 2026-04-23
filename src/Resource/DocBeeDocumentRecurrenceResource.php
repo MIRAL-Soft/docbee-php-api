@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DocBeeDocumentRecurrenceResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/docBeeDocumentRecurrence';
+    protected string $endpoint = 'docBeeDocumentRecurrence';
     protected string $dtoClass = DocBeeDocumentRecurrenceDTO::class;
     protected string $listKey  = 'docBeeDocumentRecurrence';
 

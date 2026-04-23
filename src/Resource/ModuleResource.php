@@ -15,24 +15,24 @@ final class ModuleResource
     /** Returns a list of all modules. */
     public function list(): array
     {
-        return $this->http->get('v1/module')['module'] ?? [];
+        return $this->http->get('module')['module'] ?? [];
     }
 
     /** Returns a specific module by name. */
     public function find(string $moduleName): ModuleDTO
     {
-        return ModuleDTO::fromArray($this->http->get("v1/module/{$moduleName}"));
+        return ModuleDTO::fromArray($this->http->get("module/{$moduleName}"));
     }
 
     /** Updates a module setting. */
     public function update(string $moduleName, array $data): ModuleDTO
     {
-        return ModuleDTO::fromArray($this->http->put("v1/module/{$moduleName}", $data));
+        return ModuleDTO::fromArray($this->http->put("module/{$moduleName}", $data));
     }
 
     /** Deletes a module. */
     public function delete(string $moduleName): void
     {
-        $this->http->delete("v1/module/{$moduleName}");
+        $this->http->delete("module/{$moduleName}");
     }
 }

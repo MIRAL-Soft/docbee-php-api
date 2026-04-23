@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\ObserverDTO;
  */
 final class ObserverResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/observer';
+    protected string $endpoint = 'observer';
     protected string $dtoClass = ObserverDTO::class;
     protected string $listKey  = 'observer';
 

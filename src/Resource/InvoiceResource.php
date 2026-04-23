@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class InvoiceResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/invoice';
+    protected string $endpoint = 'invoice';
     protected string $dtoClass = InvoiceDTO::class;
     protected string $listKey  = 'invoice';
 

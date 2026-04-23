@@ -19,7 +19,7 @@ final class DocBeeDocumentTaskPlanningTimeResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $docBeeDocumentId, int $taskId)
     {
-        $this->endpoint = "v1/docBeeDocument/{$docBeeDocumentId}/task/{$taskId}/planningTime";
+        $this->endpoint = "docBeeDocument/{$docBeeDocumentId}/task/{$taskId}/planningTime";
         parent::__construct($http);
     }
 }

@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class SelectionCategoryResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/selectionCategory';
+    protected string $endpoint = 'selectionCategory';
     protected string $dtoClass = SelectionCategoryDTO::class;
     protected string $listKey  = 'selectionCategory';
 

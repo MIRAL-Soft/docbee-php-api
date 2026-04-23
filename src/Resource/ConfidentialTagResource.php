@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ConfidentialTagResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/confidentialTag';
+    protected string $endpoint = 'confidentialTag';
     protected string $dtoClass = ConfidentialTagDTO::class;
     protected string $listKey  = 'confidentialTag';
 }

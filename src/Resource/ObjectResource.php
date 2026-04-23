@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\ObjectDTO;
  */
 final class ObjectResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/object';
+    protected string $endpoint = 'object';
     protected string $dtoClass = ObjectDTO::class;
     protected string $listKey  = 'object';
 

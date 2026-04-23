@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ExportProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/exportProfile';
+    protected string $endpoint = 'exportProfile';
     protected string $dtoClass = ExportProfileDTO::class;
     protected string $listKey  = 'exportProfile';
 

@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class NotificationResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/notification';
+    protected string $endpoint = 'notification';
     protected string $dtoClass = NotificationDTO::class;
     protected string $listKey  = 'notification';
 }

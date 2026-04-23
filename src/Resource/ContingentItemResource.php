@@ -20,7 +20,7 @@ final class ContingentItemResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $contingentId)
     {
-        $this->endpoint = "v1/contingent/{$contingentId}/item";
+        $this->endpoint = "contingent/{$contingentId}/item";
         parent::__construct($http);
     }
 }

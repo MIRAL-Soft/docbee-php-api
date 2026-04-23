@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\UserAndQueueDTO;
  */
 final class UserAndQueueResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/userAndQueue';
+    protected string $endpoint = 'userAndQueue';
     protected string $dtoClass = UserAndQueueDTO::class;
     protected string $listKey  = 'userAndQueue';
 

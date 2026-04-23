@@ -13,11 +13,11 @@ final class TableConfigStorageSettingResource
 
     public function get(string $type): array
     {
-        return $this->http->get("v1/tableConfigStorageSetting/{$type}");
+        return $this->http->get("tableConfigStorageSetting/{$type}");
     }
 
     public function getForStorage(string $type, int $storageId): array
     {
-        return $this->http->get("v1/tableConfigStorageSetting/{$type}/{$storageId}");
+        return $this->http->get("tableConfigStorageSetting/{$type}/{$storageId}");
     }
 }

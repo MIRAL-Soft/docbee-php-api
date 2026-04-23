@@ -14,6 +14,6 @@ final class EmailAddressResource
     /** Returns a list of email addresses. */
     public function list(): array
     {
-        return $this->http->get('v1/emailAddress/list')['emailAddress'] ?? [];
+        return $this->http->get('emailAddress/list')['emailAddress'] ?? [];
     }
 }

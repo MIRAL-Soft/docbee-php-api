@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\MapViewDTO;
  */
 final class TicketMapViewResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/ticketMapView';
+    protected string $endpoint = 'ticketMapView';
     protected string $dtoClass = MapViewDTO::class;
     protected string $listKey  = 'ticketMapView';
 

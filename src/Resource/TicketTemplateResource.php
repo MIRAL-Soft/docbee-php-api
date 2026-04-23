@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class TicketTemplateResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/ticketTemplate';
+    protected string $endpoint = 'ticketTemplate';
     protected string $dtoClass = TicketTemplateDTO::class;
     protected string $listKey  = 'ticketTemplate';
 

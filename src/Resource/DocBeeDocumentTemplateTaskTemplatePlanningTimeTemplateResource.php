@@ -19,7 +19,7 @@ final class DocBeeDocumentTemplateTaskTemplatePlanningTimeTemplateResource exten
 
     public function __construct(HttpClientInterface $http, int $documentTemplateId, int $taskTemplateId)
     {
-        $this->endpoint = "v1/docBeeDocumentTemplate/{$documentTemplateId}/taskTemplate/{$taskTemplateId}/planningTimeTemplate";
+        $this->endpoint = "docBeeDocumentTemplate/{$documentTemplateId}/taskTemplate/{$taskTemplateId}/planningTimeTemplate";
         parent::__construct($http);
     }
 }

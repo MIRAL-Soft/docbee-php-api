@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class CostEstimationTemplateResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/costEstimationTemplate';
+    protected string $endpoint = 'costEstimationTemplate';
     protected string $dtoClass = CostEstimationTemplateDTO::class;
     protected string $listKey  = 'costEstimationTemplate';
 

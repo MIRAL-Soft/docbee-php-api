@@ -25,8 +25,8 @@ final class PaymentProfileMappingResource extends AbstractResource
             throw new \InvalidArgumentException('paymentProfileId must be a positive integer.');
         }
         $this->endpoint = $paymentProfileId !== null
-            ? "v1/paymentProfile/{$paymentProfileId}/mapping"
-            : 'v1/paymentProfileMapping';
+            ? "paymentProfile/{$paymentProfileId}/mapping"
+            : 'paymentProfileMapping';
         parent::__construct($http);
     }
 }

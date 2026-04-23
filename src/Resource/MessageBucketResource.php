@@ -13,7 +13,7 @@ use miralsoft\docbee\api\DTO\MessageBucketDTO;
  */
 final class MessageBucketResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/messageBucket';
+    protected string $endpoint = 'messageBucket';
     protected string $dtoClass = MessageBucketDTO::class;
     protected string $listKey  = 'messageBucket';
 }

@@ -19,7 +19,7 @@ final class TicketReminderResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $ticketId)
     {
-        $this->endpoint = "v1/ticket/{$ticketId}/reminder";
+        $this->endpoint = "ticket/{$ticketId}/reminder";
         parent::__construct($http);
     }
 }

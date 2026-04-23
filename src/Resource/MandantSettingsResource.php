@@ -15,21 +15,21 @@ final class MandantSettingsResource
 
     public function get(): MandantSettingsDTO
     {
-        return MandantSettingsDTO::fromArray($this->http->get('v1/mandantSettings'));
+        return MandantSettingsDTO::fromArray($this->http->get('mandantSettings'));
     }
 
     public function update(array $data): MandantSettingsDTO
     {
-        return MandantSettingsDTO::fromArray($this->http->put('v1/mandantSettings', $data));
+        return MandantSettingsDTO::fromArray($this->http->put('mandantSettings', $data));
     }
 
     public function getWorkingDays(): WorkingDaysDTO
     {
-        return WorkingDaysDTO::fromArray($this->http->get('v1/mandantSettings/workingDays'));
+        return WorkingDaysDTO::fromArray($this->http->get('mandantSettings/workingDays'));
     }
 
     public function updateWorkingDays(array $data): WorkingDaysDTO
     {
-        return WorkingDaysDTO::fromArray($this->http->put('v1/mandantSettings/workingDays', $data));
+        return WorkingDaysDTO::fromArray($this->http->put('mandantSettings/workingDays', $data));
     }
 }

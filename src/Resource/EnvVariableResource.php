@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class EnvVariableResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/envVariable';
+    protected string $endpoint = 'envVariable';
     protected string $dtoClass = EnvVariableDTO::class;
     protected string $listKey  = 'envVariable';
 }

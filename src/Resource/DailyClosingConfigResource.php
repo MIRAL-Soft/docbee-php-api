@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DailyClosingConfigResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/dailyClosingConfig';
+    protected string $endpoint = 'dailyClosingConfig';
     protected string $dtoClass = DailyClosingConfigDTO::class;
     protected string $listKey  = 'dailyClosingConfig';
 

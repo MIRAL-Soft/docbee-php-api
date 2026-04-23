@@ -19,7 +19,7 @@ final class TableConfigStorageFieldResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $storageId)
     {
-        $this->endpoint = "v1/tableConfigStorage/{$storageId}/field";
+        $this->endpoint = "tableConfigStorage/{$storageId}/field";
         parent::__construct($http);
     }
 }

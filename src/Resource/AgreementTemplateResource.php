@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class AgreementTemplateResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/agreementTemplate';
+    protected string $endpoint = 'agreementTemplate';
     protected string $dtoClass = AgreementTemplateDTO::class;
     protected string $listKey  = 'agreementTemplate';
 }

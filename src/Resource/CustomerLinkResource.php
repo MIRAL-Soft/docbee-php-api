@@ -19,7 +19,7 @@ final class CustomerLinkResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $customerId)
     {
-        $this->endpoint = "v1/customer/{$customerId}/link";
+        $this->endpoint = "customer/{$customerId}/link";
         parent::__construct($http);
     }
 }

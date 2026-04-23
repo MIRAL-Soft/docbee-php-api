@@ -20,7 +20,7 @@ final class TicketBoardColumnResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $boardId)
     {
-        $this->endpoint = "v1/ticketBoard/{$boardId}/column";
+        $this->endpoint = "ticketBoard/{$boardId}/column";
         parent::__construct($http);
     }
 }

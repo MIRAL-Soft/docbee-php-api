@@ -19,7 +19,7 @@ final class ProtocolPlanningTimeResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $protocolId)
     {
-        $this->endpoint = "v1/protocol/{$protocolId}/planningTime";
+        $this->endpoint = "protocol/{$protocolId}/planningTime";
         parent::__construct($http);
     }
 }

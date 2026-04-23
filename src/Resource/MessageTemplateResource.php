@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class MessageTemplateResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/messageTemplate';
+    protected string $endpoint = 'messageTemplate';
     protected string $dtoClass = MessageTemplateDTO::class;
     protected string $listKey  = 'messageTemplate';
 

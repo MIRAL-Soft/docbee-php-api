@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class PresetProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/presetProfile';
+    protected string $endpoint = 'presetProfile';
     protected string $dtoClass = PresetProfileDTO::class;
     protected string $listKey  = 'presetProfile';
 }

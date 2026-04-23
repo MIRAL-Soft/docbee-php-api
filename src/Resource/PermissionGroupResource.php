@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class PermissionGroupResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/permissionGroup';
+    protected string $endpoint = 'permissionGroup';
     protected string $dtoClass = PermissionGroupDTO::class;
     protected string $listKey  = 'permissionGroup';
 

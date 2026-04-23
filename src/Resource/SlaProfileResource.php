@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class SlaProfileResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/slaProfile';
+    protected string $endpoint = 'slaProfile';
     protected string $dtoClass = SlaProfileDTO::class;
     protected string $listKey  = 'slaProfile';
 }

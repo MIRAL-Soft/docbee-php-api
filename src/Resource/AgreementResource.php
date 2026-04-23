@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class AgreementResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/agreement';
+    protected string $endpoint = 'agreement';
     protected string $dtoClass = AgreementDTO::class;
     protected string $listKey  = 'agreement';
 

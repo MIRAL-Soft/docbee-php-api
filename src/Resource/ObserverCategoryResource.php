@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class ObserverCategoryResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/observerCategory';
+    protected string $endpoint = 'observerCategory';
     protected string $dtoClass = ObserverCategoryDTO::class;
     protected string $listKey  = 'observerCategory';
 

@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class MaterialItemResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/materialItem';
+    protected string $endpoint = 'materialItem';
     protected string $dtoClass = MaterialItemDTO::class;
     protected string $listKey  = 'materialItem';
 

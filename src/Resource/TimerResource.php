@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class TimerResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/timer';
+    protected string $endpoint = 'timer';
     protected string $dtoClass = TimerDTO::class;
     protected string $listKey  = 'timer';
 

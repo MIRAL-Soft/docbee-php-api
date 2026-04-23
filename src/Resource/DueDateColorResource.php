@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DueDateColorResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/dueDateColor';
+    protected string $endpoint = 'dueDateColor';
     protected string $dtoClass = DueDateColorDTO::class;
     protected string $listKey  = 'dueDateColor';
 }

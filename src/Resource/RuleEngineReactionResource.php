@@ -20,7 +20,7 @@ final class RuleEngineReactionResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $actionId)
     {
-        $this->endpoint = "v1/ruleEngineAction/{$actionId}/reaction";
+        $this->endpoint = "ruleEngineAction/{$actionId}/reaction";
         parent::__construct($http);
     }
 }

@@ -14,11 +14,11 @@ final class ProtocolSiteConfigResource
 
     public function get(): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->get('v1/protocolSiteConfig'));
+        return SiteConfigDTO::fromArray($this->http->get('protocolSiteConfig'));
     }
 
     public function update(array $data): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->put('v1/protocolSiteConfig', $data));
+        return SiteConfigDTO::fromArray($this->http->put('protocolSiteConfig', $data));
     }
 }

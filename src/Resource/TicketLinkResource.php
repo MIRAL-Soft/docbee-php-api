@@ -20,7 +20,7 @@ final class TicketLinkResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $ticketId)
     {
-        $this->endpoint = "v1/ticket/{$ticketId}/link";
+        $this->endpoint = "ticket/{$ticketId}/link";
         parent::__construct($http);
     }
 }

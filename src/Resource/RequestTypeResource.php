@@ -15,7 +15,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class RequestTypeResource extends AbstractResource
 {
-    protected string $endpoint = 'requesttype';
+    protected string $endpoint = 'requestType';
     protected string $dtoClass = RequestTypeDTO::class;
     protected string $listKey  = 'requestType';
 

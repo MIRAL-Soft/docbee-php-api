@@ -20,7 +20,7 @@ final class ProtocolGroupDataResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $protocolId)
     {
-        $this->endpoint = "v1/protocol/{$protocolId}/groupData";
+        $this->endpoint = "protocol/{$protocolId}/groupData";
         parent::__construct($http);
     }
 

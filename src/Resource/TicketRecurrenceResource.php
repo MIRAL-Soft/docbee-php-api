@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class TicketRecurrenceResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/ticketRecurrence';
+    protected string $endpoint = 'ticketRecurrence';
     protected string $dtoClass = TicketRecurrenceDTO::class;
     protected string $listKey  = 'ticketRecurrence';
 

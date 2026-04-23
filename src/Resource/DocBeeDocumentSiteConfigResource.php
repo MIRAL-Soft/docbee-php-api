@@ -14,11 +14,11 @@ final class DocBeeDocumentSiteConfigResource
 
     public function get(): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->get('v1/docBeeDocumentSiteConfig'));
+        return SiteConfigDTO::fromArray($this->http->get('docBeeDocumentSiteConfig'));
     }
 
     public function update(array $data): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->put('v1/docBeeDocumentSiteConfig', $data));
+        return SiteConfigDTO::fromArray($this->http->put('docBeeDocumentSiteConfig', $data));
     }
 }

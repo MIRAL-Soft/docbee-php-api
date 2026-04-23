@@ -20,7 +20,7 @@ final class SlaProfileSpecializationResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $slaProfileId)
     {
-        $this->endpoint = "v1/slaProfile/{$slaProfileId}/specialization";
+        $this->endpoint = "slaProfile/{$slaProfileId}/specialization";
         parent::__construct($http);
     }
 }

@@ -20,7 +20,7 @@ final class TicketBoardFieldResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $boardId)
     {
-        $this->endpoint = "v1/ticketBoard/{$boardId}/field";
+        $this->endpoint = "ticketBoard/{$boardId}/field";
         parent::__construct($http);
     }
 }

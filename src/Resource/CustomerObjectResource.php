@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class CustomerObjectResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/customerObject';
+    protected string $endpoint = 'customerObject';
     protected string $dtoClass = CustomerObjectDTO::class;
     protected string $listKey  = 'customerObject';
 

@@ -20,27 +20,27 @@ final class SelectionValueResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $selectionCategoryId)
     {
-        $this->endpoint = "v1/selectionCategory/{$selectionCategoryId}/selectionValue";
+        $this->endpoint = "selectionCategory/{$selectionCategoryId}/selectionValue";
         parent::__construct($http);
     }
 
     public function findByScanCode(int $selectionCategoryId, string $scanCode): array
     {
-        return $this->http->get("v1/selectionCategory/{$selectionCategoryId}/selectionValue/findByScanCode/{$scanCode}");
+        return $this->http->get("selectionCategory/{$selectionCategoryId}/selectionValue/findByScanCode/{$scanCode}");
     }
 
     public function guess(int $selectionCategoryId, array $data): array
     {
-        return $this->http->post("v1/selectionCategory/{$selectionCategoryId}/selectionValue/guess", $data);
+        return $this->http->post("selectionCategory/{$selectionCategoryId}/selectionValue/guess", $data);
     }
 
     public function addFilter(int $selectionCategoryId, int $id): void
     {
-        $this->http->put("v1/selectionCategory/{$selectionCategoryId}/selectionValue/{$id}/addFilter", []);
+        $this->http->put("selectionCategory/{$selectionCategoryId}/selectionValue/{$id}/addFilter", []);
     }
 
     public function removeFilter(int $selectionCategoryId, int $id): void
     {
-        $this->http->put("v1/selectionCategory/{$selectionCategoryId}/selectionValue/{$id}/removeFilter", []);
+        $this->http->put("selectionCategory/{$selectionCategoryId}/selectionValue/{$id}/removeFilter", []);
     }
 }

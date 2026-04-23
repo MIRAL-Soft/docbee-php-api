@@ -19,7 +19,7 @@ final class DocBeeDocumentTaskWorkLogResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $docBeeDocumentId, int $taskId)
     {
-        $this->endpoint = "v1/docBeeDocument/{$docBeeDocumentId}/task/{$taskId}/workLog";
+        $this->endpoint = "docBeeDocument/{$docBeeDocumentId}/task/{$taskId}/workLog";
         parent::__construct($http);
     }
 }

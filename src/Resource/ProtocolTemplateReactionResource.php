@@ -19,7 +19,7 @@ final class ProtocolTemplateReactionResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $templateId, int $actionId)
     {
-        $this->endpoint = "v1/protocolTemplate/{$templateId}/action/{$actionId}/reaction";
+        $this->endpoint = "protocolTemplate/{$templateId}/action/{$actionId}/reaction";
         parent::__construct($http);
     }
 }

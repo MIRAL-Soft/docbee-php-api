@@ -14,11 +14,11 @@ final class TicketSiteConfigResource
 
     public function get(): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->get('v1/ticketSiteConfig'));
+        return SiteConfigDTO::fromArray($this->http->get('ticketSiteConfig'));
     }
 
     public function update(array $data): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->put('v1/ticketSiteConfig', $data));
+        return SiteConfigDTO::fromArray($this->http->put('ticketSiteConfig', $data));
     }
 }

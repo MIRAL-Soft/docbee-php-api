@@ -19,7 +19,7 @@ final class DocBeeDocumentTemplateTaskTemplateWorkLogTemplateResource extends Ab
 
     public function __construct(HttpClientInterface $http, int $documentTemplateId, int $taskTemplateId)
     {
-        $this->endpoint = "v1/docBeeDocumentTemplate/{$documentTemplateId}/taskTemplate/{$taskTemplateId}/workLogTemplate";
+        $this->endpoint = "docBeeDocumentTemplate/{$documentTemplateId}/taskTemplate/{$taskTemplateId}/workLogTemplate";
         parent::__construct($http);
     }
 }

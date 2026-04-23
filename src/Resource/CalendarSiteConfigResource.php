@@ -14,11 +14,11 @@ final class CalendarSiteConfigResource
 
     public function get(): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->get('v1/calendarSiteConfig'));
+        return SiteConfigDTO::fromArray($this->http->get('calendarSiteConfig'));
     }
 
     public function update(array $data): SiteConfigDTO
     {
-        return SiteConfigDTO::fromArray($this->http->put('v1/calendarSiteConfig', $data));
+        return SiteConfigDTO::fromArray($this->http->put('calendarSiteConfig', $data));
     }
 }

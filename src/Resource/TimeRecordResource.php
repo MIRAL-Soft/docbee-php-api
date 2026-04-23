@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class TimeRecordResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/timeRecord';
+    protected string $endpoint = 'timeRecord';
     protected string $dtoClass = TimeRecordDTO::class;
     protected string $listKey  = 'timeRecord';
 

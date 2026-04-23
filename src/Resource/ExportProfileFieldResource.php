@@ -19,7 +19,7 @@ final class ExportProfileFieldResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $exportProfileId)
     {
-        $this->endpoint = "v1/exportProfile/{$exportProfileId}/field";
+        $this->endpoint = "exportProfile/{$exportProfileId}/field";
         parent::__construct($http);
     }
 }

@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class DocumentTaskResource extends AbstractResource
 {
-    protected string $endpoint = 'docbeedocumenttask';
+    protected string $endpoint = 'docBeeDocumentTask';
     protected string $dtoClass = DocBeeDocumentTaskDTO::class;
     protected string $listKey  = 'docBeeDocumentTask';
 

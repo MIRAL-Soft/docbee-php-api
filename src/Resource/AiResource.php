@@ -14,12 +14,12 @@ final class AiResource
     /** Generate a mail message using AI. */
     public function generateMailMessage(array $data): array
     {
-        return $this->http->post('v1/ai/generateMailMessage', $data);
+        return $this->http->post('ai/generateMailMessage', $data);
     }
 
     /** Generate a task description using AI. */
     public function generateTaskDescription(array $data): array
     {
-        return $this->http->post('v1/ai/generateTaskDescription', $data);
+        return $this->http->post('ai/generateTaskDescription', $data);
     }
 }

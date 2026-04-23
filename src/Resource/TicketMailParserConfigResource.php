@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class TicketMailParserConfigResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/ticketMailParserConfig';
+    protected string $endpoint = 'ticketMailParserConfig';
     protected string $dtoClass = TicketMailParserConfigDTO::class;
     protected string $listKey  = 'ticketMailParserConfig';
 }

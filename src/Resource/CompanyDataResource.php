@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class CompanyDataResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/companyData';
+    protected string $endpoint = 'companyData';
     protected string $dtoClass = CompanyDataDTO::class;
     protected string $listKey  = 'companyData';
 }

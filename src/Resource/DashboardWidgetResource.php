@@ -20,7 +20,7 @@ final class DashboardWidgetResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $dashboardId)
     {
-        $this->endpoint = "v1/dashboard/{$dashboardId}/widget";
+        $this->endpoint = "dashboard/{$dashboardId}/widget";
         parent::__construct($http);
     }
 }

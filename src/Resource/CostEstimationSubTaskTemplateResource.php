@@ -19,7 +19,7 @@ final class CostEstimationSubTaskTemplateResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $costEstimationId, int $taskId)
     {
-        $this->endpoint = "v1/costEstimationTemplate/{$costEstimationId}/task/{$taskId}/subTask";
+        $this->endpoint = "costEstimationTemplate/{$costEstimationId}/task/{$taskId}/subTask";
         parent::__construct($http);
     }
 }

@@ -19,7 +19,7 @@ final class ReportParameterResource extends AbstractResource
 
     public function __construct(HttpClientInterface $http, int $reportId)
     {
-        $this->endpoint = "v1/report/{$reportId}/parameter";
+        $this->endpoint = "report/{$reportId}/parameter";
         parent::__construct($http);
     }
 }

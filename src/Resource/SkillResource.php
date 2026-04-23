@@ -14,7 +14,7 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  */
 final class SkillResource extends AbstractResource
 {
-    protected string $endpoint = 'v1/skill';
+    protected string $endpoint = 'skill';
     protected string $dtoClass = SkillDTO::class;
     protected string $listKey  = 'skill';
 

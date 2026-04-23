@@ -25,8 +25,8 @@ final class ProtocolDocumentTemplateResource extends AbstractResource
             throw new \InvalidArgumentException('protocolTemplateId must be a positive integer.');
         }
         $this->endpoint = $protocolTemplateId !== null
-            ? "v1/protocolTemplate/{$protocolTemplateId}/documentTemplate"
-            : 'v1/protocolDocumentTemplate';
+            ? "protocolTemplate/{$protocolTemplateId}/documentTemplate"
+            : 'protocolDocumentTemplate';
         parent::__construct($http);
     }
 }

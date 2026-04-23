@@ -15,24 +15,24 @@ final class AuthResource
     /** Login and get access token. */
     public function login(array $credentials): LoginResultDTO
     {
-        return LoginResultDTO::fromArray($this->http->post('v1/login', $credentials));
+        return LoginResultDTO::fromArray($this->http->post('login', $credentials));
     }
 
     /** Logout and invalidate token. */
     public function logout(): void
     {
-        $this->http->post('v1/logout');
+        $this->http->post('logout');
     }
 
     /** Request password reset email. */
     public function forgotPassword(string $username): void
     {
-        $this->http->post('v1/forgotPassword', ['username' => $username]);
+        $this->http->post('forgotPassword', ['username' => $username]);
     }
 
     /** Reset password with hash code. */
     public function resetPassword(string $hashCode, string $newPassword, string $code = ''): void
     {
-        $this->http->post('v1/resetPassword', ['hashCode' => $hashCode, 'newPassword' => $newPassword, 'code' => $code]);
+        $this->http->post('resetPassword', ['hashCode' => $hashCode, 'newPassword' => $newPassword, 'code' => $code]);
     }
 }

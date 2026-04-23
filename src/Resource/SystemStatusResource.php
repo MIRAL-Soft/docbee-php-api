@@ -14,6 +14,6 @@ final class SystemStatusResource
 
     public function get(): SystemStatusDTO
     {
-        return SystemStatusDTO::fromArray($this->http->get('v1/systemStatus'));
+        return SystemStatusDTO::fromArray($this->http->get('systemStatus'));
     }
 }

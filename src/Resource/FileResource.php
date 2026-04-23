@@ -15,18 +15,18 @@ final class FileResource
     /** Upload a file. */
     public function upload(array $data): FileDTO
     {
-        return FileDTO::fromArray($this->http->post('v1/file/upload', $data));
+        return FileDTO::fromArray($this->http->post('file/upload', $data));
     }
 
     /** Get file download URL data. */
     public function download(int $id): array
     {
-        return $this->http->get("v1/file/{$id}/download");
+        return $this->http->get("file/{$id}/download");
     }
 
     /** Get file show data. */
     public function show(int $id): array
     {
-        return $this->http->get("v1/file/{$id}/show");
+        return $this->http->get("file/{$id}/show");
     }
 }
