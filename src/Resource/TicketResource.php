@@ -27,6 +27,10 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * ```
  *
  * @extends AbstractResource<TicketDTO>
+ *
+ * @note The Docbee API interprets `id-eq` as a foreign-key (customer ID) filter
+ *       for this resource, not as a primary-key filter. To fetch a single record
+ *       by its own ID, use find(int $id) instead of list(filterEq('id', ...)).
  */
 final class TicketResource extends AbstractResource
 {
@@ -89,6 +93,11 @@ final class TicketResource extends AbstractResource
      *
      * @return list<TicketDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     *
+     * @note The Docbee API does not perform an exact match on erpReferenceNumber.
+     *       The filter appears to be a broad/fuzzy match and can return tens of thousands
+     *       of records. Callers must filter the result client-side for an exact match.
+     *       Example: array_filter($results, fn($t) => $t->getErpReferenceNumber() === $expected)
      */
     public function findByErpReferenceNumber(string $erpReferenceNumber): array
     {

@@ -11,6 +11,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * Provides access to Docbee documents (protocols / reports).
  *
  * @extends AbstractResource<DocBeeDocumentDTO>
+ *
+ * @note Filtering documents by ticket ID via filterEq('ticket', $ticketId) is not
+ *       supported by the Docbee API — the filter is silently ignored and returns
+ *       an empty result. As a workaround, use findByCustomer($customerId) and
+ *       scan the result client-side by matching getTicket() === $ticketId.
  */
 final class DocumentResource extends AbstractResource
 {

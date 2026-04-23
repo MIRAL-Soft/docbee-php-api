@@ -16,6 +16,10 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * ```
  *
  * @extends AbstractResource<CustomerContactDTO>
+ *
+ * @note The Docbee API interprets `id-eq` as a foreign-key (customer ID) filter
+ *       for this resource, not as a primary-key filter. To fetch a single record
+ *       by its own ID, use find(int $id) instead of list(filterEq('id', ...)).
  */
 final class CustomerContactResource extends AbstractResource
 {

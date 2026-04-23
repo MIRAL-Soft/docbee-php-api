@@ -84,13 +84,22 @@ abstract class AbstractResource
     /**
      * Retrieves a single record by its numeric ID.
      *
+     * @param array<string> $fields Optional list of field names to include in the response.
+     *                              When non-empty, appends ?fields=f1,f2,... to the request URL.
+     *                              Useful for reducing payload size on resources with many fields.
      * @return T
      * @throws NotFoundException        when the record does not exist.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     *
+     * @note The Docbee API does not return all fields for every resource type.
+     *       For tickets, the following fields are known to be absent in GET /ticket/{id} responses:
+     *       description, erpReferenceNumber, internalDescription, priority, ticketStatus.
+     *       This is a server-side limitation and cannot be worked around via the $fields parameter.
      */
-    public function find(int $id): AbstractDTO
+    public function find(int $id, array $fields = []): AbstractDTO
     {
-        $response = $this->http->get("{$this->endpoint}/{$id}");
+        $qs       = !empty($fields) ? '?' . http_build_query(['fields' => implode(',', $fields)]) : '';
+        $response = $this->http->get("{$this->endpoint}/{$id}{$qs}");
 
         if (empty($response)) {
             throw new NotFoundException(
