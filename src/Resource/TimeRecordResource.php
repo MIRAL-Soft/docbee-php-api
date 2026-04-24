@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<TimeRecordDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class TimeRecordResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'timeRecord';
     protected string $dtoClass = TimeRecordDTO::class;
     protected string $listKey  = 'timeRecord';

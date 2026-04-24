@@ -13,8 +13,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<ServiceTypeDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ServiceTypeResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'serviceType';
     protected string $dtoClass = ServiceTypeDTO::class;
     protected string $listKey  = 'serviceType';

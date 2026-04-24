@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<QueueDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class QueueResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'queue';
     protected string $dtoClass = QueueDTO::class;
     protected string $listKey  = 'queue';

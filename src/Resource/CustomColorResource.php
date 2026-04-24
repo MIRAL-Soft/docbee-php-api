@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<CustomColorDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class CustomColorResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'customColor';
     protected string $dtoClass = CustomColorDTO::class;
     protected string $listKey  = 'customColor';

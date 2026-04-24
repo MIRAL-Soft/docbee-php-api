@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<WorkPipeDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class WorkPipeResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'workPipe';
     protected string $dtoClass = WorkPipeDTO::class;
     protected string $listKey  = 'workPipe';

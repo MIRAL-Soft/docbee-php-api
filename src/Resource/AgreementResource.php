@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<AgreementDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class AgreementResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'agreement';
     protected string $dtoClass = AgreementDTO::class;
     protected string $listKey  = 'agreement';

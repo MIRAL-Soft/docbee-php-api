@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<CustomerStatusDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class CustomerStatusResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'customerStatus';
     protected string $dtoClass = CustomerStatusDTO::class;
     protected string $listKey  = 'customerStatus';

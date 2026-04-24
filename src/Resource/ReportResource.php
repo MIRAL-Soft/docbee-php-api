@@ -11,8 +11,11 @@ use miralsoft\docbee\api\DTO\ReportDTO;
  *
  * @extends AbstractResource<ReportDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ReportResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'report';
     protected string $dtoClass = ReportDTO::class;
     protected string $listKey  = 'report';

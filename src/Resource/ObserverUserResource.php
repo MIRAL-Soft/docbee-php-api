@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<ObserverUserDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ObserverUserResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'observerUser';
     protected string $dtoClass = ObserverUserDTO::class;
     protected string $listKey  = 'observerUser';

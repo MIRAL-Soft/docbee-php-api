@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<AwayReasonDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class AwayReasonResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'awayReason';
     protected string $dtoClass = AwayReasonDTO::class;
     protected string $listKey  = 'awayReason';

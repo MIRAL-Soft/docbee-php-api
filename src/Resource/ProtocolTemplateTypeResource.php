@@ -11,8 +11,11 @@ use miralsoft\docbee\api\DTO\ProtocolTemplateTypeDTO;
  *
  * @extends AbstractResource<ProtocolTemplateTypeDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ProtocolTemplateTypeResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'protocolTemplateType';
     protected string $dtoClass = ProtocolTemplateTypeDTO::class;
     protected string $listKey  = 'protocolTemplateType';

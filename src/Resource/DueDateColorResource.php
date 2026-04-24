@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<DueDateColorDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class DueDateColorResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'dueDateColor';
     protected string $dtoClass = DueDateColorDTO::class;
     protected string $listKey  = 'dueDateColor';

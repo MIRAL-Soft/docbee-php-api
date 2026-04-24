@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<CostEstimationTemplateDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class CostEstimationTemplateResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'costEstimationTemplate';
     protected string $dtoClass = CostEstimationTemplateDTO::class;
     protected string $listKey  = 'costEstimationTemplate';

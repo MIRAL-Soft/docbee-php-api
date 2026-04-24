@@ -6,6 +6,7 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\Client\HttpClientInterface;
 use miralsoft\docbee\api\DTO\ProtocolDocumentTemplateDTO;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee ProtocolDocumentTemplate records.
@@ -16,6 +17,7 @@ use miralsoft\docbee\api\DTO\ProtocolDocumentTemplateDTO;
  */
 final class ProtocolDocumentTemplateResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $dtoClass = ProtocolDocumentTemplateDTO::class;
     protected string $listKey  = 'protocolDocumentTemplate';
 

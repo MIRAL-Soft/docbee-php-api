@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<ErrorLogDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ErrorLogResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'errorLog';
     protected string $dtoClass = ErrorLogDTO::class;
     protected string $listKey  = 'errorLog';

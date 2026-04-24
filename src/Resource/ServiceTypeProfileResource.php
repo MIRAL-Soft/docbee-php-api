@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<ServiceTypeProfileDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ServiceTypeProfileResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'serviceTypeProfile';
     protected string $dtoClass = ServiceTypeProfileDTO::class;
     protected string $listKey  = 'serviceTypeProfile';

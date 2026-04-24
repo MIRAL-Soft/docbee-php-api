@@ -11,8 +11,11 @@ use miralsoft\docbee\api\DTO\MapViewDTO;
  *
  * @extends AbstractResource<MapViewDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class ProtocolMapViewResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'protocolMapView';
     protected string $dtoClass = MapViewDTO::class;
     protected string $listKey  = 'protocolMapView';

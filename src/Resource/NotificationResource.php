@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<NotificationDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class NotificationResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'notification';
     protected string $dtoClass = NotificationDTO::class;
     protected string $listKey  = 'notification';

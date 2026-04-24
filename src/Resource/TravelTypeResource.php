@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<TravelTypeDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class TravelTypeResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'travelType';
     protected string $dtoClass = TravelTypeDTO::class;
     protected string $listKey  = 'travelType';

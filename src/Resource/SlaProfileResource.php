@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<SlaProfileDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class SlaProfileResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'slaProfile';
     protected string $dtoClass = SlaProfileDTO::class;
     protected string $listKey  = 'slaProfile';

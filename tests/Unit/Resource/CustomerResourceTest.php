@@ -51,11 +51,13 @@ final class CustomerResourceTest extends TestCase
         $this->resource->findByCustomerId('NOPE');
     }
 
-    public function testFindByNameUsesIlikeFilter(): void
+    public function testFindByNameDelegatesToSearch(): void
     {
+        // findByName() is a @deprecated alias for search(), which uses the
+        // native Docbee `search` parameter instead of `name-ilike`.
         $this->http
             ->method('get')
-            ->with($this->stringContains('name-ilike'))
+            ->with($this->stringContains('search=Acme'))
             ->willReturn(['totalCount' => 0, 'customer' => []]);
 
         $results = $this->resource->findByName('Acme');

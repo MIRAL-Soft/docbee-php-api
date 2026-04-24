@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<PaymentProfileDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class PaymentProfileResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'paymentProfile';
     protected string $dtoClass = PaymentProfileDTO::class;
     protected string $listKey  = 'paymentProfile';

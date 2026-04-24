@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<PresetProfileDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class PresetProfileResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'presetProfile';
     protected string $dtoClass = PresetProfileDTO::class;
     protected string $listKey  = 'presetProfile';

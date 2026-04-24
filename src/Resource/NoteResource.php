@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<NoteDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class NoteResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'note';
     protected string $dtoClass = NoteDTO::class;
     protected string $listKey  = 'note';

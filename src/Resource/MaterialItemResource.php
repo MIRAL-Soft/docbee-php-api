@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<MaterialItemDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class MaterialItemResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'materialItem';
     protected string $dtoClass = MaterialItemDTO::class;
     protected string $listKey  = 'materialItem';

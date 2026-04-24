@@ -6,6 +6,7 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\Client\HttpClientInterface;
 use miralsoft\docbee\api\DTO\PaymentProfileMappingDTO;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee PaymentProfileMapping records.
@@ -16,6 +17,7 @@ use miralsoft\docbee\api\DTO\PaymentProfileMappingDTO;
  */
 final class PaymentProfileMappingResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $dtoClass = PaymentProfileMappingDTO::class;
     protected string $listKey  = 'paymentProfileMapping';
 

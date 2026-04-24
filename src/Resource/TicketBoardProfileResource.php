@@ -12,8 +12,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<TicketBoardProfileDTO>
  */
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
+
 final class TicketBoardProfileResource extends AbstractResource
 {
+    use NotSearchable;
     protected string $endpoint = 'ticketBoardProfile';
     protected string $dtoClass = TicketBoardProfileDTO::class;
     protected string $listKey  = 'ticketBoardProfile';
