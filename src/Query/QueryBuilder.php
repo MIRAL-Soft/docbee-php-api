@@ -138,6 +138,30 @@ final class QueryBuilder
     }
 
     // -------------------------------------------------------------------------
+    // Plain parameters (no operator suffix)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Adds a query parameter with a plain key — no operator suffix is appended.
+     *
+     * Most Docbee API filters follow the `field-eq=value` convention handled by
+     * {@see filterEq()} and friends.  A small number of endpoints accept the field
+     * name as-is (e.g. `customer=42` rather than `customer-eq=42`).  Use this
+     * method when the API ignores the `-eq` variant and requires the bare name.
+     *
+     * Example endpoints where this is required:
+     *   - GET /customerContact  (parameters: `customer`, `customerLocation`)
+     *   - GET /customerLocation (parameter:  `customer`)
+     *
+     * @param mixed $value Scalar value; booleans are normalised to '1'/'0'.
+     */
+    public function param(string $key, mixed $value): self
+    {
+        $this->filters[$key] = $this->normalizeValue($value);
+        return $this;
+    }
+
+    // -------------------------------------------------------------------------
     // Timestamp helpers
     // -------------------------------------------------------------------------
 

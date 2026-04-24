@@ -356,7 +356,18 @@ $tickets = $client->tickets()->list($query);
 $customer = $client->customers()->findByCustomerId('K-1001');
 $matches  = $client->customers()->findByName('Acme');
 $active   = $client->customers()->findByCustomerStatus(1);
+
+// Customer contacts and locations — use the dedicated methods (plain parameter required)
+$contacts  = $client->customerContacts()->findByCustomer(42);
+$locations = $client->customerLocations()->findByCustomer(42);
+$contacts  = $client->customerContacts()->findByCustomerLocation(3);
 ```
+
+> **Note:** For `customerContacts` and `customerLocations`, the Docbee API requires a plain
+> `customer=<id>` parameter — the standard `customer-eq=<id>` operator form is silently ignored.
+> Always use the `findByCustomer()` / `findByCustomerLocation()` methods rather than
+> `list(QueryBuilder::new()->filterEq('customer', $id))`.
+
 
 ### Tickets
 

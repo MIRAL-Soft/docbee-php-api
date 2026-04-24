@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`QueryBuilder::param(string $key, mixed $value)`** — new method for plain query parameters
+  without an operator suffix (e.g. `customer=42` instead of `customer-eq=42`).  Required for
+  endpoints where the Docbee API accepts only the bare field name as a filter parameter.
+- **`CustomerContactResource::findByCustomerLocation(int $customerLocationId)`** — new method
+  to filter contacts by location, using the plain `customerLocation=<id>` parameter.
 - **`AbstractResource::find(int $id, array $fields = [])`** — optional `$fields` parameter
   appends `?fields=f1,f2,...` to the request URL, allowing callers to restrict which fields
   the API returns.  Fully backward-compatible; existing calls without a second argument are
@@ -124,6 +129,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `updateByPlaceholderName()`.
 - `ContingentItemRecurrenceDTO`: removed spurious `name` field that is not present
   in the OpenAPI specification.
+- **`CustomerContactResource::findByCustomer()` and `CustomerLocationResource::findByCustomer()`**
+  — fixed server-side filtering.  The Docbee API requires `customer=<id>` (plain parameter)
+  for these endpoints; the standard `customer-eq=<id>` operator form is silently ignored,
+  causing all records to be returned regardless of the filter.  Both methods now use
+  `QueryBuilder::param()` and auto-paginate via `listAll()` (previously `list()` returned
+  only the first 50 records).
 - **`DocumentTaskResource::create()`** — overrides the inherited `create()` with an
   immediate `\LogicException`.  `POST /docBeeDocumentTask` returns HTTP 500 from the
   Docbee server; tasks must be created via the sub-resource endpoint
@@ -133,7 +144,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - `README.md`: sub-resource table updated with all new factory methods and corrected
   `protocolEntries` endpoint (`v1/protocol/{id}/protocolEntry`).
-- **Documented known Docbee API limitations** in resource class DocBlocks (no behaviour change):
+- **Documented known Docbee API limitations** in resource class DocBlocks (no behaviour change,
+  except the `customer` plain-parameter fix described above):
   - `AbstractResource::find()`: several ticket fields are absent in `GET /ticket/{id}`
     responses (`description`, `erpReferenceNumber`, `internalDescription`, `priority`,
     `ticketStatus`) — server-side limitation, cannot be worked around via `$fields`.

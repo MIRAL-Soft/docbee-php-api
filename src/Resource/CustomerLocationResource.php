@@ -11,6 +11,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * Provides access to Docbee customer location (branch/site) records.
  *
  * @extends AbstractResource<CustomerLocationDTO>
+ *
+ * @note The Docbee API accepts `customer=<id>` (plain parameter) for this endpoint,
+ *       NOT the standard `customer-eq=<id>` operator form.  Using filterEq('customer', ...)
+ *       via QueryBuilder silently returns all records.  Use findByCustomer() or
+ *       QueryBuilder::param('customer', $id) instead.
  */
 final class CustomerLocationResource extends AbstractResource
 {
@@ -21,12 +26,15 @@ final class CustomerLocationResource extends AbstractResource
     /**
      * Returns all locations belonging to a customer.
      *
+     * Uses the plain `customer=<id>` query parameter required by this endpoint
+     * (the standard `customer-eq=<id>` operator form is silently ignored by the API).
+     *
      * @return list<CustomerLocationDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByCustomer(int $customerId): array
     {
-        return $this->list(QueryBuilder::new()->filterEq('customer', $customerId));
+        return $this->listAll(QueryBuilder::new()->param('customer', $customerId));
     }
 
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }

@@ -17,6 +17,10 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *
  * @extends AbstractResource<CustomerContactDTO>
  *
+ * @note The Docbee API accepts `customer=<id>` (plain parameter) for this endpoint,
+ *       NOT the standard `customer-eq=<id>` operator form.  Using filterEq('customer', ...)
+ *       via QueryBuilder silently returns all records.  Use findByCustomer() or
+ *       QueryBuilder::param('customer', $id) instead.
  * @note The Docbee API interprets `id-eq` as a foreign-key (customer ID) filter
  *       for this resource, not as a primary-key filter. To fetch a single record
  *       by its own ID, use find(int $id) instead of list(filterEq('id', ...)).
@@ -30,12 +34,28 @@ final class CustomerContactResource extends AbstractResource
     /**
      * Returns all contacts belonging to a customer.
      *
+     * Uses the plain `customer=<id>` query parameter required by this endpoint
+     * (the standard `customer-eq=<id>` operator form is silently ignored by the API).
+     *
      * @return list<CustomerContactDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByCustomer(int $customerId): array
     {
-        return $this->list(QueryBuilder::new()->filterEq('customer', $customerId));
+        return $this->listAll(QueryBuilder::new()->param('customer', $customerId));
+    }
+
+    /**
+     * Returns all contacts belonging to a specific customer location.
+     *
+     * Uses the plain `customerLocation=<id>` query parameter required by this endpoint.
+     *
+     * @return list<CustomerContactDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByCustomerLocation(int $customerLocationId): array
+    {
+        return $this->listAll(QueryBuilder::new()->param('customerLocation', $customerLocationId));
     }
 
     /**
