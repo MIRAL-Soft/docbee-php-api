@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **`TicketResource::findByCustomerContact(int $contactId)`** — returns all tickets linked to a
   specific customer contact.  Uses the plain `customerContact=<id>` parameter (the `-eq` operator
   form is silently ignored by the Docbee API for relation filters on this endpoint).
+- **`TicketResource::findByCustomerLocation(int $locationId)`** — returns all tickets linked to a
+  specific customer location.  Uses the plain `customerLocation=<id>` parameter for the same
+  reason as `findByCustomerContact()`.
 - **`CustomerResource::findOneByCustomerId(string $customerId): ?CustomerDTO`** — null-safe variant
   of `findByCustomerId()`.  Returns `null` instead of throwing `NotFoundException`, designed for
   existence checks during ERP imports (e.g. *"does this weclapp customer already exist in Docbee?"*).

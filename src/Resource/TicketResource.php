@@ -82,6 +82,21 @@ final class TicketResource extends AbstractResource
     }
 
     /**
+     * Returns all tickets linked to a specific customer location.
+     *
+     * Uses the plain `customerLocation=<id>` query parameter required by this endpoint
+     * (the standard `customerLocation-eq=<id>` operator form is silently ignored by the
+     * Docbee API for relation filters).
+     *
+     * @return list<TicketDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByCustomerLocation(int $locationId): array
+    {
+        return $this->listAll(QueryBuilder::new()->param('customerLocation', $locationId));
+    }
+
+    /**
      * Returns tickets assigned to a specific owner (user).
      *
      * @return list<TicketDTO>

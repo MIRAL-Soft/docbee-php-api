@@ -174,6 +174,45 @@ final class TicketResourceTest extends TestCase
         $this->assertSame(5, $results[0]->getOwner());
     }
 
+    public function testFindByCustomerContactFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->logicalAnd(
+                $this->stringContains('customerContact=7'),
+                $this->logicalNot($this->stringContains('customerContact-eq='))
+            ))
+            ->willReturn([
+                'totalCount' => 1,
+                'ticket'     => [['id' => 11, 'customerContact' => 7]],
+            ]);
+
+        $results = $this->resource->findByCustomerContact(7);
+        $this->assertCount(1, $results);
+        $this->assertSame(7, $results[0]->getCustomerContact());
+    }
+
+    public function testFindByCustomerLocationFiltersCorrectly(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->logicalAnd(
+                $this->stringContains('customerLocation=3'),
+                $this->logicalNot($this->stringContains('customerLocation-eq='))
+            ))
+            ->willReturn([
+                'totalCount' => 2,
+                'ticket'     => [
+                    ['id' => 20, 'customerLocation' => 3],
+                    ['id' => 21, 'customerLocation' => 3],
+                ],
+            ]);
+
+        $results = $this->resource->findByCustomerLocation(3);
+        $this->assertCount(2, $results);
+        $this->assertSame(3, $results[0]->getCustomerLocation());
+    }
+
     public function testDeleteCallsHttpDelete(): void
     {
         $this->http

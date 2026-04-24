@@ -397,7 +397,8 @@ $contacts = $client->customerContacts()->findByCustomerLocation(3);
 ```php
 $tickets = $client->tickets()->findByCustomer(42);
 $tickets = $client->tickets()->findByCustomer(42, ticketStatusId: 1);
-$tickets = $client->tickets()->findByCustomerContact(7);  // all tickets for a contact
+$tickets = $client->tickets()->findByCustomerContact(7);   // all tickets for a contact
+$tickets = $client->tickets()->findByCustomerLocation(3);  // all tickets for a location
 $tickets = $client->tickets()->findByTicketStatus(1);
 $tickets = $client->tickets()->findByReferenceNumber('REF-2024-001');
 $tickets = $client->tickets()->findByOwner(5);
