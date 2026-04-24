@@ -68,14 +68,26 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Returns the value of an optional env var, or null if not set / empty.
-     * Used by subclasses to conditionally run find($id) assertions.
+     * Returns the integer value of an optional env var, or null if not set / empty.
+     * Used by subclasses to conditionally run find($id) assertions with a known DB ID.
      */
     protected function optionalIntEnv(string $name): ?int
     {
         $value = getenv($name);
 
         return ($value !== false && $value !== '') ? (int) $value : null;
+    }
+
+    /**
+     * Returns the string value of an optional env var, or null if not set / empty.
+     * Used by subclasses for env vars that hold non-integer values such as a
+     * Kundennummer (the display number shown in the Docbee UI, e.g. "12355").
+     */
+    protected function optionalStringEnv(string $name): ?string
+    {
+        $value = getenv($name);
+
+        return ($value !== false && $value !== '') ? (string) $value : null;
     }
 
     /**

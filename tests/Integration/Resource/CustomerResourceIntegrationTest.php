@@ -16,14 +16,15 @@ use miralsoft\docbee\api\Tests\Integration\IntegrationTestCase;
 /**
  * Integration tests for customer-related resources — read-only.
  *
- * Optional env vars:
- *   DOCBEE_TEST_CUSTOMER_ID              — enables find($id) test for Customer
- *   DOCBEE_TEST_CUSTOMER_FILTER_ID       — enables findByCustomer() filter tests for
- *                                          CustomerContact and CustomerLocation; verifies
- *                                          that only records belonging to this customer
- *                                          are returned (proves server-side filter works)
- *   DOCBEE_TEST_CUSTOMER_LOCATION_FILTER_ID — enables findByCustomerLocation() filter
- *                                          test for CustomerContact
+ * Optional env vars (all accept the Kundennummer displayed in the Docbee UI,
+ * NOT the internal database ID — the tests resolve the display number to the
+ * internal ID automatically via CustomerResource::search()):
+ *
+ *   DOCBEE_TEST_CUSTOMER_ID              — Kundennummer; enables find() test for Customer
+ *   DOCBEE_TEST_CUSTOMER_FILTER_ID       — Kundennummer; enables findByCustomer() filter
+ *                                          tests for CustomerContact and CustomerLocation
+ *   DOCBEE_TEST_CUSTOMER_LOCATION_FILTER_ID — internal location ID; enables
+ *                                          findByCustomerLocation() filter test
  */
 final class CustomerResourceIntegrationTest extends IntegrationTestCase
 {
@@ -46,13 +47,14 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
 
     public function testCustomerFindById(): void
     {
-        $id = $this->optionalIntEnv('DOCBEE_TEST_CUSTOMER_ID');
-        if ($id === null) {
-            $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_ID in tests/.env.test to enable.');
+        $kundennummer = $this->optionalStringEnv('DOCBEE_TEST_CUSTOMER_ID');
+        if ($kundennummer === null) {
+            $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_ID (Kundennummer) in tests/.env.test to enable.');
         }
-        $dto = $this->callApi(fn() => $this->client->customers()->find($id));
+        $internalId = $this->resolveCustomerInternalId($kundennummer);
+        $dto = $this->callApi(fn() => $this->client->customers()->find($internalId));
         $this->assertInstanceOf(CustomerDTO::class, $dto);
-        $this->assertSame($id, $dto->getId());
+        $this->assertSame($internalId, $dto->getId());
     }
 
     /**
@@ -148,27 +150,29 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
     }
 
     /**
-     * Verifies findByCustomer() for a specific configured customer ID.
-     * Set DOCBEE_TEST_CUSTOMER_FILTER_ID to a customer that is known to have
-     * at least one contact. If the customer has no contacts the test is skipped.
+     * Verifies findByCustomer() for a specific configured customer Kundennummer.
+     * Set DOCBEE_TEST_CUSTOMER_FILTER_ID to the Kundennummer shown in the Docbee
+     * UI (e.g. "12355"). The test resolves it to the internal ID automatically.
+     * Skipped if the customer has no contacts.
      */
     public function testCustomerContactFindByCustomerWithConfiguredId(): void
     {
-        $customerId = $this->optionalIntEnv('DOCBEE_TEST_CUSTOMER_FILTER_ID');
-        if ($customerId === null) {
-            $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_FILTER_ID in tests/.env.test to enable.');
+        $kundennummer = $this->optionalStringEnv('DOCBEE_TEST_CUSTOMER_FILTER_ID');
+        if ($kundennummer === null) {
+            $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_FILTER_ID (Kundennummer) in tests/.env.test to enable.');
         }
-        $result = $this->callApi(fn() => $this->client->customerContacts()->findByCustomer($customerId));
+        $internalId = $this->resolveCustomerInternalId($kundennummer);
+        $result = $this->callApi(fn() => $this->client->customerContacts()->findByCustomer($internalId));
         $this->assertIsArray($result);
         if (empty($result)) {
-            $this->markTestSkipped("Customer {$customerId} has no contacts — pick a different DOCBEE_TEST_CUSTOMER_FILTER_ID.");
+            $this->markTestSkipped("Customer Kundennummer {$kundennummer} (ID {$internalId}) has no contacts — pick a different DOCBEE_TEST_CUSTOMER_FILTER_ID.");
         }
         foreach ($result as $contact) {
             $this->assertInstanceOf(CustomerContactDTO::class, $contact);
             $this->assertSame(
-                $customerId,
+                $internalId,
                 $contact->getCustomer(),
-                "Contact ID {$contact->getId()} belongs to customer {$contact->getCustomer()}, expected {$customerId}."
+                "Contact ID {$contact->getId()} belongs to customer {$contact->getCustomer()}, expected {$internalId} (Kundennummer {$kundennummer})."
             );
         }
     }
@@ -218,25 +222,26 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
     /**
      * Verifies that findByCustomer() returns only locations belonging to the given
      * customer — i.e. the server-side filter is actually applied.
-     * Every returned DTO must have getCustomer() === $customerId.
+     * Set DOCBEE_TEST_CUSTOMER_FILTER_ID to the Kundennummer shown in the Docbee UI.
      */
     public function testCustomerLocationFindByCustomerReturnsOnlyMatchingLocations(): void
     {
-        $customerId = $this->optionalIntEnv('DOCBEE_TEST_CUSTOMER_FILTER_ID');
-        if ($customerId === null) {
-            $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_FILTER_ID in tests/.env.test to enable.');
+        $kundennummer = $this->optionalStringEnv('DOCBEE_TEST_CUSTOMER_FILTER_ID');
+        if ($kundennummer === null) {
+            $this->markTestSkipped('Set DOCBEE_TEST_CUSTOMER_FILTER_ID (Kundennummer) in tests/.env.test to enable.');
         }
-        $result = $this->callApi(fn() => $this->client->customerLocations()->findByCustomer($customerId));
+        $internalId = $this->resolveCustomerInternalId($kundennummer);
+        $result = $this->callApi(fn() => $this->client->customerLocations()->findByCustomer($internalId));
         $this->assertIsArray($result);
         if (empty($result)) {
-            $this->markTestSkipped("Customer {$customerId} has no locations — pick a different DOCBEE_TEST_CUSTOMER_FILTER_ID.");
+            $this->markTestSkipped("Customer Kundennummer {$kundennummer} (ID {$internalId}) has no locations — pick a different DOCBEE_TEST_CUSTOMER_FILTER_ID.");
         }
         foreach ($result as $location) {
             $this->assertInstanceOf(CustomerLocationDTO::class, $location);
             $this->assertSame(
-                $customerId,
+                $internalId,
                 $location->getCustomer(),
-                "Location ID {$location->getId()} belongs to customer {$location->getCustomer()}, expected {$customerId}."
+                "Location ID {$location->getId()} belongs to customer {$location->getCustomer()}, expected {$internalId} (Kundennummer {$kundennummer})."
             );
         }
     }
@@ -307,5 +312,26 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
         foreach ($result as $item) {
             $this->assertInstanceOf(CustomerUserDTO::class, $item);
         }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Resolves a Kundennummer (the display number shown in the Docbee UI, e.g.
+     * "12355") to the customer's internal database ID via CustomerResource::search().
+     *
+     * Marks the calling test as skipped when the Kundennummer yields no result.
+     */
+    private function resolveCustomerInternalId(string $kundennummer): int
+    {
+        $matches = $this->callApi(fn() => $this->client->customers()->search($kundennummer));
+
+        if (empty($matches)) {
+            $this->markTestSkipped(
+                "Kundennummer \"{$kundennummer}\" not found — check DOCBEE_TEST_CUSTOMER_FILTER_ID in tests/.env.test."
+            );
+        }
+
+        return $matches[0]->getId();
     }
 }
