@@ -28,9 +28,11 @@ final class CustomerResourceTest extends TestCase
 
     public function testFindByCustomerIdReturnsDTO(): void
     {
+        // Must use plain `customerId=` — the `-eq` operator form is silently
+        // ignored by the Docbee API even for scalar fields on this endpoint.
         $this->http
             ->method('get')
-            ->with($this->stringContains('customerId-eq=K-1001'))
+            ->with($this->stringContains('customerId=K-1001'))
             ->willReturn([
                 'totalCount' => 1,
                 'customer'   => [['id' => 5, 'name' => 'Acme', 'customerId' => 'K-1001']],
@@ -41,6 +43,19 @@ final class CustomerResourceTest extends TestCase
         $this->assertSame('K-1001', $dto->getCustomerId());
     }
 
+    public function testFindByCustomerIdDoesNotUseEqSuffix(): void
+    {
+        // Regression guard: ensure filterEq() (which appends -eq) is never used
+        // for customerId — that form is silently ignored by the Docbee backend.
+        $this->http
+            ->method('get')
+            ->with($this->logicalNot($this->stringContains('customerId-eq=')))
+            ->willReturn(['totalCount' => 0, 'customer' => []]);
+
+        $this->expectException(NotFoundException::class);
+        $this->resource->findByCustomerId('K-1001');
+    }
+
     public function testFindByCustomerIdThrowsNotFound(): void
     {
         $this->http
@@ -49,6 +64,31 @@ final class CustomerResourceTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         $this->resource->findByCustomerId('NOPE');
+    }
+
+    public function testFindOneByCustomerIdReturnsDTO(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('customerId=K-1001'))
+            ->willReturn([
+                'totalCount' => 1,
+                'customer'   => [['id' => 5, 'name' => 'Acme', 'customerId' => 'K-1001']],
+            ]);
+
+        $dto = $this->resource->findOneByCustomerId('K-1001');
+        $this->assertInstanceOf(CustomerDTO::class, $dto);
+        $this->assertSame('K-1001', $dto->getCustomerId());
+    }
+
+    public function testFindOneByCustomerIdReturnsNullWhenNotFound(): void
+    {
+        $this->http
+            ->method('get')
+            ->willReturn(['totalCount' => 0, 'customer' => []]);
+
+        $result = $this->resource->findOneByCustomerId('NOPE');
+        $this->assertNull($result);
     }
 
     public function testFindByNameDelegatesToSearch(): void

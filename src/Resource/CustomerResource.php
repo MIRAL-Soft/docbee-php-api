@@ -18,8 +18,14 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * $customers = $resource->search('Testfirma');
  * $customers = $resource->search('12355');  // finds customer with display number 12355
  *
- * // Find a customer by their ERP customer ID
+ * // Find a customer by their ERP customer ID (throws NotFoundException if absent)
  * $customer = $resource->findByCustomerId('K-10042');
+ *
+ * // Check whether a customer already exists in Docbee (returns null if absent)
+ * $customer = $resource->findOneByCustomerId('K-10042');
+ * if ($customer !== null) {
+ *     // already imported — use $customer->getId() for API relations
+ * }
  *
  * // Delta-sync: all customers changed in the last hour
  * $changed = $resource->findModifiedSince(new DateTimeImmutable('-1 hour'));
@@ -40,12 +46,16 @@ final class CustomerResource extends AbstractResource
     /**
      * Finds a customer by their ERP customer ID (e.g. "K-10042").
      *
+     * Uses the plain `customerId=<id>` query parameter — the standard
+     * `customerId-eq=<id>` operator form is silently ignored by the Docbee API
+     * even for scalar fields on this endpoint.
+     *
      * @throws NotFoundException when no match is found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByCustomerId(string $customerId): CustomerDTO
     {
-        $results = $this->list(QueryBuilder::new()->filterEq('customerId', $customerId)->limit(1));
+        $results = $this->list(QueryBuilder::new()->param('customerId', $customerId)->limit(1));
 
         if (empty($results)) {
             throw new NotFoundException(
@@ -56,6 +66,26 @@ final class CustomerResource extends AbstractResource
         }
 
         return $results[0];
+    }
+
+    /**
+     * Finds a customer by their ERP customer ID, returning null if not found.
+     *
+     * Use this instead of {@see findByCustomerId()} when checking whether a
+     * customer already exists in Docbee — for example, during an import from an
+     * external ERP system where the customer may or may not have been created yet.
+     *
+     * Uses the plain `customerId=<id>` query parameter — the standard
+     * `customerId-eq=<id>` operator form is silently ignored by the Docbee API
+     * even for scalar fields on this endpoint.
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findOneByCustomerId(string $customerId): ?CustomerDTO
+    {
+        $results = $this->list(QueryBuilder::new()->param('customerId', $customerId)->limit(1));
+
+        return $results[0] ?? null;
     }
 
     /**
