@@ -233,6 +233,34 @@ abstract class AbstractResource
         return $this->listAll($q);
     }
 
+    /**
+     * Full-text search using the Docbee `search` parameter.
+     *
+     * The Docbee API applies the search string across multiple fields at once.
+     * What is searched depends on the endpoint — typically name, number fields,
+     * and other human-visible identifiers.  For example:
+     *
+     *   - `/customer`         → matches customer name and Kundennummer (UI display number)
+     *   - `/customerContact`  → matches contact name, email, phone, …
+     *   - `/customerLocation` → matches location name and address fields
+     *   - `/ticket`           → matches ticket title, description, reference number, …
+     *   - `/user`             → matches user name and email
+     *   - `/object`           → matches object name and serial/scan codes
+     *
+     * Returns all matching records (auto-paginated via {@see listAll()}).
+     *
+     * @note Not every endpoint supports `search`; those that do are marked in the
+     *       OpenAPI specification.  On unsupported endpoints the parameter is silently
+     *       ignored and all records are returned.
+     *
+     * @return list<T>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function search(string $query): array
+    {
+        return $this->listAll(QueryBuilder::new()->search($query));
+    }
+
     // -------------------------------------------------------------------------
     // Write operations
     // -------------------------------------------------------------------------

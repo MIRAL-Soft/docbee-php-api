@@ -9,16 +9,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- **`QueryBuilder::search(string $query)`** — new method that sets the Docbee `search`
-  parameter.  For the `/customer` endpoint this matches against both the customer name and
-  the **Kundennummer** displayed in the Docbee UI — making it the correct way to resolve a
-  UI customer number to the internal database ID.
-- **`CustomerResource::search(string $query)`** — searches customers by name or Kundennummer
-  (the display number shown in the Docbee UI header, e.g. `"12355"`).  Returns all matching
-  records via `listAll()`.  Example workflow:
+- **`AbstractResource::search(string $query)`** — new method available on **every** resource
+  class.  Sets the Docbee `search` parameter and returns all matching records via `listAll()`.
+  The Docbee API supports `search` on 70 endpoints; what is searched depends on the resource
+  (name, number, email, reference number, …).  Notable use cases:
+  - `/customer` → matches customer name **and** Kundennummer (UI display number)
+  - `/customerContact` → matches contact name, email, phone, …
+  - `/customerLocation` → matches location name and address fields
+  - `/ticket` → matches title, description, reference number, …
+  - `/user` → matches username and email
+  - `/object` → matches object name and serial/scan codes
+- **`QueryBuilder::search(string $query)`** — backing method used by `AbstractResource::search()`.
+  Can also be combined with other filters: `QueryBuilder::new()->search('…')->filterEq(…)`.
+- **`CustomerResource::search()`** now inherits from `AbstractResource`; the Kundennummer
+  workflow is documented in the class DocBlock.  Example:
   ```php
-  $customers  = $client->customers()->search('12355');
-  $internalId = $customers[0]->getId();               // e.g. 241957
+  $customers  = $client->customers()->search('12355');   // by Kundennummer
+  $internalId = $customers[0]->getId();                  // e.g. 241957
   $contacts   = $client->customerContacts()->findByCustomer($internalId);
   $locations  = $client->customerLocations()->findByCustomer($internalId);
   ```
