@@ -67,6 +67,21 @@ final class TicketResource extends AbstractResource
     }
 
     /**
+     * Returns all tickets linked to a specific customer contact.
+     *
+     * Uses the plain `customerContact=<id>` query parameter required by this endpoint
+     * (the standard `customerContact-eq=<id>` operator form is silently ignored by the
+     * Docbee API for relation filters).
+     *
+     * @return list<TicketDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByCustomerContact(int $contactId): array
+    {
+        return $this->listAll(QueryBuilder::new()->param('customerContact', $contactId));
+    }
+
+    /**
      * Returns tickets assigned to a specific owner (user).
      *
      * @return list<TicketDTO>

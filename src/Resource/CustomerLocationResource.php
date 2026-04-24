@@ -24,17 +24,24 @@ final class CustomerLocationResource extends AbstractResource
     protected string $listKey  = 'customerLocation';
 
     /**
-     * Returns all locations belonging to a customer.
+     * Returns all locations belonging to a customer, including address fields.
      *
      * Uses the plain `customer=<id>` query parameter required by this endpoint
      * (the standard `customer-eq=<id>` operator form is silently ignored by the API).
+     *
+     * Address fields (`street`, `city`, `zipcode`) are requested explicitly because
+     * the Docbee API omits them from list responses unless `fields` is specified.
      *
      * @return list<CustomerLocationDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByCustomer(int $customerId): array
     {
-        return $this->listAll(QueryBuilder::new()->param('customer', $customerId));
+        return $this->listAll(
+            QueryBuilder::new()
+                ->param('customer', $customerId)
+                ->fields(['id', 'customer', 'name', 'street', 'city', 'zipcode'])
+        );
     }
 
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
