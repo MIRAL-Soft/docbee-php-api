@@ -161,6 +161,28 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Adds a full-text search filter using the Docbee `search` parameter.
+     *
+     * The Docbee API applies the search string across multiple fields at once.
+     * For the `/customer` endpoint it matches against the customer's **name**
+     * and the **customer number** displayed in the Docbee UI — making this the
+     * correct way to look up a customer when you only know the UI number.
+     *
+     * Example:
+     * ```php
+     * // Find by name
+     * QueryBuilder::new()->search('Testfirma');
+     * // Find by the Kundennummer shown in the Docbee UI
+     * QueryBuilder::new()->search('12355');
+     * ```
+     */
+    public function search(string $query): self
+    {
+        $this->filters['search'] = $query;
+        return $this;
+    }
+
     // -------------------------------------------------------------------------
     // Timestamp helpers
     // -------------------------------------------------------------------------

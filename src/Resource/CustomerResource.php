@@ -14,15 +14,20 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * ```php
  * $resource = $client->customers();
  *
+ * // Search by name OR Kundennummer (the number shown in the Docbee UI header)
+ * $customers = $resource->search('Testfirma');
+ * $customers = $resource->search('12355');  // finds customer with Kundennummer 12355
+ *
  * // Find a customer by their ERP customer ID
  * $customer = $resource->findByCustomerId('K-10042');
- *
- * // Find by name (partial, case-insensitive)
- * $customers = $resource->findByName('Acme');
  *
  * // Delta-sync: all customers changed in the last hour
  * $changed = $resource->findModifiedSince(new DateTimeImmutable('-1 hour'));
  * ```
+ *
+ * @note The Kundennummer displayed in the Docbee UI (e.g. "12355" next to the customer
+ *       name) is NOT the internal database ID used by the REST API.  Use {@see search()}
+ *       to resolve a Kundennummer to the internal ID, or to find a customer by name.
  *
  * @extends AbstractResource<CustomerDTO>
  */
@@ -54,14 +59,38 @@ final class CustomerResource extends AbstractResource
     }
 
     /**
+     * Searches customers by name or Kundennummer (the display number shown in
+     * the Docbee UI header, e.g. "12355").
+     *
+     * The Docbee API `search` parameter matches against both the customer name
+     * and the customer display number in a single request — making this the
+     * correct way to look up a customer when you only know the Kundennummer.
+     *
+     * ```php
+     * $results = $resource->search('Testfirma');
+     * $results = $resource->search('12355');   // resolves Kundennummer to internal ID
+     * $internalId = $results[0]->getId();       // use this ID for sub-resource calls
+     * ```
+     *
+     * @return list<CustomerDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function search(string $query): array
+    {
+        return $this->listAll(QueryBuilder::new()->search($query));
+    }
+
+    /**
      * Finds customers whose name contains the given string (case-insensitive).
      *
+     * @deprecated Use {@see search()} instead — it matches both name and Kundennummer
+     *             and uses the native Docbee `search` parameter.
      * @return list<CustomerDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByName(string $name): array
     {
-        return $this->list(QueryBuilder::new()->filterIlike('name', "%{$name}%"));
+        return $this->search($name);
     }
 
     /**

@@ -352,15 +352,29 @@ $tickets = $client->tickets()->list($query);
 
 ### Customers
 
+> **Important — Kundennummer vs. internal ID:** The number displayed next to the customer
+> name in the Docbee UI (e.g. *"Testfirma 12355"*) is the **Kundennummer**, a sequential
+> display counter.  It is **not** the internal database ID used by the REST API.  Use
+> `search()` to resolve a Kundennummer to the internal ID.
+
 ```php
+// Search by name OR Kundennummer (the number shown in the Docbee UI header)
+$customers  = $client->customers()->search('12355');     // finds by Kundennummer
+$customers  = $client->customers()->search('Testfirma'); // finds by name
+$internalId = $customers[0]->getId();                    // e.g. 241957
+
+// Full workflow: Kundennummer → internal ID → contacts and locations
+$customers  = $client->customers()->search('12355');
+$internalId = $customers[0]->getId();
+$contacts   = $client->customerContacts()->findByCustomer($internalId);
+$locations  = $client->customerLocations()->findByCustomer($internalId);
+
+// Find by ERP customer ID (the customerId field, e.g. 'K-1001')
 $customer = $client->customers()->findByCustomerId('K-1001');
-$matches  = $client->customers()->findByName('Acme');
 $active   = $client->customers()->findByCustomerStatus(1);
 
-// Customer contacts and locations — use the dedicated methods (plain parameter required)
-$contacts  = $client->customerContacts()->findByCustomer(42);
-$locations = $client->customerLocations()->findByCustomer(42);
-$contacts  = $client->customerContacts()->findByCustomerLocation(3);
+// Filter contacts or locations by a specific customer location
+$contacts = $client->customerContacts()->findByCustomerLocation(3);
 ```
 
 > **Note:** For `customerContacts` and `customerLocations`, the Docbee API requires a plain

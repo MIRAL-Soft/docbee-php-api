@@ -55,6 +55,42 @@ final class CustomerResourceIntegrationTest extends IntegrationTestCase
         $this->assertSame($id, $dto->getId());
     }
 
+    /**
+     * Self-validating search test — no env var needed.
+     *
+     * Picks the first customer from the list, then searches by name to verify
+     * that search() returns at least that customer (and only CustomerDTOs).
+     */
+    public function testCustomerSearchByNameReturnsMatchingDTOs(): void
+    {
+        $page = $this->callApi(fn() => $this->client->customers()->list());
+        $this->assertIsArray($page);
+        if (empty($page)) {
+            $this->markTestSkipped('No customers in the system — cannot verify search.');
+        }
+
+        $name = $page[0]->getName();
+        if ($name === null) {
+            $this->markTestSkipped('First customer has no name — cannot verify search.');
+        }
+
+        $results = $this->callApi(fn() => $this->client->customers()->search($name));
+        $this->assertIsArray($results);
+        $this->assertNotEmpty($results, "search('{$name}') returned nothing, but we know this customer exists.");
+
+        foreach ($results as $item) {
+            $this->assertInstanceOf(CustomerDTO::class, $item);
+        }
+
+        // The searched customer must be among the results
+        $ids = array_map(fn($c) => $c->getId(), $results);
+        $this->assertContains(
+            $page[0]->getId(),
+            $ids,
+            "search('{$name}') did not include the customer we searched for (ID {$page[0]->getId()})."
+        );
+    }
+
     // ── CustomerContact ───────────────────────────────────────────────────────
 
     public function testCustomerContactListReturnsArray(): void

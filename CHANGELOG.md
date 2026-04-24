@@ -9,6 +9,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`QueryBuilder::search(string $query)`** — new method that sets the Docbee `search`
+  parameter.  For the `/customer` endpoint this matches against both the customer name and
+  the **Kundennummer** displayed in the Docbee UI — making it the correct way to resolve a
+  UI customer number to the internal database ID.
+- **`CustomerResource::search(string $query)`** — searches customers by name or Kundennummer
+  (the display number shown in the Docbee UI header, e.g. `"12355"`).  Returns all matching
+  records via `listAll()`.  Example workflow:
+  ```php
+  $customers  = $client->customers()->search('12355');
+  $internalId = $customers[0]->getId();               // e.g. 241957
+  $contacts   = $client->customerContacts()->findByCustomer($internalId);
+  $locations  = $client->customerLocations()->findByCustomer($internalId);
+  ```
 - **`QueryBuilder::param(string $key, mixed $value)`** — new method for plain query parameters
   without an operator suffix (e.g. `customer=42` instead of `customer-eq=42`).  Required for
   endpoints where the Docbee API accepts only the bare field name as a filter parameter.
