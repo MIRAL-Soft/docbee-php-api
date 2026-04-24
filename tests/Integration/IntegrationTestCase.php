@@ -81,7 +81,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Returns the string value of an optional env var, or null if not set / empty.
      * Used by subclasses for env vars that hold non-integer values such as a
-     * Kundennummer (the display number shown in the Docbee UI, e.g. "12355").
+     * customer number (the display number shown in the Docbee UI, e.g. "12355").
      */
     protected function optionalStringEnv(string $name): ?string
     {

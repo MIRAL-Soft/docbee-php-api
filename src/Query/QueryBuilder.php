@@ -173,7 +173,7 @@ final class QueryBuilder
      * ```php
      * // Find by name
      * QueryBuilder::new()->search('Testfirma');
-     * // Find by the Kundennummer shown in the Docbee UI
+     * // Find by the customer number shown in the Docbee UI
      * QueryBuilder::new()->search('12355');
      * ```
      */

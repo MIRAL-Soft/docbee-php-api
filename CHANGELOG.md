@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   class.  Sets the Docbee `search` parameter and returns all matching records via `listAll()`.
   The Docbee API supports `search` on 70 endpoints; what is searched depends on the resource
   (name, number, email, reference number, …).  Notable use cases:
-  - `/customer` → matches customer name **and** Kundennummer (UI display number)
+  - `/customer` → matches customer name **and** customer number (UI display number)
   - `/customerContact` → matches contact name, email, phone, …
   - `/customerLocation` → matches location name and address fields
   - `/ticket` → matches title, description, reference number, …
@@ -21,10 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `/object` → matches object name and serial/scan codes
 - **`QueryBuilder::search(string $query)`** — backing method used by `AbstractResource::search()`.
   Can also be combined with other filters: `QueryBuilder::new()->search('…')->filterEq(…)`.
-- **`CustomerResource::search()`** now inherits from `AbstractResource`; the Kundennummer
+- **`CustomerResource::search()`** now inherits from `AbstractResource`; the customer number
   workflow is documented in the class DocBlock.  Example:
   ```php
-  $customers  = $client->customers()->search('12355');   // by Kundennummer
+  $customers  = $client->customers()->search('12355');   // by customer number
   $internalId = $customers[0]->getId();                  // e.g. 241957
   $contacts   = $client->customerContacts()->findByCustomer($internalId);
   $locations  = $client->customerLocations()->findByCustomer($internalId);

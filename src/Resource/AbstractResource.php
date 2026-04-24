@@ -240,7 +240,7 @@ abstract class AbstractResource
      * What is searched depends on the endpoint — typically name, number fields,
      * and other human-visible identifiers.  For example:
      *
-     *   - `/customer`         → matches customer name and Kundennummer (UI display number)
+     *   - `/customer`         → matches customer name and customer number (UI display number)
      *   - `/customerContact`  → matches contact name, email, phone, …
      *   - `/customerLocation` → matches location name and address fields
      *   - `/ticket`           → matches ticket title, description, reference number, …

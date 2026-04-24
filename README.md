@@ -352,18 +352,18 @@ $tickets = $client->tickets()->list($query);
 
 ### Customers
 
-> **Important — Kundennummer vs. internal ID:** The number displayed next to the customer
-> name in the Docbee UI (e.g. *"Testfirma 12355"*) is the **Kundennummer**, a sequential
+> **Important — customer number vs. internal ID:** The number displayed next to the customer
+> name in the Docbee UI (e.g. *"Testfirma 12355"*) is the **customer number**, a sequential
 > display counter.  It is **not** the internal database ID used by the REST API.  Use
-> `search()` to resolve a Kundennummer to the internal ID.
+> `search()` to resolve a customer number to the internal ID.
 
 ```php
-// Search by name OR Kundennummer (the number shown in the Docbee UI header)
-$customers  = $client->customers()->search('12355');     // finds by Kundennummer
+// Search by name OR customer number (the number shown in the Docbee UI header)
+$customers  = $client->customers()->search('12355');     // finds by customer number
 $customers  = $client->customers()->search('Testfirma'); // finds by name
 $internalId = $customers[0]->getId();                    // e.g. 241957
 
-// Full workflow: Kundennummer → internal ID → contacts and locations
+// Full workflow: customer number → internal ID → contacts and locations
 $customers  = $client->customers()->search('12355');
 $internalId = $customers[0]->getId();
 $contacts   = $client->customerContacts()->findByCustomer($internalId);
