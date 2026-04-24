@@ -369,18 +369,27 @@ $internalId = $customers[0]->getId();
 $contacts   = $client->customerContacts()->findByCustomer($internalId);
 $locations  = $client->customerLocations()->findByCustomer($internalId);
 
-// Find by ERP customer ID (the customerId field, e.g. 'K-1001')
+// Find by ERP customer ID — throws NotFoundException if absent
 $customer = $client->customers()->findByCustomerId('K-1001');
-$active   = $client->customers()->findByCustomerStatus(1);
+
+// Existence check during ERP import — returns null instead of throwing
+$customer = $client->customers()->findOneByCustomerId('K-1001');
+if ($customer !== null) {
+    $internalId = $customer->getId(); // already exists in Docbee
+}
+
+$active = $client->customers()->findByCustomerStatus(1);
 
 // Filter contacts or locations by a specific customer location
 $contacts = $client->customerContacts()->findByCustomerLocation(3);
 ```
 
-> **Note:** For `customerContacts` and `customerLocations`, the Docbee API requires a plain
-> `customer=<id>` parameter — the standard `customer-eq=<id>` operator form is silently ignored.
-> Always use the `findByCustomer()` / `findByCustomerLocation()` methods rather than
-> `list(QueryBuilder::new()->filterEq('customer', $id))`.
+> **Note:** The Docbee API requires plain parameters (without `-eq` suffix) for several
+> relation and scalar filters.  Always use the dedicated `findBy…()` methods rather than
+> `list(QueryBuilder::new()->filterEq(…))` for the following:
+> - `customerContacts` / `customerLocations`: `customer=<id>` (not `customer-eq=<id>`)
+> - `customers`: `customerId=<id>` (not `customerId-eq=<id>`)
+> - `tickets`: `customerContact=<id>` (not `customerContact-eq=<id>`)
 
 
 ### Tickets
@@ -388,6 +397,7 @@ $contacts = $client->customerContacts()->findByCustomerLocation(3);
 ```php
 $tickets = $client->tickets()->findByCustomer(42);
 $tickets = $client->tickets()->findByCustomer(42, ticketStatusId: 1);
+$tickets = $client->tickets()->findByCustomerContact(7);  // all tickets for a contact
 $tickets = $client->tickets()->findByTicketStatus(1);
 $tickets = $client->tickets()->findByReferenceNumber('REF-2024-001');
 $tickets = $client->tickets()->findByOwner(5);

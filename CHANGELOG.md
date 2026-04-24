@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`TicketResource::findByCustomerContact(int $contactId)`** — returns all tickets linked to a
+  specific customer contact.  Uses the plain `customerContact=<id>` parameter (the `-eq` operator
+  form is silently ignored by the Docbee API for relation filters on this endpoint).
+- **`CustomerResource::findOneByCustomerId(string $customerId): ?CustomerDTO`** — null-safe variant
+  of `findByCustomerId()`.  Returns `null` instead of throwing `NotFoundException`, designed for
+  existence checks during ERP imports (e.g. *"does this weclapp customer already exist in Docbee?"*).
 - **`AbstractResource::search(string $query)`** — new method available on **every** resource
   class.  Sets the Docbee `search` parameter and returns all matching records via `listAll()`.
   The Docbee API supports `search` on 70 endpoints; what is searched depends on the resource
@@ -128,6 +134,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     parameter in the implementation vs. a query parameter in the spec).
 
 ### Fixed
+- **`CustomerResource::findByCustomerId()`** — the filter was silently broken: `filterEq('customerId', …)`
+  appends a `-eq` suffix that the Docbee API ignores even for scalar fields on this endpoint,
+  causing the first customer in the list to be returned regardless of the value.  Fixed by
+  switching to `QueryBuilder::param('customerId', …)`.  A regression-guard unit test
+  (`testFindByCustomerIdDoesNotUseEqSuffix`) prevents the broken form from reappearing.
+- **`CustomerLocationResource::findByCustomer()`** — address fields (`street`, `city`, `zipcode`)
+  were always empty because the Docbee API omits them from list responses unless `fields=` is
+  specified.  The method now requests these fields explicitly via `QueryBuilder::fields()`.
 - **Double `v1/` URL prefix** — `DocbeeConfig::BASE_URL_TEMPLATE` already includes
   `/v1/`; ~177 resource files had endpoint strings starting with `'v1/…'`, resulting in
   URLs like `restApi/v1/v1/agreement`.  All endpoint strings stripped to their bare path
