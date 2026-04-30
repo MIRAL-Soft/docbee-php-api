@@ -84,15 +84,17 @@ final class CustomFieldDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'advancedPermission' => $this->advancedPermission,
-            'deactivated' => $this->deactivated,
+            'parentType'                 => $this->parentType,
+            'type'                       => $this->type,
+            'advancedPermission'         => $this->advancedPermission,
+            'deactivated'                => $this->deactivated,
             'editPermissionUserProfiles' => $this->editPermissionUserProfiles,
-            'important' => $this->important,
-            'isCustomerInfoData' => $this->isCustomerInfoData,
-            'name' => $this->name,
-            'searchable' => $this->searchable,
+            'important'                  => $this->important,
+            'isCustomerInfoData'         => $this->isCustomerInfoData,
+            'name'                       => $this->name,
+            'searchable'                 => $this->searchable,
             'showPermissionUserProfiles' => $this->showPermissionUserProfiles,
-            'visibleForCustomer' => $this->visibleForCustomer
+            'visibleForCustomer'         => $this->visibleForCustomer,
         ], fn($v) => $v !== null);
     }
 

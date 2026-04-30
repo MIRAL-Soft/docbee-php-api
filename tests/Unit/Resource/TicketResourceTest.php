@@ -213,6 +213,42 @@ final class TicketResourceTest extends TestCase
         $this->assertSame(3, $results[0]->getCustomerLocation());
     }
 
+    public function testIterateNonClosedFiltersWithNeqOperator(): void
+    {
+        $this->http
+            ->method('get')
+            ->with($this->stringContains('ticketStatus-neq=5'))
+            ->willReturn([
+                'totalCount' => 1,
+                'ticket'     => [['id' => 10, 'description' => 'Open ticket']],
+            ]);
+
+        $results = iterator_to_array($this->resource->iterateNonClosed(5));
+
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(TicketDTO::class, $results[0]);
+    }
+
+    public function testIterateNonClosedDoesNotUseEqOperator(): void
+    {
+        // Regression guard: must use -neq, not -eq
+        $captured = [];
+        $this->http
+            ->method('get')
+            ->willReturnCallback(function (string $url) use (&$captured): array {
+                $captured[] = $url;
+                return ['totalCount' => 0, 'ticket' => []];
+            });
+
+        iterator_to_array($this->resource->iterateNonClosed(5));
+
+        $this->assertNotEmpty($captured);
+        foreach ($captured as $url) {
+            $this->assertStringContainsString('ticketStatus-neq=', $url);
+            $this->assertStringNotContainsString('ticketStatus-eq=', $url);
+        }
+    }
+
     public function testDeleteCallsHttpDelete(): void
     {
         $this->http

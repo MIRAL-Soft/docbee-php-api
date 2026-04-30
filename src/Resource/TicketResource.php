@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace miralsoft\docbee\api\Resource;
 
+use Generator;
 use miralsoft\docbee\api\DTO\TicketDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
@@ -132,6 +133,27 @@ final class TicketResource extends AbstractResource
     public function findByErpReferenceNumber(string $erpReferenceNumber): array
     {
         return $this->listAll(QueryBuilder::new()->filterEq('erpReferenceNumber', $erpReferenceNumber));
+    }
+
+    /**
+     * Returns a generator that yields all tickets that do not have the given status ID.
+     *
+     * Memory-efficient — auto-paginates and yields one ticket at a time without
+     * loading the entire dataset into memory.  Useful for iterating open/active
+     * tickets in delta-sync scenarios.
+     *
+     * ```php
+     * foreach ($resource->iterateNonClosed($closedStatusId) as $ticket) {
+     *     sync($ticket);
+     * }
+     * ```
+     *
+     * @return Generator<int, TicketDTO, void, void>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function iterateNonClosed(int $closedStatusId): Generator
+    {
+        return $this->cursor(QueryBuilder::new()->filterNeq('ticketStatus', $closedStatusId));
     }
 
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }

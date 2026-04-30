@@ -402,6 +402,97 @@ $tickets = $client->tickets()->findByCustomerLocation(3);  // all tickets for a 
 $tickets = $client->tickets()->findByTicketStatus(1);
 $tickets = $client->tickets()->findByReferenceNumber('REF-2024-001');
 $tickets = $client->tickets()->findByOwner(5);
+
+// Memory-efficient iteration over all non-closed tickets (auto-paginates)
+foreach ($client->tickets()->iterateNonClosed($closedStatusId) as $ticket) {
+    sync($ticket);
+}
+```
+
+### Custom Fields
+
+Custom fields in Docbee require a three-step provisioning workflow: define the field,
+assign it to an entity type, then set values on individual records.
+
+```php
+use miralsoft\docbee\api\Resource\CustomFieldResource;
+
+$cf = $client->customFields()->ensureDefinition(
+    name:       'weclappOrderItemId',     // label shown in the Docbee UI
+    parentType: CustomFieldResource::PARENT_TYPE_DOCBEE_DOCUMENT,
+    type:       CustomFieldResource::TYPE_SINGLELINE_TEXT,
+);
+
+// Assign to Leistungen global settings (idempotent, merge-safe)
+$client->customFields()->ensureAssignedToDocument($cf->getId());
+
+// Set a value on a document
+$client->documents()->setCustomFieldValue($docId, $cf->getId(), 'WO-12345');
+
+// Set multiple values at once
+$client->documents()->setCustomFieldValues($docId, [
+    $cf->getId()    => 'WO-12345',
+    $otherCf->getId() => 'extra-value',
+]);
+
+// Check whether a field has been set (reading the actual value is not supported by the API)
+$client->documents()->hasCustomFieldValue($docId, $cf->getId());  // true / false
+$client->documents()->getCustomFieldIds($docId);                   // [101, 102, ...]
+```
+
+Available parent-type and field-type constants:
+
+| Parent type | Constant |
+|---|---|
+| Leistung (service document) | `CustomFieldResource::PARENT_TYPE_DOCBEE_DOCUMENT` |
+| Vorgang (ticket / process) | `CustomFieldResource::PARENT_TYPE_TICKET` |
+| Customer | `CustomFieldResource::PARENT_TYPE_CUSTOMER` |
+| Customer contact | `CustomFieldResource::PARENT_TYPE_CUSTOMER_CONTACT` |
+| Customer location | `CustomFieldResource::PARENT_TYPE_CUSTOMER_LOCATION` |
+| Material item | `CustomFieldResource::PARENT_TYPE_MATERIAL_ITEM` |
+
+| Field type | Constant |
+|---|---|
+| Single-line text | `CustomFieldResource::TYPE_SINGLELINE_TEXT` |
+| Multi-line text | `CustomFieldResource::TYPE_MULTILINE_TEXT` |
+| Integer | `CustomFieldResource::TYPE_NUMBER_LONG` |
+| Decimal | `CustomFieldResource::TYPE_NUMBER_DECIMAL` |
+| Boolean | `CustomFieldResource::TYPE_BOOLEAN` |
+| Date | `CustomFieldResource::TYPE_DATE` |
+| Selection | `CustomFieldResource::TYPE_SELECTION` |
+
+> **Note:** The Docbee API does not return custom field *values* via GET — it only returns
+> the IDs of fields that have a non-null value.  Use `hasCustomFieldValue()` for presence
+> checks; there is no API method to read the stored value.
+
+### Document Tasks
+
+```php
+$tasks = $client->docBeeDocumentTasks($docId)->list();
+
+// Update description
+$task = $client->docBeeDocumentTasks($docId)->updateDescription($taskId, 'New description');
+
+// Check whether a task can be deleted (has no work logs, planning times, or materials)
+$check = $client->docBeeDocumentTasks($docId)->canBeDeleted($taskId);
+if ($check->canDelete()) {
+    $client->docBeeDocumentTasks($docId)->delete($taskId);
+} else {
+    echo implode(', ', $check->getBlockers()); // e.g. "has 2 work log(s), has 1 material(s)"
+}
+```
+
+### Document Task Materials
+
+```php
+$materials = $client->docBeeDocumentTaskMaterials($docId, $taskId)->list();
+
+// Find a material entry by material item ID
+$mat = $client->docBeeDocumentTaskMaterials($docId, $taskId)->findByMaterialItemId(55);
+
+// Add or increment a material (idempotent — increments amount if already present)
+$mat = $client->docBeeDocumentTaskMaterials($docId, $taskId)
+    ->addOrIncrementByMaterialItemId(materialItemId: 55, quantity: 3.0);
 ```
 
 ### Users

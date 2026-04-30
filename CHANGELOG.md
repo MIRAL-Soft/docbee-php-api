@@ -9,6 +9,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`CustomFieldResource` — typed constants and provisioning helpers**:
+  - `PARENT_TYPE_DOCBEE_DOCUMENT`, `PARENT_TYPE_TICKET`, `PARENT_TYPE_CUSTOMER`,
+    `PARENT_TYPE_CUSTOMER_CONTACT`, `PARENT_TYPE_CUSTOMER_LOCATION`, `PARENT_TYPE_MATERIAL_ITEM`
+    (typed `string` constants for the `parentType` field).
+  - `TYPE_SINGLELINE_TEXT`, `TYPE_MULTILINE_TEXT`, `TYPE_NUMBER_LONG`, `TYPE_NUMBER_DECIMAL`,
+    `TYPE_BOOLEAN`, `TYPE_DATE`, `TYPE_SELECTION` (typed `string` constants for the `type` field).
+  - `findByName(string $name, string $parentType): ?CustomFieldDTO` — finds an existing
+    definition by name + parent type.  Requests `?fields=id,name,parentType,type` explicitly
+    because the default list response omits `parentType` and `type`.
+  - `ensureDefinition(string $name, string $parentType, string $type, ...): CustomFieldDTO` —
+    idempotent find-or-create: returns the existing field when a matching name + parentType
+    combination already exists, otherwise POSTs a new definition.
+  - `ensureAssignedToDocument(int $fieldId): void` — idempotent merge-and-write for
+    `GET/PUT /docBeeDocument/customFields` (assigns a field to Leistungen global settings).
+  - `ensureAssignedToTicket(int $fieldId): void` — same pattern for
+    `GET/PUT /ticket/customFields`.
+- **`DocumentResource` — custom field value helpers**:
+  - `getCustomFieldIds(int $docId): array` — returns IDs of custom fields that have a
+    non-null value on the document (`GET /docBeeDocument/{id}?fields=customFields`).
+    Note: the Docbee API does not expose actual field values, only presence.
+  - `hasCustomFieldValue(int $docId, int $fieldId): bool` — convenience wrapper around
+    `getCustomFieldIds()`.
+  - `setCustomFieldValue(int $docId, int $fieldId, mixed $value): void` — sets a single
+    custom field value via `PUT /docBeeDocument/{id}` with the correct nested payload.
+  - `setCustomFieldValues(int $docId, array $valuesByFieldId): void` — sets multiple
+    custom field values in a single request; no-op on an empty map.
+- **`DocBeeDocumentTaskResource` — task helpers**:
+  - `updateDescription(int $taskId, string $description): DocBeeDocumentTaskDTO` —
+    convenience method wrapping `update()` with a single-field payload.
+  - `canBeDeleted(int $taskId): DocumentTaskDeletionCheckDTO` — performs three lightweight
+    count queries (`workLog`, `planningTime`, `material`) and returns a value object
+    indicating whether the task is safe to delete.
+- **`DocumentTaskDeletionCheckDTO`** — new read-only value object returned by
+  `DocBeeDocumentTaskResource::canBeDeleted()`.  Exposes `canDelete(): bool`,
+  `getBlockers(): array` (human-readable strings), and individual count accessors
+  `getWorkLogCount()`, `getPlanningTimeCount()`, `getMaterialCount()`.
+- **`DocBeeDocumentTaskMaterialResource` — material helpers**:
+  - `findByMaterialItemId(int $materialItemId): ?MaterialDTO` — scans the task's material
+    list client-side and returns the first matching entry, or null.
+  - `addOrIncrementByMaterialItemId(int $materialItemId, float $quantity): MaterialDTO` —
+    idempotent read-before-write: increments the `amount` of an existing entry, or creates
+    a new one if absent.
+- **`TicketResource::iterateNonClosed(int $closedStatusId): Generator`** — memory-efficient
+  generator that yields all tickets not matching the given status ID, auto-paginating via
+  `cursor()` with a `ticketStatus-neq=` filter.
+- **`CustomFieldDTO::toArray()`** now includes `parentType` and `type` so callers can use
+  `$dto->toArray()` as a create payload without extra boilerplate.
 - **`TicketResource::findByCustomerContact(int $contactId)`** — returns all tickets linked to a
   specific customer contact.  Uses the plain `customerContact=<id>` parameter (the `-eq` operator
   form is silently ignored by the Docbee API for relation filters on this endpoint).

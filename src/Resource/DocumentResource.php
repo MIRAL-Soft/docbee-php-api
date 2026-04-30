@@ -47,6 +47,65 @@ final class DocumentResource extends AbstractResource
 
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
+
+    /**
+     * Returns the IDs of custom fields that have a non-null value on this document.
+     *
+     * The Docbee API does not expose the actual field values — only the IDs of
+     * fields whose value has been set.  Use {@see hasCustomFieldValue()} to check
+     * whether a specific field is populated.
+     *
+     * @return list<int>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function getCustomFieldIds(int $docId): array
+    {
+        $response = $this->http->get("{$this->endpoint}/{$docId}?fields=customFields");
+        return array_map('intval', (array) ($response['customFields'] ?? []));
+    }
+
+    /**
+     * Returns true when the given custom field has a non-null value on the document.
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function hasCustomFieldValue(int $docId, int $fieldId): bool
+    {
+        return in_array($fieldId, $this->getCustomFieldIds($docId), true);
+    }
+
+    /**
+     * Sets a single custom field value on a document.
+     *
+     * @param mixed $value Field value; type must match the field's configured type.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function setCustomFieldValue(int $docId, int $fieldId, mixed $value): void
+    {
+        $this->http->put("{$this->endpoint}/{$docId}", [
+            'customFields' => [['id' => $fieldId, 'value' => $value]],
+        ]);
+    }
+
+    /**
+     * Sets multiple custom field values on a document in a single request.
+     *
+     * @param array<int, mixed> $valuesByFieldId Map of fieldId => value.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function setCustomFieldValues(int $docId, array $valuesByFieldId): void
+    {
+        if (empty($valuesByFieldId)) {
+            return;
+        }
+
+        $customFields = [];
+        foreach ($valuesByFieldId as $fieldId => $value) {
+            $customFields[] = ['id' => (int) $fieldId, 'value' => $value];
+        }
+
+        $this->http->put("{$this->endpoint}/{$docId}", ['customFields' => $customFields]);
+    }
     public function fromTemplate(int $templateId, array $data = []): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->post("{$this->endpoint}/fromTemplate", array_merge(['template' => $templateId], $data))); }
     public function findByNumber(string $number): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
     public function findByExternalId(string $externalId): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByExternalId/{$externalId}")); }
