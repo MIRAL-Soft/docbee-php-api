@@ -48,30 +48,78 @@ final class CustomFieldResourceTest extends TestCase
         $this->assertSame('SELECTION',       CustomFieldResource::TYPE_SELECTION);
     }
 
-    // ── findByName ────────────────────────────────────────────────────────────
+    // ── findByParentType ──────────────────────────────────────────────────────
 
-    public function testFindByNameRequestsExplicitFields(): void
+    public function testFindByParentTypeUsesPlainParamNotEqSuffix(): void
     {
-        // The API only returns id/name/link by default — parentType and type
-        // must be requested via ?fields= to allow filtering by parentType.
+        // The Docbee API silently ignores parentType-eq= and returns ALL fields.
+        // Only the plain parentType= parameter works correctly.
+        $this->http
+            ->expects($this->atLeastOnce())
+            ->method('get')
+            ->with($this->logicalAnd(
+                $this->stringContains('parentType=DOCBEE_DOCUMENT'),
+                $this->logicalNot($this->stringContains('parentType-eq='))
+            ))
+            ->willReturn(['totalCount' => 0, 'customField' => []]);
+
+        $this->resource->findByParentType('DOCBEE_DOCUMENT');
+    }
+
+    public function testFindByParentTypeRequestsExplicitFields(): void
+    {
         $this->http
             ->expects($this->atLeastOnce())
             ->method('get')
             ->with($this->stringContains('fields='))
             ->willReturn(['totalCount' => 0, 'customField' => []]);
 
-        $this->resource->findByName('anything', 'TICKET');
+        $this->resource->findByParentType('TICKET');
     }
 
-    public function testFindByNameReturnsMatchingField(): void
+    public function testFindByParentTypeReturnsDTOArray(): void
     {
         $this->http
             ->method('get')
             ->willReturn([
                 'totalCount'  => 2,
                 'customField' => [
+                    ['id' => 1, 'name' => 'fieldA', 'parentType' => 'DOCBEE_DOCUMENT', 'type' => 'SINGLELINE_TEXT'],
+                    ['id' => 2, 'name' => 'fieldB', 'parentType' => 'DOCBEE_DOCUMENT', 'type' => 'NUMBER_LONG'],
+                ],
+            ]);
+
+        $results = $this->resource->findByParentType('DOCBEE_DOCUMENT');
+
+        $this->assertCount(2, $results);
+        $this->assertInstanceOf(CustomFieldDTO::class, $results[0]);
+        $this->assertSame('fieldA', $results[0]->getName());
+        $this->assertSame('DOCBEE_DOCUMENT', $results[0]->getParentType());
+    }
+
+    public function testFindByParentTypeReturnsEmptyArrayWhenNoneExist(): void
+    {
+        $this->http
+            ->method('get')
+            ->willReturn(['totalCount' => 0, 'customField' => []]);
+
+        $this->assertSame([], $this->resource->findByParentType('CUSTOMER'));
+    }
+
+    // ── findByName ────────────────────────────────────────────────────────────
+
+    public function testFindByNameDelegatesToFindByParentType(): void
+    {
+        // findByName() now uses findByParentType() so the parentType= filter
+        // must be in the request (not just a client-side check across all fields).
+        $this->http
+            ->expects($this->atLeastOnce())
+            ->method('get')
+            ->with($this->stringContains('parentType=DOCBEE_DOCUMENT'))
+            ->willReturn([
+                'totalCount'  => 1,
+                'customField' => [
                     ['id' => 1, 'name' => 'weclappOrderItemId', 'parentType' => 'DOCBEE_DOCUMENT', 'type' => 'SINGLELINE_TEXT'],
-                    ['id' => 2, 'name' => 'weclappOrderItemId', 'parentType' => 'TICKET',          'type' => 'SINGLELINE_TEXT'],
                 ],
             ]);
 
@@ -79,7 +127,6 @@ final class CustomFieldResourceTest extends TestCase
 
         $this->assertInstanceOf(CustomFieldDTO::class, $result);
         $this->assertSame(1, $result->getId());
-        $this->assertSame('DOCBEE_DOCUMENT', $result->getParentType());
     }
 
     public function testFindByNameReturnsNullWhenNoMatch(): void
@@ -91,15 +138,15 @@ final class CustomFieldResourceTest extends TestCase
         $this->assertNull($this->resource->findByName('nonexistent', 'TICKET'));
     }
 
-    public function testFindByNameRequiresExactParentTypeMatch(): void
+    public function testFindByNameReturnsNullWhenNameDoesNotMatch(): void
     {
-        // Field exists for TICKET but we look for DOCBEE_DOCUMENT — must return null.
+        // Server returns field for the correct parentType but wrong name.
         $this->http
             ->method('get')
             ->willReturn([
                 'totalCount'  => 1,
                 'customField' => [
-                    ['id' => 5, 'name' => 'myField', 'parentType' => 'TICKET', 'type' => 'SINGLELINE_TEXT'],
+                    ['id' => 5, 'name' => 'otherField', 'parentType' => 'DOCBEE_DOCUMENT', 'type' => 'SINGLELINE_TEXT'],
                 ],
             ]);
 

@@ -417,6 +417,14 @@ assign it to an entity type, then set values on individual records.
 ```php
 use miralsoft\docbee\api\Resource\CustomFieldResource;
 
+// List all fields by entity type
+$leistungsFelder = $client->customFields()->findByParentType(
+    CustomFieldResource::PARENT_TYPE_DOCBEE_DOCUMENT
+);
+$vorgangsFelder = $client->customFields()->findByParentType(
+    CustomFieldResource::PARENT_TYPE_TICKET
+);
+
 $cf = $client->customFields()->ensureDefinition(
     name:       'weclappOrderItemId',     // label shown in the Docbee UI
     parentType: CustomFieldResource::PARENT_TYPE_DOCBEE_DOCUMENT,

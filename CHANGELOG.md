@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`CustomFieldResource::findByParentType(string $parentType): array`** — returns all custom
+  field definitions for a given entity type (e.g. `PARENT_TYPE_DOCBEE_DOCUMENT`).  Uses the
+  plain `parentType=<value>` parameter — the standard `parentType-eq=` form is silently
+  ignored by the Docbee API and returns all fields regardless.  Also requests
+  `?fields=id,name,parentType,type` explicitly since the default list omits those.
+  `findByName()` is now implemented on top of `findByParentType()` (server-side pre-filter,
+  then name match client-side) instead of scanning all fields globally.
 - **`CustomFieldResource` — typed constants and provisioning helpers**:
   - `PARENT_TYPE_DOCBEE_DOCUMENT`, `PARENT_TYPE_TICKET`, `PARENT_TYPE_CUSTOMER`,
     `PARENT_TYPE_CUSTOMER_CONTACT`, `PARENT_TYPE_CUSTOMER_LOCATION`, `PARENT_TYPE_MATERIAL_ITEM`

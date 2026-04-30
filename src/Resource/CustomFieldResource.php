@@ -90,6 +90,31 @@ final class CustomFieldResource extends AbstractResource
     // ── Lookup ────────────────────────────────────────────────────────────────
 
     /**
+     * Returns all custom-field definitions for a given parent type.
+     *
+     * Uses the plain `parentType=<value>` parameter — the standard
+     * `parentType-eq=<value>` operator form is silently ignored by the Docbee API
+     * and returns all fields regardless of type.
+     *
+     * ```php
+     * $fields = $client->customFields()->findByParentType(
+     *     CustomFieldResource::PARENT_TYPE_DOCBEE_DOCUMENT
+     * );
+     * ```
+     *
+     * @return list<CustomFieldDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByParentType(string $parentType): array
+    {
+        return $this->listAll(
+            QueryBuilder::new()
+                ->param('parentType', $parentType)
+                ->fields(self::DEFINITION_FIELDS)
+        );
+    }
+
+    /**
      * Finds the first custom-field definition matching the given name and parent type.
      *
      * Returns null when no match is found.
@@ -101,12 +126,8 @@ final class CustomFieldResource extends AbstractResource
      */
     public function findByName(string $name, string $parentType): ?CustomFieldDTO
     {
-        $fields = $this->listAll(
-            QueryBuilder::new()->fields(self::DEFINITION_FIELDS)
-        );
-
-        foreach ($fields as $field) {
-            if ($field->getName() === $name && $field->getParentType() === $parentType) {
+        foreach ($this->findByParentType($parentType) as $field) {
+            if ($field->getName() === $name) {
                 return $field;
             }
         }
