@@ -443,7 +443,12 @@ $client->documents()->setCustomFieldValues($docId, [
     $otherCf->getId() => 'extra-value',
 ]);
 
-// Check whether a field has been set (reading the actual value is not supported by the API)
+// Read all stored values as a fieldId => value map
+$values = $client->documents()->getCustomFieldValues($docId);
+// e.g. [102 => 123, 104 => 'WO-12345']
+$value = $client->documents()->getCustomFieldValue($docId, $cf->getId());
+
+// Lightweight presence check (no values, just which fields are set)
 $client->documents()->hasCustomFieldValue($docId, $cf->getId());  // true / false
 $client->documents()->getCustomFieldIds($docId);                   // [101, 102, ...]
 ```
@@ -469,9 +474,10 @@ Available parent-type and field-type constants:
 | Date | `CustomFieldResource::TYPE_DATE` |
 | Selection | `CustomFieldResource::TYPE_SELECTION` |
 
-> **Note:** The Docbee API does not return custom field *values* via GET — it only returns
-> the IDs of fields that have a non-null value.  Use `hasCustomFieldValue()` for presence
-> checks; there is no API method to read the stored value.
+> **Note:** Custom field values are readable via `getCustomFieldValues()` which uses the
+> `?fields=customFields.id,customFields.value` dot-notation.  The plain
+> `?fields=customFields` form returns only IDs (used by `getCustomFieldIds()` for lightweight
+> presence checks).
 
 ### Document Tasks
 

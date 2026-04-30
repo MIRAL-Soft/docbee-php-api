@@ -49,11 +49,54 @@ final class DocumentResource extends AbstractResource
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
 
     /**
+     * Returns all custom field values for a document as a `fieldId => value` map.
+     *
+     * Uses the dot-notation `?fields=customFields.id,customFields.value` which is
+     * the only request form that makes the Docbee API return actual stored values.
+     * (The plain `?fields=customFields` form returns only a list of field IDs.)
+     *
+     * Returns an empty array when no custom fields have been set.
+     *
+     * ```php
+     * $values = $client->documents()->getCustomFieldValues($docId);
+     * // e.g. [102 => 123, 104 => 'WO-12345']
+     * echo $values[104]; // 'WO-12345'
+     * ```
+     *
+     * @return array<int, mixed> Map of fieldId => value.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function getCustomFieldValues(int $docId): array
+    {
+        $response = $this->http->get(
+            "{$this->endpoint}/{$docId}?fields=customFields.id,customFields.value"
+        );
+
+        $map = [];
+        foreach ((array) ($response['customFields'] ?? []) as $entry) {
+            if (is_array($entry) && isset($entry['id'])) {
+                $map[(int) $entry['id']] = $entry['value'] ?? null;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Returns the stored value of a single custom field on a document, or null when unset.
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function getCustomFieldValue(int $docId, int $fieldId): mixed
+    {
+        return $this->getCustomFieldValues($docId)[$fieldId] ?? null;
+    }
+
+    /**
      * Returns the IDs of custom fields that have a non-null value on this document.
      *
-     * The Docbee API does not expose the actual field values — only the IDs of
-     * fields whose value has been set.  Use {@see hasCustomFieldValue()} to check
-     * whether a specific field is populated.
+     * Useful for a lightweight presence check without fetching actual values.
+     * For reading the values themselves use {@see getCustomFieldValues()}.
      *
      * @return list<int>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException

@@ -33,15 +33,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `ensureAssignedToTicket(int $fieldId): void` — same pattern for
     `GET/PUT /ticket/customFields`.
 - **`DocumentResource` — custom field value helpers**:
-  - `getCustomFieldIds(int $docId): array` — returns IDs of custom fields that have a
-    non-null value on the document (`GET /docBeeDocument/{id}?fields=customFields`).
-    Note: the Docbee API does not expose actual field values, only presence.
+  - `getCustomFieldValues(int $docId): array<int, mixed>` — returns all stored values as a
+    `fieldId => value` map.  Uses `?fields=customFields.id,customFields.value` (dot-notation
+    is required — the plain `?fields=customFields` form returns only IDs without values).
+  - `getCustomFieldValue(int $docId, int $fieldId): mixed` — returns the value for a single
+    field, or null when not set.
+  - `getCustomFieldIds(int $docId): array` — lightweight presence check: returns IDs of
+    fields that have a non-null value (`?fields=customFields`).
   - `hasCustomFieldValue(int $docId, int $fieldId): bool` — convenience wrapper around
     `getCustomFieldIds()`.
   - `setCustomFieldValue(int $docId, int $fieldId, mixed $value): void` — sets a single
     custom field value via `PUT /docBeeDocument/{id}` with the correct nested payload.
   - `setCustomFieldValues(int $docId, array $valuesByFieldId): void` — sets multiple
     custom field values in a single request; no-op on an empty map.
+- **`DocBeeDocumentDTO::fromArray()`** — fixed crash when `customFields` contains plain
+  integers (the `?fields=customFields` response format).  The mapper now only constructs
+  `CustomFieldValueDTO` objects when elements are arrays; integer-only arrays are ignored
+  gracefully.
 - **`DocBeeDocumentTaskResource` — task helpers**:
   - `updateDescription(int $taskId, string $description): DocBeeDocumentTaskDTO` —
     convenience method wrapping `update()` with a single-field payload.

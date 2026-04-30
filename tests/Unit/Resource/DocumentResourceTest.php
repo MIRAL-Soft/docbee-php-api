@@ -24,6 +24,64 @@ final class DocumentResourceTest extends TestCase
         $this->resource = new DocumentResource($this->http);
     }
 
+    // ── getCustomFieldValues ──────────────────────────────────────────────────
+
+    public function testGetCustomFieldValuesUsesDotNotation(): void
+    {
+        // The Docbee API only returns actual values when dot-notation is used:
+        //   ?fields=customFields.id,customFields.value
+        // The plain ?fields=customFields returns only IDs without values.
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->logicalAnd(
+                $this->stringContains('customFields.id'),
+                $this->stringContains('customFields.value')
+            ))
+            ->willReturn(['customFields' => [['id' => 102, 'value' => 123], ['id' => 104, 'value' => 'WO-12345']]]);
+
+        $values = $this->resource->getCustomFieldValues(5);
+
+        $this->assertSame([102 => 123, 104 => 'WO-12345'], $values);
+    }
+
+    public function testGetCustomFieldValuesReturnsEmptyArrayWhenNoneSet(): void
+    {
+        $this->http->method('get')->willReturn([]);
+
+        $this->assertSame([], $this->resource->getCustomFieldValues(5));
+    }
+
+    public function testGetCustomFieldValuesHandlesNullValue(): void
+    {
+        $this->http
+            ->method('get')
+            ->willReturn(['customFields' => [['id' => 102, 'value' => null]]]);
+
+        $values = $this->resource->getCustomFieldValues(5);
+        $this->assertArrayHasKey(102, $values);
+        $this->assertNull($values[102]);
+    }
+
+    // ── getCustomFieldValue ───────────────────────────────────────────────────
+
+    public function testGetCustomFieldValueReturnsCorrectValue(): void
+    {
+        $this->http
+            ->method('get')
+            ->willReturn(['customFields' => [['id' => 102, 'value' => 42], ['id' => 104, 'value' => 'hello']]]);
+
+        $this->assertSame(42,      $this->resource->getCustomFieldValue(5, 102));
+        $this->assertSame('hello', $this->resource->getCustomFieldValue(5, 104));
+    }
+
+    public function testGetCustomFieldValueReturnsNullWhenFieldAbsent(): void
+    {
+        $this->http->method('get')->willReturn(['customFields' => []]);
+
+        $this->assertNull($this->resource->getCustomFieldValue(5, 999));
+    }
+
     // ── getCustomFieldIds ─────────────────────────────────────────────────────
 
     public function testGetCustomFieldIdsRequestsFieldsParam(): void

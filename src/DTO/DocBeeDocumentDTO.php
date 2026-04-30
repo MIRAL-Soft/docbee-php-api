@@ -187,7 +187,17 @@ final class DocBeeDocumentDTO extends AbstractDTO
             completedSuccessfully: isset($data['completedSuccessfully']) ? self::toBool($data['completedSuccessfully']) : null,
             confidentialTag: self::toInt($data['confidentialTag'] ?? null),
             customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
+                // The API returns two different shapes depending on the ?fields= parameter:
+                //   ?fields=customFields            → [102, 104]             (IDs only, no value)
+                //   ?fields=customFields.id,…value  → [{id:102,value:…}, …]  (full objects)
+                // Only map to DTOs when the elements are arrays; ignore plain-integer forms.
+                ? array_values(array_filter(
+                    array_map(
+                        fn($x) => is_array($x) ? CustomFieldValueDTO::fromArray($x) : null,
+                        $data['customFields']
+                    ),
+                    fn($v) => $v !== null
+                ))
                 : null,
             customer: self::toInt($data['customer'] ?? null),
             customerContact: self::toInt($data['customerContact'] ?? null),
