@@ -9,6 +9,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **Custom Fields — complete lifecycle support** (provisioning, assignment, reading and writing
+  values).  The Docbee API works differently from most REST APIs for custom fields; the
+  following notes describe the key behaviours discovered during live testing:
+
+  **How the API works:**
+  1. *Define* — `POST /customField` creates the field definition (name, parentType, type).
+  2. *Assign* — `PUT /docBeeDocument/customFields` (or `/ticket/customFields`) assigns the
+     field to an entity type globally.  This is a merge operation: the current list must be
+     read first, the new ID appended, and the full merged list written back.
+  3. *Write* — `PUT /docBeeDocument/{id}` with `{"customFields":[{"id":<cfId>,"value":<v>}]}`
+     sets a value on a specific document.
+  4. *Read* — `GET /docBeeDocument/{id}` returns values **only when requested with dot-notation**:
+     `?fields=customFields.id,customFields.value` → `[{"id":102,"value":123},{"id":104,"value":"WO-12345"}]`.
+     The seemingly equivalent `?fields=customFields` returns only a flat list of IDs
+     (`[102,104]`) — **no values**.  This is a Docbee API behaviour confirmed by live testing.
+
+  **Docbee API quirks (confirmed by live tests):**
+  - `parentType-eq=` filter is silently ignored on `GET /customField` — use the plain
+    `parentType=` parameter instead.
+  - The default `GET /customField/{id}` response omits `parentType` and `type`; request
+    `?fields=id,name,parentType,type` explicitly.
+  - `DELETE /customField/{id}` returns HTTP 403 — field deletion is admin-only, not available
+    via the REST API.
+
 - **`CustomFieldResource::findByParentType(string $parentType): array`** — returns all custom
   field definitions for a given entity type (e.g. `PARENT_TYPE_DOCBEE_DOCUMENT`).  Uses the
   plain `parentType=<value>` parameter — the standard `parentType-eq=` form is silently
