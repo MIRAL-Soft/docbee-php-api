@@ -22,20 +22,16 @@ final class UserResource extends AbstractResource
     /**
      * Finds a user by their email address.
      *
+     * Delegates to the dedicated `/user/findFirstByEmail/{email}` endpoint which
+     * performs a server-side exact match.  The previously used `email-eq=` filter
+     * parameter is silently ignored by the Docbee API (returns unfiltered results).
+     *
      * @throws NotFoundException when not found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByEmail(string $email): UserDTO
     {
-        $results = $this->list(QueryBuilder::new()->filterEq('email', $email)->limit(1));
-        if (empty($results)) {
-            throw new NotFoundException(
-                message:    "User with email '{$email}' not found.",
-                statusCode: 404,
-                requestUrl: $this->endpoint,
-            );
-        }
-        return $results[0];
+        return $this->findFirstByEmail($email);
     }
 
     /**

@@ -7,17 +7,30 @@ namespace miralsoft\docbee\api\Resource;
 use miralsoft\docbee\api\DTO\ServiceTypeDTO;
 use miralsoft\docbee\api\Exception\NotFoundException;
 use miralsoft\docbee\api\Query\QueryBuilder;
-
-/**
- * Provides access to Docbee service types.
- *
- * @extends AbstractResource<ServiceTypeDTO>
- */
 use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
+/**
+ * Provides access to Docbee service types (Leistungen).
+ *
+ * @extends AbstractResource<ServiceTypeDTO>
+ *
+ * **Docbee filter quirks (confirmed by live tests):**
+ *
+ * - No filter parameter works server-side on this endpoint: `name-eq=`, `name=`,
+ *   `number-eq=`, and `number=` are all silently ignored — the API always returns
+ *   the unfiltered list.  `findByName()` and `findByNumber()` therefore perform a
+ *   paginated cursor scan with an exact client-side match.
+ *
+ * - The `number` field is NOT included in the default list response.  It must be
+ *   requested explicitly via `?fields=id,name,number,...`.
+ *
+ * - There are no dedicated `/serviceType/findByNumber/{n}` or
+ *   `/serviceType/findByName/{n}` endpoints (confirmed: both return HTTP 404).
+ */
 final class ServiceTypeResource extends AbstractResource
 {
     use NotSearchable;
+
     protected string $endpoint = 'serviceType';
     protected string $dtoClass = ServiceTypeDTO::class;
     protected string $listKey  = 'serviceType';
@@ -25,39 +38,54 @@ final class ServiceTypeResource extends AbstractResource
     /**
      * Finds a service type by its exact name.
      *
+     * The Docbee API does not honour any server-side filter on the `/serviceType`
+     * endpoint — `name-eq=` and `name=` are both silently ignored.  This method
+     * therefore performs a paginated cursor scan and applies an exact client-side
+     * match.  For a typical tenant with ≤ 200 service types this takes ~2 API calls.
+     *
      * @throws NotFoundException when not found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByName(string $name): ServiceTypeDTO
     {
-        $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
-        if (empty($results)) {
-            throw new NotFoundException(
-                message:    "ServiceType with name '{$name}' not found.",
-                statusCode: 404,
-                requestUrl: $this->endpoint,
-            );
+        foreach ($this->cursor(QueryBuilder::new()->fields(['id', 'name', 'number', 'deactivated'])) as $st) {
+            if ($st->getName() === $name) {
+                return $st;
+            }
         }
-        return $results[0];
+
+        throw new NotFoundException(
+            message:    "ServiceType with name '{$name}' not found.",
+            statusCode: 404,
+            requestUrl: $this->endpoint,
+        );
     }
 
     /**
-     * Finds a service type by its number.
+     * Finds a service type by its number (external ERP article number).
+     *
+     * The Docbee API does not honour any server-side filter on the `/serviceType`
+     * endpoint — `number-eq=` and `number=` are both silently ignored, and the
+     * `number` field is excluded from the default list response.  This method
+     * requests `fields=id,name,number,deactivated` explicitly and performs a
+     * paginated cursor scan with an exact client-side match.
      *
      * @throws NotFoundException when not found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByNumber(string $number): ServiceTypeDTO
     {
-        $results = $this->list(QueryBuilder::new()->filterEq('number', $number)->limit(1));
-        if (empty($results)) {
-            throw new NotFoundException(
-                message:    "ServiceType with number '{$number}' not found.",
-                statusCode: 404,
-                requestUrl: $this->endpoint,
-            );
+        foreach ($this->cursor(QueryBuilder::new()->fields(['id', 'name', 'number', 'deactivated'])) as $st) {
+            if ($st->getNumber() === $number) {
+                return $st;
+            }
         }
-        return $results[0];
+
+        throw new NotFoundException(
+            message:    "ServiceType with number '{$number}' not found.",
+            statusCode: 404,
+            requestUrl: $this->endpoint,
+        );
     }
 
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }

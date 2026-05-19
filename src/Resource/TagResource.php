@@ -6,7 +6,6 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\TagDTO;
 use miralsoft\docbee\api\Exception\NotFoundException;
-use miralsoft\docbee\api\Query\QueryBuilder;
 
 /**
  * Provides access to Docbee tags.
@@ -22,20 +21,27 @@ final class TagResource extends AbstractResource
     /**
      * Finds a tag by its exact name.
      *
+     * The Docbee API does not honour `name-eq=` on this endpoint — it is silently
+     * ignored and returns the unfiltered list.  This method performs a cursor scan
+     * (typically 1 page for tenants with ≤ 100 tags) and applies an exact
+     * client-side match.
+     *
      * @throws NotFoundException when not found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByName(string $name): TagDTO
     {
-        $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
-        if (empty($results)) {
-            throw new NotFoundException(
-                message:    "Tag with name '{$name}' not found.",
-                statusCode: 404,
-                requestUrl: $this->endpoint,
-            );
+        foreach ($this->cursor() as $tag) {
+            if ($tag->getName() === $name) {
+                return $tag;
+            }
         }
-        return $results[0];
+
+        throw new NotFoundException(
+            message:    "Tag with name '{$name}' not found.",
+            statusCode: 404,
+            requestUrl: $this->endpoint,
+        );
     }
 
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }

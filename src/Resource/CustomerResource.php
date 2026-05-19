@@ -44,28 +44,34 @@ final class CustomerResource extends AbstractResource
     protected string $listKey  = 'customer';
 
     /**
-     * Finds a customer by their ERP customer ID (e.g. "K-10042").
+     * Finds a customer by their ERP customer ID (e.g. "K-10042" or "12355").
      *
-     * Uses the plain `customerId=<id>` query parameter — the standard
-     * `customerId-eq=<id>` operator form is silently ignored by the Docbee API
-     * even for scalar fields on this endpoint.
+     * The Docbee API does not honour any `customerId=` or `customerId-eq=` filter
+     * parameter — both forms are silently ignored and the unfiltered list is returned.
+     * This method performs a paginated cursor scan with `fields=id,customerId` and
+     * applies an exact client-side match.
+     *
+     * **Performance:** proportional to the number of customers in the tenant
+     * (~23 API calls for 2 261 customers at 100 per page).  For high-frequency
+     * lookups, maintain an external `customerId → id` cache populated via
+     * {@see cursor()} at startup.
      *
      * @throws NotFoundException when no match is found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByCustomerId(string $customerId): CustomerDTO
     {
-        $results = $this->list(QueryBuilder::new()->param('customerId', $customerId)->limit(1));
-
-        if (empty($results)) {
-            throw new NotFoundException(
-                message:    "Customer with customerId '{$customerId}' not found.",
-                statusCode: 404,
-                requestUrl: $this->endpoint,
-            );
+        foreach ($this->cursor(QueryBuilder::new()->fields(['id', 'customerId'])) as $customer) {
+            if ($customer->getCustomerId() === $customerId) {
+                return $customer;
+            }
         }
 
-        return $results[0];
+        throw new NotFoundException(
+            message:    "Customer with customerId '{$customerId}' not found.",
+            statusCode: 404,
+            requestUrl: $this->endpoint,
+        );
     }
 
     /**
@@ -75,17 +81,19 @@ final class CustomerResource extends AbstractResource
      * customer already exists in Docbee — for example, during an import from an
      * external ERP system where the customer may or may not have been created yet.
      *
-     * Uses the plain `customerId=<id>` query parameter — the standard
-     * `customerId-eq=<id>` operator form is silently ignored by the Docbee API
-     * even for scalar fields on this endpoint.
+     * See {@see findByCustomerId()} for performance notes.
      *
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findOneByCustomerId(string $customerId): ?CustomerDTO
     {
-        $results = $this->list(QueryBuilder::new()->param('customerId', $customerId)->limit(1));
+        foreach ($this->cursor(QueryBuilder::new()->fields(['id', 'customerId'])) as $customer) {
+            if ($customer->getCustomerId() === $customerId) {
+                return $customer;
+            }
+        }
 
-        return $results[0] ?? null;
+        return null;
     }
 
     /**

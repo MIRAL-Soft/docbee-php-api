@@ -26,31 +26,36 @@ final class CustomerResourceTest extends TestCase
         $this->resource = new CustomerResource($this->http);
     }
 
-    public function testFindByCustomerIdReturnsDTO(): void
+    public function testFindByCustomerIdReturnsCursorMatch(): void
     {
-        // Must use plain `customerId=` — the `-eq` operator form is silently
-        // ignored by the Docbee API even for scalar fields on this endpoint.
+        // The Docbee API ignores ALL customerId= and customerId-eq= filter parameters.
+        // The fix uses a cursor scan + client-side exact match on getCustomerId().
         $this->http
             ->method('get')
-            ->with($this->stringContains('customerId=K-1001'))
             ->willReturn([
-                'totalCount' => 1,
-                'customer'   => [['id' => 5, 'name' => 'Acme', 'customerId' => 'K-1001']],
+                'totalCount' => 2,
+                'customer'   => [
+                    ['id' => 4, 'customerId' => 'K-9999'],
+                    ['id' => 5, 'customerId' => 'K-1001'],
+                ],
             ]);
 
         $dto = $this->resource->findByCustomerId('K-1001');
         $this->assertInstanceOf(CustomerDTO::class, $dto);
         $this->assertSame('K-1001', $dto->getCustomerId());
+        $this->assertSame(5, $dto->getId());
     }
 
-    public function testFindByCustomerIdDoesNotUseEqSuffix(): void
+    public function testFindByCustomerIdDoesNotReturnFirstItemWhenNoMatch(): void
     {
-        // Regression guard: ensure filterEq() (which appends -eq) is never used
-        // for customerId — that form is silently ignored by the Docbee backend.
+        // Regression: old code returned $results[0] (the wrong customer) even
+        // when the server filter was ignored and the first item didn't match.
         $this->http
             ->method('get')
-            ->with($this->logicalNot($this->stringContains('customerId-eq=')))
-            ->willReturn(['totalCount' => 0, 'customer' => []]);
+            ->willReturn([
+                'totalCount' => 1,
+                'customer'   => [['id' => 99, 'customerId' => 'K-OTHER']],
+            ]);
 
         $this->expectException(NotFoundException::class);
         $this->resource->findByCustomerId('K-1001');
@@ -66,14 +71,16 @@ final class CustomerResourceTest extends TestCase
         $this->resource->findByCustomerId('NOPE');
     }
 
-    public function testFindOneByCustomerIdReturnsDTO(): void
+    public function testFindOneByCustomerIdReturnsMatch(): void
     {
         $this->http
             ->method('get')
-            ->with($this->stringContains('customerId=K-1001'))
             ->willReturn([
-                'totalCount' => 1,
-                'customer'   => [['id' => 5, 'name' => 'Acme', 'customerId' => 'K-1001']],
+                'totalCount' => 2,
+                'customer'   => [
+                    ['id' => 4, 'customerId' => 'K-9999'],
+                    ['id' => 5, 'customerId' => 'K-1001'],
+                ],
             ]);
 
         $dto = $this->resource->findOneByCustomerId('K-1001');
@@ -88,6 +95,20 @@ final class CustomerResourceTest extends TestCase
             ->willReturn(['totalCount' => 0, 'customer' => []]);
 
         $result = $this->resource->findOneByCustomerId('NOPE');
+        $this->assertNull($result);
+    }
+
+    public function testFindOneByCustomerIdReturnsNullWhenNoMatch(): void
+    {
+        // Regression: old code returned $results[0] even when customer didn't match.
+        $this->http
+            ->method('get')
+            ->willReturn([
+                'totalCount' => 1,
+                'customer'   => [['id' => 99, 'customerId' => 'K-OTHER']],
+            ]);
+
+        $result = $this->resource->findOneByCustomerId('K-1001');
         $this->assertNull($result);
     }
 

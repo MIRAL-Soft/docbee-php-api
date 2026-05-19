@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **Universal `filterEq` / `param` filter-ignore bug — silent false-positive `findByX` results**
+  (live-tested against a tenant with 125 service types, 2 261 customers, 13 ticket statuses,
+  26 tags, 4 priorities, 120 document templates, 1 user; confirmed by non-existent-needle probe):
+
+  The Docbee API **silently ignores ALL filter parameters** on most entity-list endpoints —
+  `name-eq=`, `number-eq=`, `customerId=`, `email-eq=`, `isClosed-eq=` and plain variants all
+  return the full unfiltered list.  Any `findByX()` helper that relied on `filterEq + limit(1)`
+  would return the **first item in the list** regardless of the needle value, making `NotFoundException`
+  unreachable on non-empty tenants and silently returning the wrong entity to every caller.
+
+  The root cause was first discovered in `ServiceTypeResource::findByNumber()` (81 HTTP 400
+  errors during a service-type sync: the wrong service type was being renamed instead of the
+  correct one).
+
+  **All affected methods have been rewritten to use a paginated cursor scan + exact client-side
+  match.** Summary of changes:
+
+  | Resource | Method | Before | After |
+  |---|---|---|---|
+  | `ServiceTypeResource` | `findByName()` | `filterEq('name', …)` — ignored | cursor + exact `getName()` match |
+  | `ServiceTypeResource` | `findByNumber()` | `filterEq('number', …)` — ignored | cursor + exact `getNumber()` match |
+  | `PriorityResource` | `findByName()` | `filterEq('name', …)` — ignored | cursor + exact `getName()` match |
+  | `TagResource` | `findByName()` | `filterEq('name', …)` — ignored | cursor + exact `getName()` match |
+  | `TicketStatusResource` | `findByName()` | `filterEq('name', …)` — ignored | cursor + exact `getName()` match |
+  | `TicketStatusResource` | `findClosed()` | `filterEq('isClosed', true)` — field doesn't exist | cursor with `fields=id,name,behaviour` + `behaviour === 'CLOSED'` |
+  | `DocumentTemplateResource` | `findByName()` | `filterEq('name', …)` — ignored | cursor + exact `getName()` match |
+  | `UserResource` | `findByEmail()` | `filterEq('email', …)` — ignored | delegates to existing `findFirstByEmail()` (server-side endpoint) |
+  | `CustomerResource` | `findByCustomerId()` | `param('customerId', …)` — ignored | cursor with `fields=id,customerId` + exact `getCustomerId()` match |
+  | `CustomerResource` | `findOneByCustomerId()` | `param('customerId', …)` — ignored | same cursor approach, returns `null` instead of throwing |
+
+  **Additional findings from live probes:**
+  - `ServiceType.number` is NOT returned in the default list response — must be requested via
+    `?fields=id,name,number,deactivated`.  `findByNumber()` now always requests this field.
+  - `TicketStatus.isClosed` is NOT a real API field — it is absent from all API responses.
+    "Closed" statuses have `behaviour === 'CLOSED'`; `TicketStatusResource` now exposes
+    `BEHAVIOUR_CLOSED`, `BEHAVIOUR_NORMAL`, and `BEHAVIOUR_PAUSED` constants.
+  - `CustomerResource` note: with 2 261+ customers the cursor scan takes ~23 pages (~11 s).
+    For high-frequency lookups, cache the `customerId → id` mapping at startup via `cursor()`.
+
 ### Added
 - **Performance fixes — server-filter corrections and N+1 elimination** (live-tested against
   a tenant with 55 070 tickets and 3 963 documents; OpenAPI spec 2025.3.0 used as reference):

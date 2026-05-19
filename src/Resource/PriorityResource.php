@@ -6,7 +6,6 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\PriorityDTO;
 use miralsoft\docbee\api\Exception\NotFoundException;
-use miralsoft\docbee\api\Query\QueryBuilder;
 
 /**
  * Provides access to Docbee ticket priority levels.
@@ -22,20 +21,27 @@ final class PriorityResource extends AbstractResource
     /**
      * Finds a priority by its exact name.
      *
+     * The Docbee API does not honour `name-eq=` on this endpoint — it is silently
+     * ignored and returns the unfiltered list.  This method performs a cursor scan
+     * (typically 1 page for tenants with ≤ 100 priorities) and applies an exact
+     * client-side match.
+     *
      * @throws NotFoundException when not found.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByName(string $name): PriorityDTO
     {
-        $results = $this->list(QueryBuilder::new()->filterEq('name', $name)->limit(1));
-        if (empty($results)) {
-            throw new NotFoundException(
-                message:    "Priority with name '{$name}' not found.",
-                statusCode: 404,
-                requestUrl: $this->endpoint,
-            );
+        foreach ($this->cursor() as $priority) {
+            if ($priority->getName() === $name) {
+                return $priority;
+            }
         }
-        return $results[0];
+
+        throw new NotFoundException(
+            message:    "Priority with name '{$name}' not found.",
+            statusCode: 404,
+            requestUrl: $this->endpoint,
+        );
     }
 
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
