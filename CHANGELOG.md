@@ -154,8 +154,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `getCustomFields() / updateCustomFields()` — global assignment list for the entity type.
 
   **`CustomFieldResource::ensureAssignedToDocumentTemplate(int $fieldId)`** — idempotent helper
-  that adds a field to the `docBeeDocumentTemplate/customFields` assignment list.  Call this
-  alongside `ensureAssignedToDocument()` when the same field should appear on both entity types.
+  that ensures the field is available on document templates.  **Live probe confirmed:**
+  `GET/PUT /docBeeDocumentTemplate/customFields` returns HTTP 400 — the endpoint does not exist
+  for templates.  Templates and regular documents share the same `docBeeDocument/customFields`
+  assignment list; assigning a field to `docBeeDocument` is both necessary *and* sufficient for
+  CF values to be readable and writable on templates.  `ensureAssignedToDocumentTemplate` is
+  therefore an alias for `ensureAssignedToDocument` and does not need to be called separately.
 
   **`DocBeeDocumentTemplateDTO`** — `customFields` is now deserialized as `CustomFieldValueDTO[]`
   (same as `DocBeeDocumentDTO`), enabling `instanceof` checks and typed access via `getCustomFields()`.
