@@ -97,6 +97,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `DELETE /customField/{id}` returns HTTP 403 — field deletion is admin-only, not available
     via the REST API.
 
+- **`DocumentTemplateResource` — full custom field support:**
+  Document templates share custom-field definitions with regular documents (both use
+  `parentType = DOCBEE_DOCUMENT`).  A single field definition can appear on Leistungen *and*
+  Leistungsvorlagen simultaneously.  The following methods have been added:
+  - `setCustomFieldValue(int $templateId, int $fieldId, mixed $value)` — sets one CF value via PUT.
+  - `setCustomFieldValues(int $templateId, array $valuesByFieldId)` — sets multiple CF values in one request.
+  - `getCustomFieldValues(int $templateId): array<int, mixed>` — returns a `fieldId => value` map
+    via `?fields=customFields.id,customFields.value` dot-notation.
+  - `getCustomFieldValue(int $templateId, int $fieldId): mixed` — returns a single field value or null.
+  - `getCustomFieldIds(int $templateId): list<int>` — lightweight check: which fields have values set.
+  - `hasCustomFieldValue(int $templateId, int $fieldId): bool` — presence check without reading values.
+  - `cursorWithCustomFields(int $customerId): Generator` — yields templates with inline custom field data.
+  - `findByCustomFieldValue(int $customerId, int $fieldId, mixed $value): array` — cursor scan matching
+    templates by CF value (no server-side CF filter exists; reads values inline per page, no N+1).
+  - `getCustomFields() / updateCustomFields()` — global assignment list for the entity type.
+
+  **`CustomFieldResource::ensureAssignedToDocumentTemplate(int $fieldId)`** — idempotent helper
+  that adds a field to the `docBeeDocumentTemplate/customFields` assignment list.  Call this
+  alongside `ensureAssignedToDocument()` when the same field should appear on both entity types.
+
+  **`DocBeeDocumentTemplateDTO`** — `customFields` is now deserialized as `CustomFieldValueDTO[]`
+  (same as `DocBeeDocumentDTO`), enabling `instanceof` checks and typed access via `getCustomFields()`.
+
 - **`CustomFieldResource::findByParentType(string $parentType): array`** — returns all custom
   field definitions for a given entity type (e.g. `PARENT_TYPE_DOCBEE_DOCUMENT`).  Uses the
   plain `parentType=<value>` parameter — the standard `parentType-eq=` form is silently

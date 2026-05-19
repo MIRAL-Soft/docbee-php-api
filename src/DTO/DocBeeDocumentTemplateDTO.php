@@ -79,7 +79,18 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
             billable: isset($data['billable']) ? self::toBool($data['billable']) : null,
             completedSuccessfully: isset($data['completedSuccessfully']) ? self::toBool($data['completedSuccessfully']) : null,
             confidentialTag: self::toInt($data['confidentialTag'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields']) ? $data['customFields'] : null,
+            customFields: isset($data['customFields']) && is_array($data['customFields'])
+                // Same dual-shape handling as DocBeeDocumentDTO:
+                //   ?fields=customFields            → [102, 104]              (IDs only)
+                //   ?fields=customFields.id,…value  → [{id:102,value:…}, …]   (full objects)
+                ? array_values(array_filter(
+                    array_map(
+                        fn($x) => is_array($x) ? CustomFieldValueDTO::fromArray($x) : null,
+                        $data['customFields']
+                    ),
+                    fn($v) => $v !== null
+                ))
+                : null,
             customer: self::toInt($data['customer'] ?? null),
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),

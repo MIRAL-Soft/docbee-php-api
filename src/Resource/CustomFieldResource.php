@@ -185,6 +185,22 @@ final class CustomFieldResource extends AbstractResource
     }
 
     /**
+     * Ensures the given custom field is assigned to Leistungsvorlagen (docBeeDocumentTemplate).
+     *
+     * Document templates share custom-field definitions with regular documents
+     * (`parentType = DOCBEE_DOCUMENT`), but each entity type has its own
+     * independent assignment list that controls which fields appear in the UI.
+     * Call this in addition to {@see ensureAssignedToDocument()} when a field
+     * should be visible on both Leistungen and Leistungsvorlagen.
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function ensureAssignedToDocumentTemplate(int $fieldId): void
+    {
+        $this->ensureAssignedToEndpoint('docBeeDocumentTemplate', $fieldId);
+    }
+
+    /**
      * Ensures the given custom field is assigned to Vorgänge (ticket).
      *
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
