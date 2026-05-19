@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`ServiceTypeResource::delete()` — documented HTTP 403 limitation:**
+  `DELETE /serviceType/{id}` always returns HTTP 403 regardless of token permissions —
+  service types cannot be deleted via the Docbee REST API.  Added a `@inheritDoc` override
+  with an explicit note pointing callers to `update($id, ['deactivated' => true])` as the
+  correct alternative.  (`customFields()->delete()` has the same restriction, already noted
+  in the CHANGELOG.)
+
 - **Universal `filterEq` / `param` filter-ignore bug — silent false-positive `findByX` results**
   (live-tested against a tenant with 125 service types, 2 261 customers, 13 ticket statuses,
   26 tags, 4 priorities, 120 document templates, 1 user; confirmed by non-existent-needle probe):

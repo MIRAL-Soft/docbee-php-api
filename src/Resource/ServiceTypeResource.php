@@ -88,5 +88,18 @@ final class ServiceTypeResource extends AbstractResource
         );
     }
 
+    /**
+     * @inheritDoc
+     *
+     * **Docbee API limitation:** `DELETE /serviceType/{id}` always returns HTTP 403 —
+     * service types cannot be deleted via the REST API regardless of token permissions.
+     * This method will throw {@see \miralsoft\docbee\api\Exception\AuthenticationException}.
+     * Use `update($id, ['deactivated' => true])` to deactivate a service type instead.
+     */
+    public function delete(int $id): void
+    {
+        parent::delete($id);
+    }
+
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

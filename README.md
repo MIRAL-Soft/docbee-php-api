@@ -542,6 +542,23 @@ $items = $client->materialItems()->findActive();
 > `changedSince`, `sortings`, and `tableSortings` — no `number`, `name`, or `search` filter
 > exists (confirmed against OpenAPI spec 2025.3.0).
 
+### Service Types
+
+```php
+// Find by exact name or article number (cursor scan — no server-side filter available)
+$type = $client->serviceTypes()->findByName('Vor-Ort-Service');
+$type = $client->serviceTypes()->findByNumber('1105');
+
+// Deactivate a service type (use this instead of delete — see note below)
+$client->serviceTypes()->update($id, ['deactivated' => true]);
+```
+
+> **Note:** `DELETE /serviceType/{id}` returns HTTP 403 — service types cannot be
+> deleted via the Docbee REST API regardless of token permissions.  Use
+> `update($id, ['deactivated' => true])` to remove a type from active use instead.
+> Custom field definitions (`customFields()->delete()`) are subject to the same
+> restriction.
+
 ### Document Tasks
 
 ```php
