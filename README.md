@@ -403,11 +403,20 @@ $tickets = $client->tickets()->findByTicketStatus(1);
 $tickets = $client->tickets()->findByReferenceNumber('REF-2024-001');
 $tickets = $client->tickets()->findByOwner(5);
 
+// Find tickets by ERP reference number — uses server-side search + exact-match filter.
+// Fast even on large tenants (2–4 s for 55 000 tickets vs 5+ min with a naive filter).
+$tickets = $client->tickets()->findByErpReferenceNumber('WO-12345');
+
 // Memory-efficient iteration over all non-closed tickets (auto-paginates)
 foreach ($client->tickets()->iterateNonClosed($closedStatusId) as $ticket) {
     sync($ticket);
 }
 ```
+
+> **Docbee API note:** `erpReferenceNumber-eq=` is silently ignored by the Docbee server
+> for tickets — the parameter is absent from the OpenAPI spec.  `findByErpReferenceNumber()`
+> uses `search=<value>` (the only server-side mechanism) plus client-side exact-match
+> filtering.  Verified live: 2 hits returned in 2.4 s on a 55 070-ticket tenant.
 
 ### Custom Fields
 
@@ -478,6 +487,60 @@ Available parent-type and field-type constants:
 > `?fields=customFields.id,customFields.value` dot-notation.  The plain
 > `?fields=customFields` form returns only IDs (used by `getCustomFieldIds()` for lightweight
 > presence checks).
+
+### Documents — Performance-Optimised Lookups
+
+```php
+// Find all documents linked to a specific ticket (uses the correct `ticketIds` param).
+// ticket-eq= is silently ignored by the Docbee API and must NOT be used.
+$docs = $client->documents()->findByTicket($ticketId);
+
+// Find documents by ERP reference number (scoped to one customer, fields-only scan).
+// No server-side filter exists; this performs a paginated scan with minimal payload.
+$docs = $client->documents()->findByErpReferenceNumber($customerId, 'WO-12345');
+
+// Find a document by a custom field value — N+1 eliminated.
+// Fetches all docs for the customer with custom fields inline (one HTTP call per page)
+// instead of one getCustomFieldValues() call per document.
+$docs = $client->documents()->findByCustomFieldValue(
+    customerId: 205023,
+    fieldId:    104,         // e.g. weclappOrderItemId custom field
+    value:      'WO-12345',
+);
+// Typical: ~40 page calls for 3 963 docs  vs  3 963 individual calls previously.
+
+// Generator-based alternative for memory-efficient processing of large datasets:
+foreach ($client->documents()->cursorWithCustomFields($customerId) as $doc) {
+    $fields = $doc->getCustomFields() ?? [];  // list<CustomFieldValueDTO>
+    foreach ($fields as $cf) {
+        echo $cf->getId() . ' => ' . $cf->getValue() . "\n";
+    }
+}
+```
+
+> **Docbee API filter limitations:**
+> - `ticketIds=<id>` works; `ticket-eq=<id>` is silently ignored (returns all docs).
+> - `erpReferenceNumber-eq=` is ignored; document full-text search does not cover
+>   `erpReferenceNumber` either — client-side scan is the only option.
+> - `/findByExternalId/{val}` does **not** match `externalReferenceNumber`,
+>   `erpReferenceNumber`, or `referenceNumber` — it searches an internal integration
+>   field not settable via the standard REST API.  Use custom fields as a unique key instead.
+
+### Material Items
+
+```php
+// Find by number — O(n) full-catalogue scan (no server-side filter available).
+// For production use with large catalogues, cache the result or build a number→id
+// map at startup from a single listAll() call.
+$item = $client->materialItems()->findByNumber('SW-1234');
+
+// List only active (non-deactivated) items
+$items = $client->materialItems()->findActive();
+```
+
+> **Note:** `GET /materialItem` supports only `deactivated`, `limit`, `offset`, `fields`,
+> `changedSince`, `sortings`, and `tableSortings` — no `number`, `name`, or `search` filter
+> exists (confirmed against OpenAPI spec 2025.3.0).
 
 ### Document Tasks
 

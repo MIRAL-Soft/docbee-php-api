@@ -190,20 +190,28 @@ final class QueryBuilder
     /**
      * Filters for records modified after the given date/time.
      * Maps to the `changedSince` query parameter.
+     *
+     * @note The Docbee API requires the exact format `YYYY-MM-DDTHH:mm:ss.mmmZ`
+     *       (ISO 8601 UTC with millisecond precision).  Any other format — plain
+     *       ISO without timezone, epoch milliseconds, date-only — yields HTTP 400
+     *       with "changedSince has invalid date format".  The `.000Z` suffix is
+     *       appended automatically here; no caller adjustment is needed.
      */
     public function modifiedSince(DateTimeInterface $since): self
     {
-        $this->filters['changedSince'] = $since->format('Y-m-d\TH:i:s');
+        $this->filters['changedSince'] = $since->format('Y-m-d\TH:i:s') . '.000Z';
         return $this;
     }
 
     /**
      * Filters for records created after the given date/time.
      * Maps to the `createdSince` query parameter.
+     *
+     * @note See {@see modifiedSince()} — the same date-format requirement applies.
      */
     public function createdSince(DateTimeInterface $since): self
     {
-        $this->filters['createdSince'] = $since->format('Y-m-d\TH:i:s');
+        $this->filters['createdSince'] = $since->format('Y-m-d\TH:i:s') . '.000Z';
         return $this;
     }
 

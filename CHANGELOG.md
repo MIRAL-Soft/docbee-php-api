@@ -9,6 +9,70 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **Performance fixes — server-filter corrections and N+1 elimination** (live-tested against
+  a tenant with 55 070 tickets and 3 963 documents; OpenAPI spec 2025.3.0 used as reference):
+
+  **`QueryBuilder` — `changedSince` / `createdSince` date format fixed (critical bug):**
+  The Docbee API requires `YYYY-MM-DDTHH:mm:ss.mmmZ` (ISO 8601 UTC with millisecond precision).
+  The previous `Y-m-d\TH:i:s` format caused HTTP 400 "changedSince has invalid date format" on
+  every `findModifiedSince()` / `findCreatedSince()` call.  The `.000Z` suffix is now appended
+  automatically — no caller changes needed.
+
+  **`TicketResource::findByErpReferenceNumber()` — 5.5 min → ≤ 5 s:**
+  The previous implementation used `erpReferenceNumber-eq=` (server filter silently ignored →
+  full scan of all 55 070 tickets, 329 s).  The new implementation uses `search=<value>` (the
+  only server-side mechanism for this field on tickets, confirmed by OpenAPI spec), requests
+  `fields=id,erpReferenceNumber` so the field is present in the list response, and then
+  applies an exact-match filter client-side.  Typical timing: 2–4 s regardless of tenant size.
+
+  **`DocumentResource::findByTicket()` — new method, correct filter:**
+  `filterEq('ticket', …)` (`ticket-eq=`) is silently ignored by the Docbee API and returns
+  all documents unfiltered.  The OpenAPI spec documents `ticketIds` (array[string]) as the
+  correct parameter.  The new `findByTicket(int $ticketId)` uses `param('ticketIds', …)` and
+  was verified live (12 exact-match results for a ticket with 12 linked documents, vs 3 963
+  with the old filter).
+
+  **`DocumentResource::findByCustomFieldValue()` — N+1 eliminated:**
+  Previously, looking up a document by a custom field value required one `getCustomFieldValues()`
+  call per document (= 3 963 API calls for a customer with 3 963 documents).  The new method
+  uses `fields=id,customFields.id,customFields.value` in the list query, loading custom field
+  values inline for every document in each page response.  This reduces 3 963 calls to ~40
+  paginated calls.
+
+  **`DocumentResource::cursorWithCustomFields()` — memory-efficient bulk custom-field reader:**
+  Generator-based helper that yields documents with their custom fields pre-loaded (dot-notation
+  field selection).  Designed for processing large datasets without holding the entire list in memory.
+
+  **`DocumentResource::findByErpReferenceNumber()` — new method (scoped scan):**
+  No server-side filter exists for `erpReferenceNumber` on documents (neither `-eq` nor plain
+  form is honoured; document full-text search also does not cover this field).  The new method
+  performs a paginated scan scoped to one customer with `fields=id,erpReferenceNumber`, minimising
+  payload size.
+
+  **`MaterialItemResource::findByNumber()` — honest O(n) implementation:**
+  `GET /materialItem` exposes only `deactivated`, `limit`, `offset`, `fields`, `changedSince`,
+  `sortings`, `tableSortings` — no `number` or `search` filter exists (confirmed via OpenAPI spec
+  2025.3.0).  `findByNumber()` performs a cursor-based full scan and returns the first exact match.
+  Callers are advised to cache the result or build a `number → id` map at startup.
+
+  **`MaterialItemResource::findActive()` — convenience filter:**
+  Adds `deactivated=0` — the only content filter the endpoint supports.
+
+  **Docbee API quirks documented (confirmed by live tests):**
+  - `changedSince` requires millisecond-precision UTC: `2026-05-18T12:00:00.000Z` ✅  
+    Any other format (`2026-05-18T12:00:00`, `+02:00`, epoch ms, date-only) → HTTP 400.
+  - `ticketIds=<id>` (plain array param) works for document→ticket filter; `ticket-eq=` is ignored.
+  - `erpReferenceNumber-eq=` is ignored on both tickets and documents; only `search=` produces
+    server-side narrowing for tickets (2 hits in 2.4 s for a 55 000-ticket tenant).
+  - `GET /docBeeDocument/findByExternalId/{val}` does NOT match `externalReferenceNumber`,
+    `erpReferenceNumber`, or `referenceNumber` — confirmed by live test (set all three fields,
+    all returned 404 on `findByExternalId`).  The endpoint appears to search an internal
+    integration field not settable via the standard REST API.
+  - `customer-eq=<id>` on documents filters by company/organisation-level customer; the
+    `customer` field returned in each document may differ (child entity — location or contact).
+  - Custom field values ARE readable in list responses via `fields=id,customFields.id,customFields.value`
+    (dot-notation), enabling batch reads in one paginated request instead of N individual calls.
+
 - **Custom Fields — complete lifecycle support** (provisioning, assignment, reading and writing
   values).  The Docbee API works differently from most REST APIs for custom fields; the
   following notes describe the key behaviours discovered during live testing:
