@@ -488,6 +488,10 @@ Available parent-type and field-type constants:
 > `?fields=customFields` form returns only IDs (used by `getCustomFieldIds()` for lightweight
 > presence checks).
 
+> **Document Templates:** `documents()` and `documentTemplates()` share the same CF
+> definitions and the same assignment list.  `ensureAssignedToDocument()` covers both —
+> see the [Document Templates](#document-templates) section for the full CF workflow.
+
 ### Documents — Performance-Optimised Lookups
 
 ```php
@@ -541,6 +545,71 @@ $items = $client->materialItems()->findActive();
 > **Note:** `GET /materialItem` supports only `deactivated`, `limit`, `offset`, `fields`,
 > `changedSince`, `sortings`, and `tableSortings` — no `number`, `name`, or `search` filter
 > exists (confirmed against OpenAPI spec 2025.3.0).
+
+### Document Templates
+
+```php
+// Find by exact name (cursor scan — name-eq= is silently ignored by the Docbee API)
+$tpl = $client->documentTemplates()->findByName('Wartungsprotokoll');
+
+// Clone a template to create a new document
+$client->documentTemplates()->clone($templateId);
+```
+
+#### Custom Fields on Document Templates
+
+Document templates share CF definitions with regular documents — `parentType` is always
+`PARENT_TYPE_DOCBEE_DOCUMENT` for both.  **`ensureAssignedToDocument()` is sufficient for
+templates as well** — calling `ensureAssignedToDocumentTemplate()` is equivalent (it is an
+alias).  Skipping the assignment call causes `setCustomFieldValue()` to return HTTP 200
+silently without persisting the value — no error is raised.
+
+```php
+// 1. Define (idempotent)
+$cf = $client->customFields()->ensureDefinition(
+    name:       'weclappOrderItemId',
+    parentType: CustomFieldResource::PARENT_TYPE_DOCBEE_DOCUMENT,   // always DOCBEE_DOCUMENT
+    type:       CustomFieldResource::TYPE_SINGLELINE_TEXT,
+);
+
+// 2. Assign (do this once — covers both documents AND templates)
+$client->customFields()->ensureAssignedToDocument($cf->getId());
+
+// 3. Set / read on a specific template
+$client->documentTemplates()->setCustomFieldValue($templateId, $cf->getId(), 'WO-12345');
+$client->documentTemplates()->setCustomFieldValues($templateId, [
+    $cf->getId() => 'WO-12345',
+]);
+
+$values = $client->documentTemplates()->getCustomFieldValues($templateId);
+// e.g. [107 => 'WO-12345']
+$value  = $client->documentTemplates()->getCustomFieldValue($templateId, $cf->getId());
+
+$client->documentTemplates()->hasCustomFieldValue($templateId, $cf->getId()); // true/false
+$client->documentTemplates()->getCustomFieldIds($templateId);                  // [107, ...]
+
+// 4. Find templates by CF value (N+1-free cursor scan, inline CF data per page)
+$templates = $client->documentTemplates()->findByCustomFieldValue(
+    customerId: 205023,
+    fieldId:    $cf->getId(),
+    value:      'WO-12345',
+);
+
+// 5. Iterate all templates of a customer with CF values pre-loaded
+foreach ($client->documentTemplates()->cursorWithCustomFields(205023) as $tpl) {
+    foreach ($tpl->getCustomFields() ?? [] as $cfVal) {
+        // $cfVal is CustomFieldValueDTO
+        echo $cfVal->getId() . ' => ' . $cfVal->getValue() . "\n";
+    }
+}
+```
+
+> **Critical:** `setCustomFieldValue()` returns HTTP 200 and silently discards the value
+> when the field has not been assigned via `ensureAssignedToDocument()` first.  Always
+> call `ensureAssignedToDocument()` during provisioning.
+
+> **Note:** `GET/PUT /docBeeDocumentTemplate/customFields` returns HTTP 400 — the
+> template-specific assignment endpoint does not exist.  Confirmed by live probe.
 
 ### Service Types
 
