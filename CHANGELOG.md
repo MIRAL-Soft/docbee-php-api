@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`DocumentResource::createFromTemplate()` — new convenience method for template-based document creation with ticket linkage:**
+  `fromTemplate()` silently ignores `ticket`, `erpReferenceNumber`, and `billable`.
+  The new `createFromTemplate(int $templateId, array $overrides = [])` method fetches the
+  complete template payload via `GET /docBeeDocumentTemplate/{id}/createPayloadForDocBeeDocument`
+  (including the embedded task structure), merges `$overrides` on top, and creates the
+  document via `POST /docBeeDocument`.  All fields — `customer`, `ticket`, `erpReferenceNumber`,
+  `billable` — are accepted and applied correctly.
+
 - **`DocumentResource::fromTemplate()` and `TicketResource::fromTemplate()` — wrong payload key:**
   Both methods sent `'template' => $templateId` in the POST body, causing HTTP 400
   `"You must specify a templateId or a templateName"` on every call.  The correct key

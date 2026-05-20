@@ -321,14 +321,9 @@ final class DocumentResource extends AbstractResource
      * - `billable` — accepted without error but value stays null
      *
      * **Creating a document with a ticket link:**
-     * `fromTemplate()` cannot link a ticket.  Use the two-step alternative:
-     * ```php
-     * $payload = $client->documentTemplates()->createPayloadForDocBeeDocument($templateId);
-     * $payload['customer'] = $customerId;
-     * $payload['ticket']   = $ticketId;
-     * $doc = $client->documents()->create($payload);
-     * ```
-     * This creates the document including embedded tasks and the ticket link in one call.
+     * `fromTemplate()` cannot link a ticket.  Use {@see createFromTemplate()} instead —
+     * it fetches the full template payload (including tasks) and supports `ticket`,
+     * `erpReferenceNumber`, and `billable` via its `$overrides` parameter.
      *
      * @param int   $templateId Docbee template ID (used as `templateId` in the payload).
      * @param array $data       Additional fields merged into the request body.
@@ -340,6 +335,47 @@ final class DocumentResource extends AbstractResource
             $this->http->post("{$this->endpoint}/fromTemplate", array_merge(['templateId' => $templateId], $data))
         );
     }
+    /**
+     * Creates a new document from a template, with full support for ticket linkage.
+     *
+     * This is the recommended alternative to {@see fromTemplate()} when the document
+     * must be linked to a ticket, or when `erpReferenceNumber` / `billable` need to be
+     * set at creation time — fields that `fromTemplate()` silently ignores.
+     *
+     * Internally calls `GET /docBeeDocumentTemplate/{id}/createPayloadForDocBeeDocument`
+     * to obtain the complete template payload (including embedded task structure), merges
+     * `$overrides` on top, then creates the document via `POST /docBeeDocument`.
+     *
+     * **Supported `$overrides` keys (confirmed by live test):**
+     * - `customer` (int) — customer ID
+     * - `ticket` (int) — links the document to an existing ticket ✓
+     * - `erpReferenceNumber` (string) — ERP reference
+     * - `billable` (bool) — whether the document is billable
+     *
+     * ```php
+     * $doc = $client->documents()->createFromTemplate(
+     *     templateId: 4109,
+     *     overrides:  [
+     *         'customer'           => 205023,
+     *         'ticket'             => 261861,
+     *         'erpReferenceNumber' => 'WO-12345',
+     *     ],
+     * );
+     * ```
+     *
+     * @param int   $templateId Docbee document template ID.
+     * @param array $overrides  Fields merged into the template payload before creation.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function createFromTemplate(int $templateId, array $overrides = []): DocBeeDocumentDTO
+    {
+        $payload = $this->http->get("docBeeDocumentTemplate/{$templateId}/createPayloadForDocBeeDocument");
+
+        return DocBeeDocumentDTO::fromArray(
+            $this->http->post($this->endpoint, array_merge($payload, $overrides))
+        );
+    }
+
     public function findByNumber(string $number): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
     public function findByExternalId(string $externalId): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByExternalId/{$externalId}")); }
     public function clone(int $id): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }

@@ -235,4 +235,73 @@ final class DocumentResourceTest extends TestCase
         $this->resource->fromTemplate(99);
         $this->resource->fromTemplate(99, ['customer' => 1]);
     }
+
+    // ── createFromTemplate ────────────────────────────────────────────────────
+
+    public function testCreateFromTemplateFetchesPayloadThenCreates(): void
+    {
+        // createFromTemplate() must:
+        // 1. GET docBeeDocumentTemplate/{id}/createPayloadForDocBeeDocument
+        // 2. Merge $overrides on top
+        // 3. POST docBeeDocument with the merged payload
+        $templatePayload = ['name' => 'Wartungsprotokoll', 'tasks' => [['description' => 'Task 1']]];
+
+        $this->http
+            ->expects($this->once())
+            ->method('get')
+            ->with('docBeeDocumentTemplate/4109/createPayloadForDocBeeDocument')
+            ->willReturn($templatePayload);
+
+        $this->http
+            ->expects($this->once())
+            ->method('post')
+            ->with(
+                'docBeeDocument',
+                $this->callback(fn(array $body): bool =>
+                    $body['name']     === 'Wartungsprotokoll'        // from template
+                    && $body['tasks'] === [['description' => 'Task 1']] // from template
+                    && $body['customer'] === 205023                  // from overrides
+                    && $body['ticket']   === 261861                  // from overrides
+                ),
+            )
+            ->willReturn(['id' => 71200, 'name' => 'Wartungsprotokoll']);
+
+        $dto = $this->resource->createFromTemplate(4109, [
+            'customer' => 205023,
+            'ticket'   => 261861,
+        ]);
+
+        $this->assertInstanceOf(DocBeeDocumentDTO::class, $dto);
+        $this->assertSame(71200, $dto->getId());
+    }
+
+    public function testCreateFromTemplateOverridesTemplateFields(): void
+    {
+        // $overrides take precedence over template-payload fields via array_merge.
+        $this->http
+            ->method('get')
+            ->willReturn(['name' => 'Original Name', 'customer' => 0]);
+
+        $captured = [];
+        $this->http
+            ->method('post')
+            ->willReturnCallback(function (string $url, array $body) use (&$captured): array {
+                $captured = $body;
+                return ['id' => 1, 'name' => 'Overridden'];
+            });
+
+        $this->resource->createFromTemplate(4109, ['customer' => 205023, 'name' => 'Overridden']);
+
+        $this->assertSame(205023, $captured['customer']);
+        $this->assertSame('Overridden', $captured['name']);
+    }
+
+    public function testCreateFromTemplateWorksWithNoOverrides(): void
+    {
+        $this->http->method('get')->willReturn(['name' => 'Template']);
+        $this->http->method('post')->willReturn(['id' => 1, 'name' => 'Template']);
+
+        $dto = $this->resource->createFromTemplate(4109);
+        $this->assertInstanceOf(DocBeeDocumentDTO::class, $dto);
+    }
 }

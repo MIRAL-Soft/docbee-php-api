@@ -628,6 +628,39 @@ $client->serviceTypes()->update($id, ['deactivated' => true]);
 > Custom field definitions (`customFields()->delete()`) are subject to the same
 > restriction.
 
+### Creating Documents from Templates
+
+Two methods exist with different capabilities:
+
+| Method | Ticket linkage | `erpReferenceNumber` | `billable` | Embedded tasks |
+|---|---|---|---|---|
+| `fromTemplate($tplId, $data)` | ✗ HTTP 400 | ✗ silently ignored | ✗ silently ignored | ✓ |
+| `createFromTemplate($tplId, $overrides)` | ✓ | ✓ | ✓ | ✓ |
+
+```php
+// Simple case — customer only, no ticket link needed
+$doc = $client->documents()->fromTemplate(4109, ['customer' => 205023]);
+
+// Full case — with ticket, ERP reference, billable flag
+$doc = $client->documents()->createFromTemplate(
+    templateId: 4109,
+    overrides: [
+        'customer'           => 205023,
+        'ticket'             => 261861,
+        'erpReferenceNumber' => 'WO-12345',
+        'billable'           => true,
+    ],
+);
+```
+
+`createFromTemplate()` fetches the full template payload via
+`GET /docBeeDocumentTemplate/{id}/createPayloadForDocBeeDocument` (including embedded
+task structure), merges `$overrides` on top, and creates the document in one call.
+
+> **Note:** `fromTemplate()` uses `POST /docBeeDocument/fromTemplate` which only
+> accepts `customer` from the payload.  Passing `ticket` to it causes HTTP 400;
+> `erpReferenceNumber` and `billable` are silently discarded.
+
 ### Document Tasks
 
 ```php
