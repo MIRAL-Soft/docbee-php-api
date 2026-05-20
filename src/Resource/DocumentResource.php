@@ -304,7 +304,42 @@ final class DocumentResource extends AbstractResource
 
         $this->http->put("{$this->endpoint}/{$docId}", ['customFields' => $customFields]);
     }
-    public function fromTemplate(int $templateId, array $data = []): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->post("{$this->endpoint}/fromTemplate", array_merge(['template' => $templateId], $data))); }
+    /**
+     * Creates a new document from a template.
+     *
+     * **Required payload key is `templateId`** — the seemingly obvious `template` key
+     * is silently rejected with HTTP 400 "You must specify a templateId or a templateName".
+     * Alternatively pass `['templateName' => 'My Template']` in `$data` and omit the
+     * `$templateId` argument (pass `0`).
+     *
+     * **Accepted `$data` fields (confirmed by live test):**
+     * - `customer` (int) — applied to the created document ✓
+     *
+     * **Silently ignored `$data` fields (confirmed by live test):**
+     * - `ticket` — HTTP 400 "Unknown error" when passed to this endpoint
+     * - `erpReferenceNumber` — accepted without error but value stays null
+     * - `billable` — accepted without error but value stays null
+     *
+     * **Creating a document with a ticket link:**
+     * `fromTemplate()` cannot link a ticket.  Use the two-step alternative:
+     * ```php
+     * $payload = $client->documentTemplates()->createPayloadForDocBeeDocument($templateId);
+     * $payload['customer'] = $customerId;
+     * $payload['ticket']   = $ticketId;
+     * $doc = $client->documents()->create($payload);
+     * ```
+     * This creates the document including embedded tasks and the ticket link in one call.
+     *
+     * @param int   $templateId Docbee template ID (used as `templateId` in the payload).
+     * @param array $data       Additional fields merged into the request body.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function fromTemplate(int $templateId, array $data = []): DocBeeDocumentDTO
+    {
+        return DocBeeDocumentDTO::fromArray(
+            $this->http->post("{$this->endpoint}/fromTemplate", array_merge(['templateId' => $templateId], $data))
+        );
+    }
     public function findByNumber(string $number): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
     public function findByExternalId(string $externalId): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByExternalId/{$externalId}")); }
     public function clone(int $id): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }

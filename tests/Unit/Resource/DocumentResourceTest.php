@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Tests\Unit\Resource;
 
 use miralsoft\docbee\api\Client\HttpClientInterface;
+use miralsoft\docbee\api\DTO\DocBeeDocumentDTO;
 use miralsoft\docbee\api\Resource\DocumentResource;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -178,5 +179,60 @@ final class DocumentResourceTest extends TestCase
         $this->http->expects($this->never())->method('put');
 
         $this->resource->setCustomFieldValues(10, []);
+    }
+
+    // ── fromTemplate ─────────────────────────────────────────────────────────
+
+    public function testFromTemplateUsesTemplateIdKey(): void
+    {
+        // Regression: the payload key must be 'templateId', not 'template'.
+        // Docbee returns HTTP 400 "You must specify a templateId or a templateName"
+        // when 'template' is used instead (confirmed by live test).
+        $this->http
+            ->expects($this->once())
+            ->method('post')
+            ->with(
+                'docBeeDocument/fromTemplate',
+                $this->callback(fn(array $body) => ($body['templateId'] ?? null) === 4109
+                    && !array_key_exists('template', $body)),
+            )
+            ->willReturn(['id' => 71100, 'name' => 'From template']);
+
+        $dto = $this->resource->fromTemplate(4109);
+
+        $this->assertInstanceOf(DocBeeDocumentDTO::class, $dto);
+        $this->assertSame(71100, $dto->getId());
+    }
+
+    public function testFromTemplateMergesAdditionalData(): void
+    {
+        $captured = [];
+        $this->http
+            ->method('post')
+            ->willReturnCallback(function (string $url, array $body) use (&$captured): array {
+                $captured = $body;
+                return ['id' => 71101, 'name' => 'With customer'];
+            });
+
+        $this->resource->fromTemplate(4109, ['customer' => 205023]);
+
+        $this->assertSame(4109, $captured['templateId']);
+        $this->assertSame(205023, $captured['customer']);
+        $this->assertArrayNotHasKey('template', $captured);
+    }
+
+    public function testFromTemplateNeverSendsWrongKey(): void
+    {
+        // Guard: ensure the old broken 'template' key is never sent, regardless of $data.
+        $this->http
+            ->method('post')
+            ->willReturnCallback(function (string $url, array $body): array {
+                $this->assertArrayNotHasKey('template', $body,
+                    "fromTemplate() must not send 'template' key — Docbee requires 'templateId'.");
+                return ['id' => 1, 'name' => 'x'];
+            });
+
+        $this->resource->fromTemplate(99);
+        $this->resource->fromTemplate(99, ['customer' => 1]);
     }
 }

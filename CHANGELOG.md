@@ -9,6 +9,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`DocumentResource::fromTemplate()` and `TicketResource::fromTemplate()` — wrong payload key:**
+  Both methods sent `'template' => $templateId` in the POST body, causing HTTP 400
+  `"You must specify a templateId or a templateName"` on every call.  The correct key
+  is `templateId`.  Fixed in both resources; regression tests added.
+
+  **Additional findings (live-tested on `DocumentResource::fromTemplate()`):**
+  - `customer` (int) — accepted and applied to the created document ✓
+  - `ticket` (int) — causes HTTP 400 `"Unknown error"`; cannot be set via this endpoint
+  - `erpReferenceNumber` (string) — silently ignored (HTTP 200, value stays null)
+  - `billable` (bool) — silently ignored (HTTP 200, value stays null)
+
+  **Alternative for creating a document with a ticket link:**
+  ```php
+  $payload = $client->documentTemplates()->createPayloadForDocBeeDocument($templateId);
+  $payload['customer'] = $customerId;
+  $payload['ticket']   = $ticketId;
+  $doc = $client->documents()->create($payload);
+  ```
+  This creates the document including embedded tasks and the ticket link in one call.
+
 - **`ServiceTypeResource::delete()` — documented HTTP 403 limitation:**
   `DELETE /serviceType/{id}` always returns HTTP 403 regardless of token permissions —
   service types cannot be deleted via the Docbee REST API.  Added a `@inheritDoc` override

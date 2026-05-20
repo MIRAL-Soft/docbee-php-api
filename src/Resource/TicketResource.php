@@ -190,7 +190,22 @@ final class TicketResource extends AbstractResource
 
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
-    public function fromTemplate(int $templateId, array $data = []): TicketDTO { return TicketDTO::fromArray($this->http->post("{$this->endpoint}/fromTemplate", array_merge(['template' => $templateId], $data))); }
+    /**
+     * Creates a new ticket from a template.
+     *
+     * **Required payload key is `templateId`** — the `template` key causes HTTP 400.
+     * Alternatively pass `['templateName' => 'My Template']` in `$data`.
+     *
+     * @param int   $templateId Docbee ticket template ID.
+     * @param array $data       Additional fields merged into the request body.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function fromTemplate(int $templateId, array $data = []): TicketDTO
+    {
+        return TicketDTO::fromArray(
+            $this->http->post("{$this->endpoint}/fromTemplate", array_merge(['templateId' => $templateId], $data))
+        );
+    }
     public function findByNumber(string $number): TicketDTO { return TicketDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
     public function clone(int $id): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }
     public function merge(int $id, int $sourceTicketId): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/merge/{$sourceTicketId}", [])); }

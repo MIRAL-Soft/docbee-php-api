@@ -272,4 +272,42 @@ final class TicketResourceTest extends TestCase
         $dto = $this->resource->update(42, $payload);
         $this->assertSame('Updated description', $dto->getDescription());
     }
+
+    public function testFromTemplateUsesTemplateIdKey(): void
+    {
+        // Regression: the payload key must be 'templateId', not 'template'.
+        // Docbee returns HTTP 400 "You must specify a templateId or a templateName"
+        // when 'template' is used instead.
+        $this->http
+            ->expects($this->once())
+            ->method('post')
+            ->with(
+                'ticket/fromTemplate',
+                $this->callback(fn(array $body) => ($body['templateId'] ?? null) === 55
+                    && !array_key_exists('template', $body)),
+            )
+            ->willReturn(['id' => 200, 'description' => 'From template']);
+
+        $dto = $this->resource->fromTemplate(55);
+
+        $this->assertInstanceOf(TicketDTO::class, $dto);
+        $this->assertSame(200, $dto->getId());
+    }
+
+    public function testFromTemplateMergesAdditionalData(): void
+    {
+        $captured = [];
+        $this->http
+            ->method('post')
+            ->willReturnCallback(function (string $url, array $body) use (&$captured): array {
+                $captured = $body;
+                return ['id' => 201, 'description' => 'Merged'];
+            });
+
+        $this->resource->fromTemplate(55, ['customer' => 42]);
+
+        $this->assertSame(55, $captured['templateId']);
+        $this->assertSame(42, $captured['customer']);
+        $this->assertArrayNotHasKey('template', $captured);
+    }
 }
