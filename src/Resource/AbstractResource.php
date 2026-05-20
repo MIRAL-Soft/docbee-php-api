@@ -115,6 +115,25 @@ abstract class AbstractResource
     /**
      * Returns a paginated list of records.
      *
+     * **Docbee API field behaviour:** The default list response omits many DTO fields.
+     * Getter methods for omitted fields return `null` silently — no error is raised.
+     * Use `QueryBuilder::new()->fields([...])` to request specific fields explicitly:
+     *
+     * ```php
+     * // Without fields() — number will be null on every ServiceTypeDTO
+     * $types = $client->serviceTypes()->list();
+     *
+     * // With fields() — number is present
+     * $types = $client->serviceTypes()->list(
+     *     QueryBuilder::new()->fields(['id', 'name', 'number', 'deactivated'])
+     * );
+     * ```
+     *
+     * Known fields that require explicit request in list responses:
+     * `ServiceType.number`, `DocBeeDocument.erpReferenceNumber`,
+     * `DocBeeDocument.ticket`, `customFields` (use dot-notation
+     * `customFields.id,customFields.value` to get values, not just IDs).
+     *
      * @return list<T>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
@@ -139,6 +158,10 @@ abstract class AbstractResource
      *
      * Use sparingly on large datasets – prefer {@see cursor()} for memory efficiency.
      *
+     * The same field-selection caveat as {@see list()} applies: many DTO fields are
+     * omitted from default responses and silently return `null` unless requested via
+     * `QueryBuilder::new()->fields([...])`.
+     *
      * @return list<T>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
@@ -161,6 +184,10 @@ abstract class AbstractResource
      *     process($ticket);
      * }
      * ```
+     *
+     * The same field-selection caveat as {@see list()} applies: many DTO fields are
+     * omitted from default responses and silently return `null` unless requested via
+     * `QueryBuilder::new()->fields([...])`.
      *
      * @return Generator<int, T, void, void>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException

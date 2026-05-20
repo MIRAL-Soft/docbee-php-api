@@ -21,8 +21,11 @@ use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
  *   the unfiltered list.  `findByName()` and `findByNumber()` therefore perform a
  *   paginated cursor scan with an exact client-side match.
  *
- * - The `number` field is NOT included in the default list response.  It must be
- *   requested explicitly via `?fields=id,name,number,...`.
+ * - The `number` field is NOT included in the default list response — calling
+ *   `list()` / `listAll()` / `cursor()` without an explicit `fields()` yields
+ *   DTOs where `getNumber()` returns `null`.  Request it explicitly:
+ *   `QueryBuilder::new()->fields(['id', 'name', 'number', 'deactivated'])`.
+ *   `findByName()` and `findByNumber()` already do this internally.
  *
  * - There are no dedicated `/serviceType/findByNumber/{n}` or
  *   `/serviceType/findByName/{n}` endpoints (confirmed: both return HTTP 404).
