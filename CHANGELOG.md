@@ -9,6 +9,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`CustomerContactDTO` — added `firstName`, `lastName`, `website` fields:**
+  Docbee has extended CustomerContacts with these three fields (visible in the UI).
+  All three are now supported: deserialized from API responses, available as typed
+  getters (`getFirstName()`, `getLastName()`, `getWebsite()`), and included in
+  `toArray()` for create/update payloads.
+
+  **Live-tested findings (roundtrip against pcs tenant):**
+  - `firstName`, `lastName`, `website` all persist and are readable via
+    `?fields=firstName,lastName,website` ✓
+  - `name`, `firstName`, and `lastName` are **fully independent** — Docbee does NOT
+    auto-derive `name` from the individual components.  Set all three explicitly.
+    For the "Nachname, Vorname" display format, set `name` directly.
+  - All three fields are absent from the default list/detail response — they must be
+    requested explicitly via `fields=firstName,lastName,website`.
+
+  **`CustomerContactDTO` class docblock updated** with the independent-field note
+  and a code example for explicit field selection.
+
 - **`DocumentResource::createFromTemplate()` — new convenience method for template-based document creation with ticket linkage:**
   `fromTemplate()` silently ignores `ticket`, `erpReferenceNumber`, and `billable`.
   The new `createFromTemplate(int $templateId, array $overrides = [])` method fetches the

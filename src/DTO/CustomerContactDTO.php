@@ -6,6 +6,22 @@ namespace miralsoft\docbee\api\DTO;
 
 /**
  * Represents a Docbee CustomerContact record.
+ *
+ * **`name` vs. `firstName` / `lastName`:**
+ * These three fields are fully independent — Docbee does NOT auto-derive `name` from
+ * `firstName` and `lastName`, nor does updating `firstName`/`lastName` change `name`.
+ * Set all three explicitly as needed. For the "Nachname, Vorname" display format,
+ * set `name` directly alongside the individual components.
+ *
+ * **Fields absent from the default response:**
+ * `firstName`, `lastName`, and `website` are NOT included in the default list or
+ * detail response.  Request them explicitly:
+ * ```php
+ * $contact = $client->customerContacts()->find(
+ *     $id,
+ *     fields: ['id', 'name', 'firstName', 'lastName', 'email', 'website'],
+ * );
+ * ```
  */
 final class CustomerContactDTO extends AbstractDTO
 {
@@ -26,15 +42,30 @@ final class CustomerContactDTO extends AbstractDTO
         private ?array $customFields,
         /** email */
         private ?string $email,
+        /**
+         * First name of the contact.
+         * Independent of {@see $name} — Docbee does not auto-derive name from firstName/lastName.
+         * Not included in default list/detail responses; request via fields=['firstName'].
+         */
+        private ?string $firstName,
         /** gender */
         private ?string $gender,
         /** Additional information about the customer contact */
         private ?string $info,
         /** labeling */
         private ?string $labeling,
+        /**
+         * Last name of the contact.
+         * Independent of {@see $name} — Docbee does not auto-derive name from firstName/lastName.
+         * Not included in default list/detail responses; request via fields=['lastName'].
+         */
+        private ?string $lastName,
         /** mobile */
         private ?string $mobile,
-        /** name */
+        /**
+         * Display name (e.g. "Mustermann, Erika").
+         * Fully independent of firstName/lastName — set explicitly for custom formats.
+         */
         private ?string $name,
         /** if sendEmail is set documents or protocols are send to these contact via email */
         private ?bool $sendEmail,
@@ -49,7 +80,12 @@ final class CustomerContactDTO extends AbstractDTO
         /** telefax */
         private ?string $telefax,
         /** telephone */
-        private ?string $telephone
+        private ?string $telephone,
+        /**
+         * Website URL of the contact.
+         * Not included in default list/detail responses; request via fields=['website'].
+         */
+        private ?string $website,
     ) {}
 
     #[Override]
@@ -66,9 +102,11 @@ final class CustomerContactDTO extends AbstractDTO
                 ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
                 : null,
             email: self::toString($data['email'] ?? null),
+            firstName: self::toString($data['firstName'] ?? null),
             gender: self::toString($data['gender'] ?? null),
             info: self::toString($data['info'] ?? null),
             labeling: self::toString($data['labeling'] ?? null),
+            lastName: self::toString($data['lastName'] ?? null),
             mobile: self::toString($data['mobile'] ?? null),
             name: self::toString($data['name'] ?? null),
             sendEmail: isset($data['sendEmail']) ? self::toBool($data['sendEmail']) : null,
@@ -77,7 +115,8 @@ final class CustomerContactDTO extends AbstractDTO
             sendFaxIfSelected: isset($data['sendFaxIfSelected']) ? self::toBool($data['sendFaxIfSelected']) : null,
             syncToApp: isset($data['syncToApp']) ? self::toBool($data['syncToApp']) : null,
             telefax: self::toString($data['telefax'] ?? null),
-            telephone: self::toString($data['telephone'] ?? null)
+            telephone: self::toString($data['telephone'] ?? null),
+            website: self::toString($data['website'] ?? null),
         );
     }
 
@@ -87,9 +126,11 @@ final class CustomerContactDTO extends AbstractDTO
         return array_filter([
             'customFields' => $this->customFields,
             'email' => $this->email,
+            'firstName' => $this->firstName,
             'gender' => $this->gender,
             'info' => $this->info,
             'labeling' => $this->labeling,
+            'lastName' => $this->lastName,
             'mobile' => $this->mobile,
             'name' => $this->name,
             'sendEmail' => $this->sendEmail,
@@ -98,7 +139,8 @@ final class CustomerContactDTO extends AbstractDTO
             'sendFaxIfSelected' => $this->sendFaxIfSelected,
             'syncToApp' => $this->syncToApp,
             'telefax' => $this->telefax,
-            'telephone' => $this->telephone
+            'telephone' => $this->telephone,
+            'website' => $this->website,
         ], fn($v) => $v !== null);
     }
 
@@ -110,9 +152,11 @@ final class CustomerContactDTO extends AbstractDTO
     public function getTemporary(): ?bool { return $this->temporary; }
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getEmail(): ?string { return $this->email; }
+    public function getFirstName(): ?string { return $this->firstName; }
     public function getGender(): ?string { return $this->gender; }
     public function getInfo(): ?string { return $this->info; }
     public function getLabeling(): ?string { return $this->labeling; }
+    public function getLastName(): ?string { return $this->lastName; }
     public function getMobile(): ?string { return $this->mobile; }
     public function getName(): ?string { return $this->name; }
     public function getSendEmail(): ?bool { return $this->sendEmail; }
@@ -122,4 +166,5 @@ final class CustomerContactDTO extends AbstractDTO
     public function isSyncToApp(): ?bool { return $this->syncToApp; }
     public function getTelefax(): ?string { return $this->telefax; }
     public function getTelephone(): ?string { return $this->telephone; }
+    public function getWebsite(): ?string { return $this->website; }
 }
