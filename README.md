@@ -546,6 +546,41 @@ $items = $client->materialItems()->findActive();
 > `changedSince`, `sortings`, and `tableSortings` — no `number`, `name`, or `search` filter
 > exists (confirmed against OpenAPI spec 2025.3.0).
 
+### Customer Contacts
+
+```php
+$contacts = $client->customerContacts()->findByCustomer($customerId);
+$contacts = $client->customerContacts()->findByCustomerLocation($locationId);
+$contacts = $client->customerContacts()->findByEmail('user@example.com');
+
+// Create with all name fields
+$client->customerContacts()->create([
+    'customer'   => $customerId,
+    'name'       => 'Mustermann, Erika',  // display name — set explicitly
+    'firstName'  => 'Erika',
+    'lastName'   => 'Mustermann',
+    'email'      => 'erika@example.com',
+    'website'    => 'https://example.com',
+]);
+
+// Read firstName/lastName/website — must request explicitly (absent from default response)
+$contact = $client->customerContacts()->find($id, fields: [
+    'id', 'name', 'firstName', 'lastName', 'email', 'website',
+]);
+echo $contact->getFirstName();  // 'Erika'
+echo $contact->getLastName();   // 'Mustermann'
+echo $contact->getWebsite();    // 'https://example.com'
+```
+
+> **`name` vs. `firstName` / `lastName`:** These three fields are fully independent —
+> Docbee does **not** auto-derive `name` from `firstName`/`lastName`, and updating
+> the individual components does not change `name`.  Set all three explicitly.
+> Confirmed by live roundtrip test.
+
+> **Fields absent from default response:** `firstName`, `lastName`, and `website`
+> are not included unless requested via `fields=`.  `name`, `email`, `customer`,
+> and `id` are always present.
+
 ### Document Templates
 
 ```php
