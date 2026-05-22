@@ -726,6 +726,68 @@ $mat = $client->docBeeDocumentTaskMaterials($docId, $taskId)
     ->addOrIncrementByMaterialItemId(materialItemId: 55, quantity: 3.0);
 ```
 
+### Comments / Messages (Kommentare)
+
+Docbee calls comments "messages" in the REST API; the UI labels them "Kommentare".
+Both tickets and documents support a comment thread.
+
+#### Ticket comments
+
+```php
+$msgs = $client->ticketMessages($ticketId);
+
+// Check for any activity (fast — fetches totalCount only)
+if ($msgs->hasMessages()) {
+    echo "Ticket has " . $msgs->countMessages() . " comment(s).";
+}
+
+// Iterate all comments
+foreach ($msgs->cursor() as $msg) {
+    echo $msg->getCreated() . '  ' . $msg->getSender() . ': ' . $msg->getContent();
+}
+
+// Add a public comment
+$msg = $msgs->add('Will be fixed by Friday.');
+
+// Add an internal note (visible to staff only)
+$msg = $msgs->add('Kunde angerufen.', internal: true);
+
+// Add with subject line
+$msg = $msgs->add('See below.', subject: 'Update', internal: false);
+```
+
+Ticket comments support full CRUD: `list()`, `find()`, `add()`, `update()`, `delete()`.
+
+#### Document comments
+
+```php
+$msgs = $client->documentMessages($documentId);
+
+// Check for any activity
+if ($msgs->hasMessages()) {
+    echo "Document has " . $msgs->countMessages() . " comment(s).";
+}
+
+// Iterate all comments
+foreach ($msgs->cursor() as $msg) {
+    echo $msg->getCreated() . '  ' . $msg->getSender() . ': ' . $msg->getContent();
+}
+
+// Add a comment
+$msg = $msgs->add('Erledigt.');
+
+// Add an internal comment
+$msg = $msgs->add('Bitte nicht verrechnen.', internal: true);
+```
+
+> **API limitation:** `DocBeeDocumentMessage` supports only GET (list/single) and POST (add).
+> `update()` and `delete()` inherited from `AbstractResource` are **not available** on this
+> endpoint — calling them results in HTTP 404 or 405.  Use `TicketMessageResource` if full
+> CRUD is required.
+
+> **Note:** There is no message/comment endpoint for document tasks
+> (`/docBeeDocumentTask/{id}/message`). The Docbee API spec does not expose this resource.
+
 ### Users
 
 ```php

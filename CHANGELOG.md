@@ -8,6 +8,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- **`TicketMessageResource` and `DocBeeDocumentMessageResource` — comment/message helpers:**
+  Consumers can now read and write ticket and document comments ("Kommentare") through typed
+  resource classes without constructing raw payloads.
+
+  **New methods on both resources:**
+  - `add(string $content, ?string $subject = null, bool $internal = false)` — posts a new
+    comment; returns a typed DTO.  The `subject` key is omitted from the payload entirely
+    when `null` (not sent as `null`).
+  - `hasMessages(): bool` — returns `true` when at least one comment exists; uses
+    `totalCount` from a single list request (no full page load).
+  - `countMessages(): int` — returns the total number of comments.
+
+  **API limitation documented in `DocBeeDocumentMessageResource`:**
+  `DELETE /docBeeDocument/{id}/message/{msgId}` and `PUT …` are not supported by the
+  Docbee API (HTTP 404 / 405).  A class-level docblock warns callers not to call the
+  inherited `update()` / `delete()` methods on document messages.  Ticket messages support
+  full CRUD.
+
+  13 unit tests added (`MessageResourceTest`).
+
 ### Fixed
 - **`CustomerContactDTO` — added `firstName`, `lastName`, `website` fields:**
   Docbee has extended CustomerContacts with these three fields (visible in the UI).
