@@ -9,6 +9,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`InvoiceResource::findByDocument()` — new cursor-based lookup helper:**
+  Finds the Invoice record for a given document ID by scanning with explicit `fields=`
+  so that `getDocBeeDocument()` is populated.  Returns `null` when no Invoice exists.
+
+- **Billing workflow clarified — `erpReferenceNumber` ≠ "Abrechnungsnummer" (live-verified):**
+
+  | Field | DTO | Setter | UI label |
+  |---|---|---|---|
+  | Billing number | `InvoiceDTO::invoiceNumber` | `invoices()->update($invId, ['invoiceNumber' => '…'])` | "Abrechnungsnummer" |
+  | ERP reference | `DocBeeDocumentDTO::erpReferenceNumber` | Creation only (`createFromTemplate`) | "Vorgangs-Referenznummer" |
+
+  Key findings:
+  - `documents()->update($id, ['erpReferenceNumber' => '…'])` → HTTP 200 but value stays null (silently ignored).
+  - `invoices()->update($invId, ['invoiceNumber' => '…'])` → persists ✓, status transitions `OPEN → INVOICED` ✓.
+  - Invoice records are created automatically by Docbee when a document is approved+billable.
+    `documents()->invoice($id)` consistently returns HTTP 400; its purpose is not confirmed.
+  - `InvoiceDTO.docBeeDocument` and `status` are absent from the default invoice response
+    (already fixed by `InvoiceResource::$findFields`).
+
+  `InvoiceResource` class docblock and `DocumentResource` class docblock updated to
+  document the field mapping and correct billing workflow explicitly.
+
 - **`DocumentResource::find()` — silently null billing and status fields:**
   `find($id)` returned `null` for `approved`, `finished`, `billable`, `invoiceNumber`,
   `erpReferenceNumber`, `ticket` etc. even when those values were set, because the

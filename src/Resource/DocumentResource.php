@@ -32,6 +32,20 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *   `referenceNumber` — it searches an internal integration field that is not settable
  *   via the standard REST API.  Use custom fields + {@see findByCustomFieldValue()}
  *   as a unique-key lookup instead.
+ *
+ * **Billing field clarification (live-verified):**
+ *
+ * - `erpReferenceNumber` on DocBeeDocumentDTO is **not** the billing number.
+ *   It is an ERP integration reference (e.g. work-order number) that can only be set
+ *   at document creation time — `update($id, ['erpReferenceNumber' => …])` is silently
+ *   ignored (HTTP 200, value stays null).  In CSV exports it appears as the column
+ *   "Vorgangs-Referenznummer".
+ *
+ * - The **billing number** ("Abrechnungsnummer") lives on the {@see InvoiceDTO} as
+ *   `invoiceNumber` and is set via `invoices()->update($invoiceId, ['invoiceNumber' => …])`.
+ *   Setting it also transitions the invoice status from `OPEN` → `INVOICED`.
+ *   Use {@see \miralsoft\docbee\api\Resource\InvoiceResource::findByDocument()} to
+ *   look up the Invoice record for a given document ID.
  */
 final class DocumentResource extends AbstractResource
 {

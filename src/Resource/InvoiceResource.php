@@ -10,6 +10,29 @@ use miralsoft\docbee\api\Query\QueryBuilder;
 /**
  * Provides access to Docbee Invoice records.
  *
+ * In Docbee, each approved+billable document has exactly one Invoice record.
+ * The Invoice record is the authoritative place for the **billing number** ("Abrechnungsnummer")
+ * and for marking a document as fully invoiced.
+ *
+ * **Billing workflow (confirmed by live probe):**
+ *
+ * ```php
+ * // 1. Find the invoice record for a document
+ * $invoice = $client->invoices()->findByDocument($docId);
+ *
+ * // 2. Set the billing number + mark as INVOICED in one call
+ * $client->invoices()->update($invoice->getId(), ['invoiceNumber' => 'RE-2024-001']);
+ * // → invoice status changes from OPEN → INVOICED automatically
+ *
+ * // 3. Export billing PDF
+ * $pdf = $client->invoices()->exportOverviewPdfByIds($layoutId, [$invoice->getId()]);
+ * ```
+ *
+ * **Field mapping (live-verified):**
+ * - `invoiceNumber` on InvoiceDTO  = "Abrechnungsnummer" in Docbee UI and CSV exports
+ * - `erpReferenceNumber` on DocBeeDocumentDTO = "Vorgangs-Referenznummer" in CSV
+ *   (an ERP integration field set at document creation; silently ignored on `update()`)
+ *
  * @extends AbstractResource<InvoiceDTO>
  */
 final class InvoiceResource extends AbstractResource
@@ -26,6 +49,31 @@ final class InvoiceResource extends AbstractResource
      * @var array<string>
      */
     protected array $findFields = ['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable'];
+
+    /**
+     * Returns the Invoice record for a given document ID, or null when none exists.
+     *
+     * Because the Docbee API provides no server-side filter for `docBeeDocument`,
+     * this method performs a cursor scan with explicit field selection.
+     *
+     * ```php
+     * $invoice = $client->invoices()->findByDocument($docId);
+     * if ($invoice) {
+     *     $client->invoices()->update($invoice->getId(), ['invoiceNumber' => 'RE-2024-001']);
+     * }
+     * ```
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByDocument(int $docId): ?InvoiceDTO
+    {
+        foreach ($this->cursor(QueryBuilder::new()->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable'])) as $invoice) {
+            if ($invoice->getDocBeeDocument() === $docId) {
+                return $invoice;
+            }
+        }
+        return null;
+    }
 
     /**
      * Exports all invoices matching a given export profile and returns raw file bytes.
