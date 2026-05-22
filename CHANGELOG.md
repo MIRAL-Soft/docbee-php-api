@@ -31,6 +31,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `InvoiceResource` class docblock and `DocumentResource` class docblock updated to
   document the field mapping and correct billing workflow explicitly.
 
+  **Additional live-verified finding (document `#20260507-00004`, correctly invoiced):**
+  `DocBeeDocumentDTO::invoiceNumber` is a **read-only mirror** of the Invoice record's
+  `invoiceNumber` — it is populated automatically once the invoice reaches `INVOICED`
+  status and can be used for quick reads without a separate Invoice look-up.
+  Writing it via `documents()->update($id, ['invoiceNumber' => …])` has no effect.
+
 - **`DocumentResource::find()` — silently null billing and status fields:**
   `find($id)` returned `null` for `approved`, `finished`, `billable`, `invoiceNumber`,
   `erpReferenceNumber`, `ticket` etc. even when those values were set, because the

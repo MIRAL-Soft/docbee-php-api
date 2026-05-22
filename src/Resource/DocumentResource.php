@@ -46,6 +46,11 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  *   Setting it also transitions the invoice status from `OPEN` → `INVOICED`.
  *   Use {@see \miralsoft\docbee\api\Resource\InvoiceResource::findByDocument()} to
  *   look up the Invoice record for a given document ID.
+ *
+ * - `invoiceNumber` on DocBeeDocumentDTO is a **read-only mirror** of the Invoice record's
+ *   `invoiceNumber`.  It is populated automatically once the invoice is marked INVOICED and
+ *   is handy for quick reads (no separate Invoice look-up needed).  Writing it via
+ *   `documents()->update($id, ['invoiceNumber' => …])` has no effect.
  */
 final class DocumentResource extends AbstractResource
 {
