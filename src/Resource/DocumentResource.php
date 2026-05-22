@@ -40,6 +40,28 @@ final class DocumentResource extends AbstractResource
     protected string $listKey  = 'docBeeDocument';
 
     /**
+     * Fields requested automatically by {@see find()} when no explicit fields are passed.
+     *
+     * The Docbee API omits billing and status fields from the default single-record response.
+     * `approved`, `finished`, `billable`, `invoiceNumber`, `erpReferenceNumber` and `ticket`
+     * are all absent unless requested explicitly — making them silently null even when set.
+     * This default set ensures `find($id)` always returns a fully usable document.
+     *
+     * @var array<string>
+     */
+    protected array $findFields = [
+        'id', 'documentNumber', 'created', 'modified', 'link',
+        'approved', 'approvedDate', 'approvedComment',
+        'finished', 'finishedDate',
+        'preFinished', 'drafted', 'canceled', 'canceledDate',
+        'billable', 'invoiceNumber', 'erpReferenceNumber',
+        'ticket', 'customer', 'customerLocation', 'customerContact',
+        'releasedDate', 'personInCharge', 'priority', 'type',
+        'sendMessage', 'needSignature', 'needFinishPin',
+        'completedSuccessfully', 'totalInvoicePrice', 'totalTasksInvoicePrice',
+    ];
+
+    /**
      * Returns all documents for a given customer.
      *
      * @return list<DocBeeDocumentDTO>
@@ -48,6 +70,39 @@ final class DocumentResource extends AbstractResource
     public function findByCustomer(int $customerId): array
     {
         return $this->listAll(QueryBuilder::new()->filterEq('customer', $customerId));
+    }
+
+    /**
+     * Returns all approved and billable documents for a given customer (Leistungen zur Abrechnung).
+     *
+     * Because the Docbee API does not support server-side filtering by `approved` or `billable`,
+     * this method performs a paginated cursor scan with explicit field selection and filters
+     * client-side.  The `approved`, `finished`, and `billable` fields are **absent** from the
+     * default list response — this method requests them explicitly so the filter works correctly.
+     *
+     * ```php
+     * $docs = $client->documents()->findApprovedBillable($customerId);
+     * $ids  = array_map(fn($d) => $d->getId(), $docs);
+     * $csv  = $client->documents()->exportByIds($profileId, $ids);
+     * ```
+     *
+     * @return list<DocBeeDocumentDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findApprovedBillable(int $customerId): array
+    {
+        $query = QueryBuilder::new()
+            ->filterEq('customer', $customerId)
+            ->fields(['id', 'documentNumber', 'approved', 'finished', 'billable',
+                      'invoiceNumber', 'erpReferenceNumber', 'ticket', 'customer']);
+
+        $results = [];
+        foreach ($this->cursor($query) as $doc) {
+            if ($doc->getApproved() === true && $doc->getBillable() === true) {
+                $results[] = $doc;
+            }
+        }
+        return $results;
     }
 
     /**

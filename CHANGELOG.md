@@ -9,6 +9,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`DocumentResource::find()` — silently null billing and status fields:**
+  `find($id)` returned `null` for `approved`, `finished`, `billable`, `invoiceNumber`,
+  `erpReferenceNumber`, `ticket` etc. even when those values were set, because the
+  Docbee API omits them from the default single-record response unless requested via
+  `?fields=`.
+
+  **Root cause:** `AbstractResource::find()` sent no `?fields=` parameter, so the API
+  returned only its default subset of fields.
+
+  **Fix:** Added a protected `$findFields` array to `AbstractResource`.  When non-empty,
+  `find()` appends `?fields=...` automatically.  `DocumentResource` now defines a
+  comprehensive default set covering all billing-relevant fields:
+  `approved`, `approvedDate`, `finished`, `finishedDate`, `billable`, `invoiceNumber`,
+  `erpReferenceNumber`, `ticket`, `customer`, `preFinished`, `drafted`, `canceled`, etc.
+
+  `InvoiceResource` defines `['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable']`
+  so that `getDocBeeDocument()` and `getStatus()` are always populated.
+
+  Subclasses that don't set `$findFields` retain the existing behaviour (no change).
+
+- **`DocumentResource::findApprovedBillable(int $customerId)` — new helper:**
+  Returns all approved and billable documents for a customer, scanned via cursor with
+  explicit `fields=` so `approved` and `billable` are correctly populated.  Filters
+  client-side (server-side filter not available).
+
+  ```php
+  $docs = $client->documents()->findApprovedBillable($customerId);
+  $ids  = array_map(fn($d) => $d->getId(), $docs);
+  $csv  = $client->documents()->exportByIds($profileId, $ids);
+  ```
+
 - **`exportByIds()` / `export()` on all resources — binary response handling:**
   All export endpoints return raw file bytes (CSV, PDF, …), not JSON.  The previous
   implementation called `json_decode()` on the response body and threw

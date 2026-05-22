@@ -19,6 +19,15 @@ final class InvoiceResource extends AbstractResource
     protected string $listKey  = 'invoice';
 
     /**
+     * Fields requested automatically by {@see find()} when no explicit fields are passed.
+     *
+     * `docBeeDocument` and `status` are absent from the default invoice response.
+     *
+     * @var array<string>
+     */
+    protected array $findFields = ['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable'];
+
+    /**
      * Exports all invoices matching a given export profile and returns raw file bytes.
      *
      * @return string Raw file bytes (typically PDF or CSV).

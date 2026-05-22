@@ -42,6 +42,17 @@ abstract class AbstractResource
     /** Default page size for list requests. */
     private const DEFAULT_PAGE_SIZE = 50;
 
+    /**
+     * Default fields to request in {@see find()} when no explicit fields are passed.
+     *
+     * Subclasses can override this to ensure that fields which the Docbee API omits
+     * from the default single-record response are always included automatically.
+     * Leave empty to preserve the API's default field selection.
+     *
+     * @var array<string>
+     */
+    protected array $findFields = [];
+
     public function __construct(
         protected readonly HttpClientInterface $http,
     ) {
@@ -98,6 +109,9 @@ abstract class AbstractResource
      */
     public function find(int $id, array $fields = []): AbstractDTO
     {
+        if (empty($fields) && !empty($this->findFields)) {
+            $fields = $this->findFields;
+        }
         $qs       = !empty($fields) ? '?' . http_build_query(['fields' => implode(',', $fields)]) : '';
         $response = $this->http->get("{$this->endpoint}/{$id}{$qs}");
 
