@@ -128,6 +128,51 @@ final class HttpClient implements HttpClientInterface
         $this->throwIfError($response, $url);
     }
 
+    /**
+     * Performs a GET request and returns the raw (binary) response body.
+     *
+     * Use this for endpoints that return file data (PDF, CSV, …) rather than JSON.
+     *
+     * @return string Raw response bytes.
+     * @throws DocbeeApiException
+     */
+    public function getRaw(string $path): string
+    {
+        $url      = $this->buildUrl($path);
+        $start    = hrtime(true);
+        $response = $this->withRetry(fn() => $this->guzzle->get($url, $this->headersRaw()));
+        $ms       = $this->elapsed($start);
+
+        $this->logger->info("GET (raw) {$url} → {$response->getStatusCode()} ({$ms} ms)");
+        $this->throwIfError($response, $url);
+
+        return (string) $response->getBody();
+    }
+
+    /**
+     * Performs a POST request with a JSON body and returns the raw (binary) response body.
+     *
+     * Use this for export endpoints that return file data (PDF, CSV, …) rather than JSON.
+     *
+     * @param array<string, mixed> $data
+     * @return string Raw response bytes.
+     * @throws DocbeeApiException
+     */
+    public function postRaw(string $path, array $data = []): string
+    {
+        $url      = $this->buildUrl($path);
+        $start    = hrtime(true);
+        $response = $this->withRetry(
+            fn() => $this->guzzle->post($url, $this->headersRaw(['json' => $data]))
+        );
+        $ms = $this->elapsed($start);
+
+        $this->logger->info("POST (raw) {$url} → {$response->getStatusCode()} ({$ms} ms)");
+        $this->throwIfError($response, $url);
+
+        return (string) $response->getBody();
+    }
+
     // -------------------------------------------------------------------------
     // Internal helpers
     // -------------------------------------------------------------------------
@@ -169,6 +214,25 @@ final class HttpClient implements HttpClientInterface
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->config->getToken(),
                 'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+            ],
+        ], $extra);
+    }
+
+    /**
+     * Returns Guzzle request options for raw (binary) responses.
+     *
+     * Omits `Accept: application/json` so the server can return any content type
+     * (PDF, CSV, …) without triggering JSON parsing.
+     *
+     * @param array<string, mixed> $extra
+     * @return array<string, mixed>
+     */
+    private function headersRaw(array $extra = []): array
+    {
+        return array_merge([
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->config->getToken(),
                 'Content-Type'  => 'application/json',
             ],
         ], $extra);

@@ -46,4 +46,25 @@ interface HttpClientInterface
      * @throws DocbeeApiException
      */
     public function delete(string $path): void;
+
+    /**
+     * Performs a GET request and returns the raw (binary) response body.
+     *
+     * Use this for endpoints that return file data (PDF, CSV, …) rather than JSON.
+     *
+     * @return string Raw response bytes.
+     * @throws DocbeeApiException
+     */
+    public function getRaw(string $path): string;
+
+    /**
+     * Performs a POST request with a JSON body and returns the raw (binary) response body.
+     *
+     * Use this for export endpoints that return file data (PDF, CSV, …) rather than JSON.
+     *
+     * @param array<string, mixed> $data
+     * @return string Raw response bytes.
+     * @throws DocbeeApiException
+     */
+    public function postRaw(string $path, array $data = []): string;
 }

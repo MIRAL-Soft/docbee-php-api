@@ -8,6 +8,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **`exportByIds()` / `export()` on all resources — binary response handling:**
+  All export endpoints return raw file bytes (CSV, PDF, …), not JSON.  The previous
+  implementation called `json_decode()` on the response body and threw
+  `"Failed to decode Docbee API response: Syntax error"` whenever the server returned
+  binary content.
+
+  **Root cause:** `HttpClient::post()` / `get()` always parse the response as JSON via
+  `ResponseParser::parse()`.  Export endpoints return `Content-Type: text/csv` or
+  `application/pdf` — not JSON.
+
+  **Fix:** Added `getRaw(string $path): string` and `postRaw(string $path, array $data): string`
+  to `HttpClientInterface` and `HttpClient`.  These methods skip `ResponseParser::parse()`
+  and return the raw response body directly.  All `export()` and `exportByIds()` methods
+  across every resource now return `string` (raw bytes) instead of `array`.
+
+  **Affected resources:** `DocumentResource`, `InvoiceResource`, `AgreementResource`,
+  `AwayResource`, `CustomerContactResource`, `CustomerObjectResource`, `CustomerResource`,
+  `ProtocolResource`, `TicketRecurrenceResource`, `TicketResource`.
+
+  **Live-tested findings (pcs tenant):**
+  - Export profiles are CSV exports — `exportByIds($profileId, $ids)` returns
+    semicolon-delimited CSV, ISO-8859-1 encoded.  Example for `DOC_BEE_DOCUMENT`:
+    columns include `Kundennummer`, `Leistungs-Nr.`, `Vorgangs-Nr.`, `Abrechnungsnummer`,
+    `Rechnungspreis`, `Freigabekommentar`, etc.
+  - Export profile `exportType` determines which resource method to use:
+    `DOC_BEE_DOCUMENT` → `documents()->exportByIds()`,
+    `INVOICE` → `invoices()->exportByIds()`.
+    Mixing them returns HTTP 400 `"Invalid export profile type"`.
+  - Invoice PDF exports (`exportPdfByIds`, `exportOverviewPdfByIds`,
+    `exportOverviewPricePdfByIds`) return HTTP 400 `"Invalid pdf layout type"` when
+    the PDF layout is not configured as an invoice-type layout in Docbee.
+    Correct PDF layouts must be set up in Docbee UI (Abrechnung → PDF-Layout) and
+    their IDs retrieved via `$client->pdfLayouts()->list()`.
+
+  **Breaking change:** `export()` and `exportByIds()` return type changed from `array`
+  to `string` across all affected resources.
+
 ### Added
 - **`TicketMessageResource` and `DocBeeDocumentMessageResource` — comment/message helpers:**
   Consumers can now read and write ticket and document comments ("Kommentare") through typed

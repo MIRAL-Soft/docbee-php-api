@@ -391,6 +391,44 @@ final class DocumentResource extends AbstractResource
     public function poke(int $id, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/poke", $data); }
     public function reply(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/reply/{$messageId}", $data); }
     public function forward(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/forward/{$messageId}", $data); }
-    public function export(int $exportProfileId, array $params = []): array { return $this->http->get("{$this->endpoint}/export/{$exportProfileId}"); }
-    public function exportByIds(int $exportProfileId, array $ids): array { return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]); }
+    /**
+     * Exports all documents matching a given export profile and returns raw file bytes.
+     *
+     * The export format (PDF, CSV, …) depends on the profile configuration in Docbee.
+     * Use {@see exportProfiles()} to list available profiles and their IDs.
+     *
+     * ```php
+     * $pdf = $client->documents()->export($profileId);
+     * file_put_contents('leistungen.pdf', $pdf);
+     * ```
+     *
+     * @return string Raw file bytes (typically PDF or CSV).
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function export(int $exportProfileId): string
+    {
+        return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}");
+    }
+
+    /**
+     * Exports a specific set of documents by ID and returns raw file bytes.
+     *
+     * Supports single-document and bulk (Sammelreport) exports in one call.
+     * The export format depends on the profile configuration in Docbee.
+     *
+     * ```php
+     * // Sammelreport für alle freigegebenen Leistungen eines Vorgangs:
+     * $ids = array_map(fn($d) => $d->getId(), $approvedDocs);
+     * $pdf = $client->documents()->exportByIds($profileId, $ids);
+     * file_put_contents('abrechnung.pdf', $pdf);
+     * ```
+     *
+     * @param  int[]  $ids Document IDs to include in the export.
+     * @return string Raw file bytes (typically PDF or CSV).
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function exportByIds(int $exportProfileId, array $ids): string
+    {
+        return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]);
+    }
 }

@@ -18,9 +18,73 @@ final class InvoiceResource extends AbstractResource
     protected string $dtoClass = InvoiceDTO::class;
     protected string $listKey  = 'invoice';
 
-    public function export(int $exportProfileId): array { return $this->http->get("{$this->endpoint}/export/{$exportProfileId}"); }
-    public function exportByIds(int $exportProfileId, array $ids): array { return $this->http->post("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]); }
-    public function exportOverviewPdfByIds(int $pdfLayoutId, array $ids): array { return $this->http->post("{$this->endpoint}/exportOverviewPdfByIds/{$pdfLayoutId}", ['ids' => $ids]); }
-    public function exportOverviewPricePdfByIds(int $pdfLayoutId, array $ids): array { return $this->http->post("{$this->endpoint}/exportOverviewPricePdfByIds/{$pdfLayoutId}", ['ids' => $ids]); }
-    public function exportPdfByIds(int $pdfLayoutId, array $ids): array { return $this->http->post("{$this->endpoint}/exportPdfByIds/{$pdfLayoutId}", ['ids' => $ids]); }
+    /**
+     * Exports all invoices matching a given export profile and returns raw file bytes.
+     *
+     * @return string Raw file bytes (typically PDF or CSV).
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function export(int $exportProfileId): string
+    {
+        return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}");
+    }
+
+    /**
+     * Exports a specific set of invoices by ID and returns raw file bytes.
+     *
+     * @param  int[]  $ids Invoice IDs to include.
+     * @return string Raw file bytes.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function exportByIds(int $exportProfileId, array $ids): string
+    {
+        return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]);
+    }
+
+    /**
+     * Generates a combined overview PDF for the given invoice IDs.
+     *
+     * This corresponds to the "Sammelreport" (combined billing report) in the
+     * Docbee UI under Abrechnung → Abrechnungsreport erstellen.
+     *
+     * ```php
+     * $pdf = $client->invoices()->exportOverviewPdfByIds($layoutId, $invoiceIds);
+     * file_put_contents('sammelreport.pdf', $pdf);
+     * ```
+     *
+     * @param  int   $pdfLayoutId  PDF layout ID from {@see pdfLayouts()}.
+     * @param  int[] $ids          Invoice IDs to include.
+     * @return string Raw PDF bytes.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function exportOverviewPdfByIds(int $pdfLayoutId, array $ids): string
+    {
+        return $this->http->postRaw("{$this->endpoint}/exportOverviewPdfByIds/{$pdfLayoutId}", ['ids' => $ids]);
+    }
+
+    /**
+     * Generates a combined overview PDF with prices for the given invoice IDs.
+     *
+     * @param  int   $pdfLayoutId  PDF layout ID from {@see pdfLayouts()}.
+     * @param  int[] $ids          Invoice IDs to include.
+     * @return string Raw PDF bytes.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function exportOverviewPricePdfByIds(int $pdfLayoutId, array $ids): string
+    {
+        return $this->http->postRaw("{$this->endpoint}/exportOverviewPricePdfByIds/{$pdfLayoutId}", ['ids' => $ids]);
+    }
+
+    /**
+     * Generates individual PDFs for the given invoice IDs, merged into one file.
+     *
+     * @param  int   $pdfLayoutId  PDF layout ID from {@see pdfLayouts()}.
+     * @param  int[] $ids          Invoice IDs to include.
+     * @return string Raw PDF bytes.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function exportPdfByIds(int $pdfLayoutId, array $ids): string
+    {
+        return $this->http->postRaw("{$this->endpoint}/exportPdfByIds/{$pdfLayoutId}", ['ids' => $ids]);
+    }
 }
