@@ -53,6 +53,30 @@ abstract class AbstractResource
      */
     protected array $findFields = [];
 
+    /**
+     * Default fields to request in {@see list()}, {@see cursor()}, and all methods
+     * that delegate to them ({@see listAll()}, {@see findModifiedSince()},
+     * {@see findCreatedSince()}, {@see search()}) when the caller supplies no
+     * explicit `QueryBuilder::fields()` selector.
+     *
+     * **Why this exists:** The Docbee API list endpoints return a smaller default
+     * field set than the single-record endpoint (`GET /<resource>/{id}`).  Without
+     * this property, `find($id)` and `findModifiedSince()` return the same entity
+     * with a different set of populated DTO fields — a subtle, hard-to-debug
+     * inconsistency that causes null-pointer errors in consumer code.
+     *
+     * Subclasses should set this to the same value as `$findFields` (or a superset)
+     * to guarantee that list DTOs are as fully populated as single-record DTOs.
+     * Leave empty to preserve the API's narrow default field selection.
+     *
+     * When the caller explicitly sets fields via `QueryBuilder::fields([...])`,
+     * that explicit selection takes precedence and this default is ignored — so
+     * callers can still request a slim projection for performance-sensitive scans.
+     *
+     * @var array<string>
+     */
+    protected array $defaultListFields = [];
+
     public function __construct(
         protected readonly HttpClientInterface $http,
     ) {
@@ -129,7 +153,15 @@ abstract class AbstractResource
     /**
      * Returns a paginated list of records.
      *
-     * **Docbee API field behaviour:** The default list response omits many DTO fields.
+     * **Default field selection:** When `$defaultListFields` is configured on the
+     * concrete resource (e.g. `DocumentResource`), those fields are requested
+     * automatically — even without an explicit `QueryBuilder::fields()` call.
+     * This ensures list DTOs are as fully populated as single-record DTOs from
+     * {@see find()}.  Callers that need a slim projection can always override by
+     * passing an explicit `QueryBuilder::new()->fields([...])`.
+     *
+     * **Docbee API field behaviour on resources without `$defaultListFields`:**
+     * The default list response omits many DTO fields.
      * Getter methods for omitted fields return `null` silently — no error is raised.
      * Use `QueryBuilder::new()->fields([...])` to request specific fields explicitly:
      *
@@ -153,9 +185,11 @@ abstract class AbstractResource
      */
     public function list(?QueryBuilder $query = null): array
     {
-        $qs       = ($query ?? QueryBuilder::new())->build();
-        $response = $this->http->get("{$this->endpoint}{$qs}");
-        $items    = $response[$this->listKey] ?? [];
+        $baseQuery = $query ?? QueryBuilder::new();
+        $baseQuery = $this->applyDefaultListFields($baseQuery);
+        $qs        = $baseQuery->build();
+        $response  = $this->http->get("{$this->endpoint}{$qs}");
+        $items     = $response[$this->listKey] ?? [];
 
         if (!is_array($items)) {
             return [];
@@ -172,9 +206,8 @@ abstract class AbstractResource
      *
      * Use sparingly on large datasets – prefer {@see cursor()} for memory efficiency.
      *
-     * The same field-selection caveat as {@see list()} applies: many DTO fields are
-     * omitted from default responses and silently return `null` unless requested via
-     * `QueryBuilder::new()->fields([...])`.
+     * Default field selection is identical to {@see cursor()} — `$defaultListFields`
+     * are injected automatically when no explicit `QueryBuilder::fields()` is given.
      *
      * @return list<T>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
@@ -199,9 +232,10 @@ abstract class AbstractResource
      * }
      * ```
      *
-     * The same field-selection caveat as {@see list()} applies: many DTO fields are
-     * omitted from default responses and silently return `null` unless requested via
-     * `QueryBuilder::new()->fields([...])`.
+     * Default field selection behaviour is identical to {@see list()}: when
+     * `$defaultListFields` is configured on the concrete resource, those fields are
+     * requested automatically unless the caller already specified an explicit
+     * `QueryBuilder::fields([...])` selector.
      *
      * @return Generator<int, T, void, void>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
@@ -210,7 +244,7 @@ abstract class AbstractResource
     {
         $offset    = 0;
         $pageSize  = self::DEFAULT_PAGE_SIZE;
-        $baseQuery = $query ?? QueryBuilder::new();
+        $baseQuery = $this->applyDefaultListFields($query ?? QueryBuilder::new());
 
         do {
             $pageQuery = (clone $baseQuery)->limit($pageSize)->offset($offset);
@@ -247,11 +281,15 @@ abstract class AbstractResource
      * This is the recommended approach for efficient incremental synchronisation:
      *
      * ```php
-     * $changed = $client->tickets()->findModifiedSince(new DateTimeImmutable('-1 hour'));
-     * foreach ($changed as $ticket) {
-     *     sync($ticket);
+     * $changed = $client->documents()->findModifiedSince(new DateTimeImmutable('-1 hour'));
+     * foreach ($changed as $doc) {
+     *     sync($doc);  // getModified(), getTicket(), getApproved() etc. are fully populated
      * }
      * ```
+     *
+     * Default field selection: when `$defaultListFields` is configured on the resource
+     * (e.g. `DocumentResource`), the returned DTOs are as fully populated as those
+     * from `find($id)`.  Pass an explicit `QueryBuilder::fields([...])` to override.
      *
      * @return list<T>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
@@ -264,6 +302,9 @@ abstract class AbstractResource
 
     /**
      * Returns records created after the given date/time.
+     *
+     * Default field selection: identical to {@see findModifiedSince()} — `$defaultListFields`
+     * are injected automatically when the caller passes no explicit field selector.
      *
      * @return list<T>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
@@ -300,6 +341,25 @@ abstract class AbstractResource
     public function search(string $query): array
     {
         return $this->listAll(QueryBuilder::new()->search($query));
+    }
+
+    // -------------------------------------------------------------------------
+    // Internal helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Returns a QueryBuilder with the resource's `$defaultListFields` injected,
+     * but **only** when the caller did not already set an explicit field selector.
+     *
+     * Clones the builder before mutating it so the caller's original instance is
+     * never modified.
+     */
+    private function applyDefaultListFields(QueryBuilder $query): QueryBuilder
+    {
+        if (!empty($this->defaultListFields) && empty($query->getFields())) {
+            return (clone $query)->fields($this->defaultListFields);
+        }
+        return $query;
     }
 
     // -------------------------------------------------------------------------

@@ -293,6 +293,16 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Returns the currently configured field list (empty when not set).
+     *
+     * @return list<string>
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
     // -------------------------------------------------------------------------
     // Build
     // -------------------------------------------------------------------------

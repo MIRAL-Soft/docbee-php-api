@@ -208,4 +208,26 @@ final class QueryBuilderTest extends TestCase
         $qs = QueryBuilder::new()->filter('field_name', FilterOperator::EQ, 'value')->build();
         $this->assertStringContainsString('field_name-eq=value', $qs);
     }
+
+    // ── getFields() ──────────────────────────────────────────────────────────
+
+    public function testGetFieldsReturnsEmptyArrayByDefault(): void
+    {
+        $this->assertSame([], QueryBuilder::new()->getFields());
+    }
+
+    public function testGetFieldsReturnsConfiguredFields(): void
+    {
+        $fields = ['id', 'name', 'modified'];
+        $qb     = QueryBuilder::new()->fields($fields);
+
+        $this->assertSame($fields, $qb->getFields());
+    }
+
+    public function testGetFieldsReturnsLastSetAfterMultipleCalls(): void
+    {
+        $qb = QueryBuilder::new()->fields(['id', 'name'])->fields(['id', 'status']);
+
+        $this->assertSame(['id', 'status'], $qb->getFields());
+    }
 }

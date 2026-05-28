@@ -51,6 +51,14 @@ final class InvoiceResource extends AbstractResource
     protected array $findFields = ['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable'];
 
     /**
+     * Same as `$findFields` — ensures list/cursor/findModifiedSince/findCreatedSince
+     * return DTOs that are as fully populated as a `find($id)` call.
+     *
+     * @var array<string>
+     */
+    protected array $defaultListFields = ['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable'];
+
+    /**
      * Returns the Invoice record for a given document ID, or null when none exists.
      *
      * Because the Docbee API provides no server-side filter for `docBeeDocument`,

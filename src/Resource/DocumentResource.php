@@ -81,6 +81,32 @@ final class DocumentResource extends AbstractResource
     ];
 
     /**
+     * Same as `$findFields` — ensures list/cursor/findModifiedSince/findCreatedSince
+     * return DTOs that are as fully populated as a `find($id)` call.
+     *
+     * **Why:** The Docbee list endpoint omits billing/status fields by default.
+     * Without this, `findModifiedSince()` would return documents where `getModified()`,
+     * `getTicket()`, `getApproved()` etc. all return null — making delta-sync logic
+     * silently broken (live-verified bug, 2026-05-27).
+     *
+     * Callers that need a slim projection (e.g. for performance) can still pass an
+     * explicit `QueryBuilder::fields([...])` to override this default.
+     *
+     * @var array<string>
+     */
+    protected array $defaultListFields = [
+        'id', 'documentNumber', 'created', 'modified', 'link',
+        'approved', 'approvedDate', 'approvedComment',
+        'finished', 'finishedDate',
+        'preFinished', 'drafted', 'canceled', 'canceledDate',
+        'billable', 'invoiceNumber', 'erpReferenceNumber',
+        'ticket', 'customer', 'customerLocation', 'customerContact',
+        'releasedDate', 'personInCharge', 'priority', 'type',
+        'sendMessage', 'needSignature', 'needFinishPin',
+        'completedSuccessfully', 'totalInvoicePrice', 'totalTasksInvoicePrice',
+    ];
+
+    /**
      * Returns all documents for a given customer.
      *
      * @return list<DocBeeDocumentDTO>

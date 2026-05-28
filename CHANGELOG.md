@@ -9,6 +9,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Fixed
+- **`list()` / `cursor()` / `findModifiedSince()` / `findCreatedSince()` — inconsistent default field sets (live-verified bug):**
+
+  The Docbee API list endpoint returns a narrower default field set than the single-record
+  endpoint (`GET /<resource>/{id}`).  Previously, calling `findModifiedSince()` or `list()`
+  on `DocumentResource` returned DTOs where `getModified()`, `getTicket()`, `getApproved()`,
+  `getBillable()`, `getInvoiceNumber()`, `getErpReferenceNumber()` etc. were all `null` —
+  even though those fields were set on the records.  This caused delta-sync logic in consumer
+  code to silently skip every document (`modified == null > lastSync` evaluated to `false`).
+
+  **Root cause:** `AbstractResource` passed no `fields=` parameter to list requests, so the
+  API returned its own narrow default.  `find($id)` used `$findFields` correctly, but
+  `list()`, `cursor()`, `listAll()`, `findModifiedSince()`, and `findCreatedSince()` did not.
+
+  **Fix:** Added a `$defaultListFields` property to `AbstractResource`, analogous to
+  `$findFields`.  A new private `applyDefaultListFields()` helper injects these fields into
+  the `QueryBuilder` used by `list()` and `cursor()` — but only when the caller has not
+  already set an explicit `QueryBuilder::fields([...])` selector.  Callers that need a slim
+  projection (for performance) can still override by passing explicit fields.
+
+  Also added `QueryBuilder::getFields()` to expose the current field selection, which
+  `applyDefaultListFields()` uses to detect whether the caller already has an explicit
+  selector.
+
+  **Resources updated:**
+  - `DocumentResource::$defaultListFields` — set to same value as `$findFields` (all
+    billing/status/lifecycle fields: `approved`, `finished`, `billable`, `invoiceNumber`,
+    `erpReferenceNumber`, `ticket`, `modified`, etc.)
+  - `InvoiceResource::$defaultListFields` — set to same value as `$findFields`:
+    `['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable']`
+
+  Resources without `$defaultListFields` (everything else) are unaffected — they retain
+  the API's existing narrow default for backwards compatibility.
+
+  **Acceptance criterion (live assertion):**
+  ```php
+  $found  = $client->documents()->find(165851);
+  foreach ($client->documents()->findModifiedSince(new DateTime('-1 day')) as $listed) {
+      if ($listed->getId() === 165851) {
+          assert($listed->getModified()  === $found->getModified());   // ✓
+          assert($listed->getTicket()    === $found->getTicket());      // ✓
+          assert($listed->getCustomer()  === $found->getCustomer());    // ✓
+          break;
+      }
+  }
+  ```
+
 - **`InvoiceResource::findByDocument()` — new cursor-based lookup helper:**
   Finds the Invoice record for a given document ID by scanning with explicit `fields=`
   so that `getDocBeeDocument()` is populated.  Returns `null` when no Invoice exists.
