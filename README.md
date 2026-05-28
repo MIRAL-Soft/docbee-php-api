@@ -310,6 +310,45 @@ $new = $client->customers()->findCreatedSince(new DateTimeImmutable('today'));
 
 This is the recommended approach for keeping an external system (e.g. ERP, CRM) in sync with Docbee.
 
+### Fully-populated DTOs in list results (DocumentResource & InvoiceResource)
+
+**`DocumentResource`** and **`InvoiceResource`** automatically request a comprehensive field
+set in every list/cursor/findModifiedSince call — so the returned DTOs are as fully populated
+as those from `find($id)`, without any extra work on the caller side:
+
+```php
+// All fields — including modified, ticket, approved, billable, invoiceNumber, etc. —
+// are populated automatically. No QueryBuilder::fields() required.
+foreach ($client->documents()->findModifiedSince($since) as $doc) {
+    if ($doc->getModified() > $lastSync) {        // ✓ never null
+        processDocument(
+            id:            $doc->getId(),
+            ticketId:      $doc->getTicket(),     // ✓ never null
+            approved:      $doc->getApproved(),   // ✓ never null
+            invoiceNumber: $doc->getInvoiceNumber(),
+        );
+    }
+}
+```
+
+> **Background:** The Docbee API list endpoint returns a narrower default field set than the
+> single-record endpoint.  Without an explicit `?fields=` parameter, `modified`, `ticket`,
+> `approved`, `billable`, `invoiceNumber` etc. are absent from list responses and silently
+> return `null`.  `DocumentResource` and `InvoiceResource` work around this automatically
+> via an internal `$defaultListFields` property.  Other resources still use the API's
+> narrow default — pass `QueryBuilder::new()->fields([...])` to request additional fields.
+
+To request a **slim projection** instead (e.g. for performance-sensitive scans over many
+records), pass an explicit field selector — this always overrides the default:
+
+```php
+// Only fetch id and modified — skips all other fields for speed
+$docs = $client->documents()->findModifiedSince(
+    $since,
+    QueryBuilder::new()->fields(['id', 'modified']),
+);
+```
+
 ---
 
 ## Querying
@@ -345,6 +384,51 @@ $tickets = $client->tickets()->list($query);
 | `FilterOperator::LT`    | less than          |
 | `FilterOperator::LTE`   | less than or equal |
 | `FilterOperator::IN`    | IN list            |
+
+### Field Selection
+
+Use `QueryBuilder::fields([...])` to restrict which fields the API returns.  This reduces
+payload size and is the primary tool for working around the Docbee API's uneven default
+field coverage across endpoints:
+
+```php
+// Only fetch the fields you actually need
+$docs = $client->documents()->list(
+    QueryBuilder::new()->fields(['id', 'modified', 'ticket', 'approved', 'billable'])
+);
+```
+
+#### Default field sets — list vs. find
+
+The Docbee API returns **different default field sets** for list endpoints (`GET /resource`)
+and single-record endpoints (`GET /resource/{id}`).  Many fields — such as `modified`,
+`ticket`, `approved`, `billable`, `invoiceNumber` — are absent from list responses unless
+explicitly requested.  Without them, getter methods silently return `null`.
+
+**`DocumentResource`** and **`InvoiceResource`** address this automatically: they define a
+`$defaultListFields` set that mirrors their `find()` field set.  Every call to `list()`,
+`cursor()`, `listAll()`, `findModifiedSince()`, `findCreatedSince()`, or `search()` includes
+these fields automatically — no extra configuration needed.
+
+Other resources (tickets, customers, etc.) still use the API's narrow default.  For those,
+request the fields you need explicitly:
+
+```php
+// ServiceType.number is absent from the default list response
+$types = $client->serviceTypes()->list(
+    QueryBuilder::new()->fields(['id', 'name', 'number', 'deactivated'])
+);
+
+// For delta-sync on tickets, request the fields your sync logic depends on
+$changed = $client->tickets()->findModifiedSince(
+    new DateTimeImmutable('-1 hour'),
+    QueryBuilder::new()->fields(['id', 'modified', 'ticketStatus', 'erpReferenceNumber']),
+);
+```
+
+> **Rule of thumb:** if a getter returns `null` unexpectedly on a list result, add that
+> field name to a `QueryBuilder::fields([...])` call — or check whether the resource
+> already defines `$defaultListFields` (see class docblock).
 
 ---
 
