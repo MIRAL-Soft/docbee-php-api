@@ -27,7 +27,17 @@ use InvalidArgumentException;
  */
 final class QueryBuilder
 {
-    /** Maximum number of records per page allowed by the Docbee API. */
+    /**
+     * Maximum number of records per page for a single {@see list()} call.
+     *
+     * **Endpoint-specific server limits (live-verified, 2026-05-23):**
+     * - `/invoice`          – silently returns 0 items for `limit > 100`. Hard cap = 100.
+     * - `/docBeeDocument`   – honours up to at least 500 per page.
+     *
+     * This constant governs {@see limit()} which is used by `list()`.  For cursor-based
+     * pagination use {@see pageSize()} instead — it bypasses this cap and lets each
+     * resource set its own endpoint-appropriate page size.
+     */
     private const MAX_LIMIT = 100;
 
     /** @var array<string, string> */
@@ -36,8 +46,15 @@ final class QueryBuilder
     /** @var list<string> */
     private array $sorts = [];
 
-    private int $limit  = 50;
+    private int $limit  = 100;
     private int $offset = 0;
+
+    /**
+     * Per-page size used by {@see AbstractResource::cursor()} when set.
+     * Null means "use the resource's $defaultPageSize".
+     * NOT capped by MAX_LIMIT — endpoint-specific limits are the caller's responsibility.
+     */
+    private ?int $pageSize = null;
 
     /** @var list<string> */
     private array $fields = [];
@@ -303,6 +320,50 @@ final class QueryBuilder
         return $this->fields;
     }
 
+    /**
+     * Sets the page size used by {@see AbstractResource::cursor()} when iterating large
+     * datasets.  This is semantically distinct from {@see limit()}:
+     *
+     * - `limit(N)` controls how many records a single `list()` call fetches (one request).
+     * - `pageSize(N)` controls the internal per-request chunk size that `cursor()` uses
+     *   while auto-paginating through the full result set.
+     *
+     * Increasing the page size reduces the number of HTTP round trips for large datasets.
+     * Values above 100 are accepted by the Docbee API (live-verified):
+     *
+     * ```php
+     * // Fetch 4 000 invoices in ~8 requests instead of ~80
+     * foreach ($client->invoices()->cursor(QueryBuilder::new()->pageSize(500)) as $inv) { … }
+     * ```
+     *
+     * Values are clamped to [1, {@see MAX_LIMIT}].
+     */
+    public function pageSize(int $size): self
+    {
+        // Intentionally NOT capped at MAX_LIMIT — endpoints like /docBeeDocument accept
+        // 500+ records per page.  /invoice caps at 100 server-side (live-verified).
+        // The resource is responsible for choosing an appropriate page size.
+        $this->pageSize = max(1, $size);
+        return $this;
+    }
+
+    /**
+     * Returns the configured page size, or null when not explicitly set.
+     * `null` instructs {@see AbstractResource::cursor()} to use its own default.
+     */
+    public function getPageSize(): ?int
+    {
+        return $this->pageSize;
+    }
+
+    /**
+     * Returns the configured limit (records per `list()` request).
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
     // -------------------------------------------------------------------------
     // Build
     // -------------------------------------------------------------------------
@@ -317,6 +378,35 @@ final class QueryBuilder
         $params = $this->filters;
         $params['limit']  = (string) $this->limit;
         $params['offset'] = (string) $this->offset;
+
+        if (!empty($this->sorts)) {
+            $params['sort'] = implode(',', $this->sorts);
+        }
+        if (!empty($this->fields)) {
+            $params['fields'] = implode(',', $this->fields);
+        }
+
+        return '?' . http_build_query($params);
+    }
+
+    /**
+     * Builds a query string for one cursor page with an **unclamped** page size.
+     *
+     * Used internally by {@see AbstractResource::cursor()} so that resources which
+     * support larger-than-100 pages (e.g. `DocumentResource` with up to 500/page)
+     * can benefit from fewer round trips without the {@see MAX_LIMIT} cap of
+     * {@see limit()} interfering.
+     *
+     * Do **not** call this method directly — use {@see pageSize()} in your QueryBuilder
+     * and let `cursor()` pick it up automatically.
+     *
+     * @internal
+     */
+    public function buildForPage(int $pageSize, int $offset): string
+    {
+        $params = $this->filters;
+        $params['limit']  = (string) max(1, $pageSize);
+        $params['offset'] = (string) max(0, $offset);
 
         if (!empty($this->sorts)) {
             $params['sort'] = implode(',', $this->sorts);

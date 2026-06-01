@@ -430,6 +430,32 @@ $changed = $client->tickets()->findModifiedSince(
 > field name to a `QueryBuilder::fields([...])` call — or check whether the resource
 > already defines `$defaultListFields` (see class docblock).
 
+### Performance — Page Size (`pageSize()`)
+
+`cursor()` fetches records in pages.  The **default page size is 100** (raised from 50).
+For large datasets, request fewer round trips with `QueryBuilder::pageSize(N)`:
+
+```php
+// Document cursor: 500/page → 8 requests instead of 80 for 4 000 docs
+// (live-measured: 4.4 s vs 8.4 s, pcs tenant 2026-05-23)
+foreach ($client->documents()->cursor(QueryBuilder::new()->pageSize(500)) as $doc) { … }
+
+// Invoice batch lookup: findByDocuments() in one scan instead of N × findByDocument()
+// (live-measured: 10.8 s vs 43.1 s for 3 documents, pcs tenant 2026-05-23)
+$map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
+```
+
+`pageSize()` is separate from `limit()`:
+- `limit(N)` — max records returned by a single `list()` call; capped at 100 by `MAX_LIMIT`.
+- `pageSize(N)` — chunk size used by `cursor()` for pagination; **not** capped (endpoint-specific).
+
+> **⚠ Endpoint-specific server limits (live-verified 2026-05-23):**
+> - `/invoice` — silently returns **0 items** for `limit > 100`. Keep `pageSize ≤ 100` for invoice scans.
+> - `/docBeeDocument` — accepts at least 500 per page. `DocumentResource` uses 500 by default.
+>
+> `DocumentResource` automatically sets `$defaultPageSize = 500`.
+> `InvoiceResource` keeps the safe default of 100.
+
 ---
 
 ## Resource-specific Methods
@@ -581,6 +607,7 @@ Available parent-type and field-type constants:
 ```php
 // Find all documents linked to a specific ticket (uses the correct `ticketIds` param).
 // ticket-eq= is silently ignored by the Docbee API and must NOT be used.
+// Fast: server-side filter, typically < 1 s regardless of tenant size.
 $docs = $client->documents()->findByTicket($ticketId);
 
 // Find documents by ERP reference number (scoped to one customer, fields-only scan).
@@ -588,14 +615,14 @@ $docs = $client->documents()->findByTicket($ticketId);
 $docs = $client->documents()->findByErpReferenceNumber($customerId, 'WO-12345');
 
 // Find a document by a custom field value — N+1 eliminated.
-// Fetches all docs for the customer with custom fields inline (one HTTP call per page)
-// instead of one getCustomFieldValues() call per document.
+// Fetches all docs for the customer with custom fields inline (one HTTP call per page).
+// No server-side custom-field filter exists (confirmed — silently ignored).
 $docs = $client->documents()->findByCustomFieldValue(
     customerId: 205023,
     fieldId:    104,         // e.g. weclappOrderItemId custom field
     value:      'WO-12345',
 );
-// Typical: ~40 page calls for 3 963 docs  vs  3 963 individual calls previously.
+// With $defaultPageSize = 500: ~8 requests for 4 000 docs (4.4 s) vs 80 requests (8.4 s).
 
 // Generator-based alternative for memory-efficient processing of large datasets:
 foreach ($client->documents()->cursorWithCustomFields($customerId) as $doc) {
@@ -606,13 +633,47 @@ foreach ($client->documents()->cursorWithCustomFields($customerId) as $doc) {
 }
 ```
 
-> **Docbee API filter limitations:**
-> - `ticketIds=<id>` works; `ticket-eq=<id>` is silently ignored (returns all docs).
-> - `erpReferenceNumber-eq=` is ignored; document full-text search does not cover
->   `erpReferenceNumber` either — client-side scan is the only option.
-> - `/findByExternalId/{val}` does **not** match `externalReferenceNumber`,
->   `erpReferenceNumber`, or `referenceNumber` — it searches an internal integration
->   field not settable via the standard REST API.  Use custom fields as a unique key instead.
+> **Docbee API filter limitations (live-verified):**
+> - `ticketIds=<id>` works server-side; `ticket-eq=<id>` is silently ignored (returns all docs).
+> - `erpReferenceNumber-eq=` is ignored; document full-text search does not cover it — client-side scan only.
+> - `customFields.<id>-eq=<value>` is silently ignored — client-side scan only.
+> - `/findByExternalId/{val}` does **not** match `externalReferenceNumber`, `erpReferenceNumber`, or
+>   `referenceNumber` — it searches an internal integration field.  Use custom fields as a unique key instead.
+
+### Billing / Invoices
+
+```php
+// ── Finding the Invoice record for a document ─────────────────────────────────
+// Each approved+billable document has exactly one Invoice record.
+// findByDocument() performs a full cursor scan (no server-side filter available).
+$invoice = $client->invoices()->findByDocument($docId);
+
+// ✓ Batch lookup: ONE scan for multiple documents (4× faster than calling findByDocument() N times)
+// live-measured: 10.8 s for all 3 docs vs 43.1 s with 3 individual calls (pcs tenant)
+$map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
+// $map is array<int, InvoiceDTO> keyed by document ID
+
+// ── Setting the billing number (Abrechnungsnummer) ───────────────────────────
+// invoices()->update() sets invoiceNumber AND transitions status OPEN → INVOICED.
+$client->invoices()->update($invoice->getId(), ['invoiceNumber' => 'RE-2024-001']);
+
+// ── Exporting billing PDFs ────────────────────────────────────────────────────
+$pdf = $client->invoices()->exportOverviewPdfByIds($pdfLayoutId, [$invoice->getId()]);
+file_put_contents('sammelreport.pdf', $pdf);
+
+// ── Approved & billable documents ────────────────────────────────────────────
+$docs = $client->documents()->findApprovedBillable($customerId);
+$ids  = array_map(fn($d) => $d->getId(), $docs);
+$csv  = $client->documents()->exportByIds($exportProfileId, $ids);
+```
+
+> **Performance notes for invoice scans:**
+> - The `/invoice` endpoint silently returns **0 items** for `limit > 100` (live-verified bug).
+>   `InvoiceResource` enforces `$defaultPageSize = 100` automatically.
+> - No server-side filter for `docBeeDocument` exists — all variants (`docBeeDocument-eq`,
+>   `docBeeDocument-in`, `docBeeDocumentId-eq`) are silently ignored; the full 3 800+ invoice
+>   set is returned regardless.  Full cursor scan is unavoidable.
+> - Prefer `findByDocuments(array $docIds)` over multiple `findByDocument()` calls.
 
 ### Material Items
 

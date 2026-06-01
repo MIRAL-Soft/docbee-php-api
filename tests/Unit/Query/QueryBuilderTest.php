@@ -18,7 +18,8 @@ final class QueryBuilderTest extends TestCase
     public function testBuildIncludesDefaultPagination(): void
     {
         $qs = QueryBuilder::new()->build();
-        $this->assertStringContainsString('limit=50', $qs);
+        // Default limit raised from 50 → 100 (2026-05-23 performance improvement)
+        $this->assertStringContainsString('limit=100', $qs);
         $this->assertStringContainsString('offset=0', $qs);
     }
 

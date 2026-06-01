@@ -81,6 +81,15 @@ final class DocumentResource extends AbstractResource
     ];
 
     /**
+     * `/docBeeDocument` supports up to at least 500 records per page (live-verified
+     * 2026-05-23 on pcs tenant: 500 items returned correctly; timing 4,374ms for 4,000
+     * docs vs. 8,443ms at 50/page).  Override cursor's conservative default of 100.
+     *
+     * @var int
+     */
+    protected int $defaultPageSize = 500;
+
+    /**
      * Same as `$findFields` — ensures list/cursor/findModifiedSince/findCreatedSince
      * return DTOs that are as fully populated as a `find($id)` call.
      *

@@ -61,26 +61,98 @@ final class InvoiceResource extends AbstractResource
     /**
      * Returns the Invoice record for a given document ID, or null when none exists.
      *
-     * Because the Docbee API provides no server-side filter for `docBeeDocument`,
-     * this method performs a cursor scan with explicit field selection.
+     * **Performance note:** The Docbee API has no server-side filter for `docBeeDocument`,
+     * so this method performs a full cursor scan of all invoice records (O(n) where n is
+     * the total number of invoices in the tenant).  On large tenants this can take 20–30 s.
+     *
+     * When you need to look up invoices for **multiple** documents, call
+     * {@see findByDocuments()} instead — it performs a single scan and returns all
+     * requested mappings at once:
      *
      * ```php
-     * $invoice = $client->invoices()->findByDocument($docId);
-     * if ($invoice) {
-     *     $client->invoices()->update($invoice->getId(), ['invoiceNumber' => 'RE-2024-001']);
-     * }
+     * // ✓ Fast: one scan for any number of documents
+     * $map = $client->invoices()->findByDocuments([$docId1, $docId2]);
+     *
+     * // ✗ Slow on large tenants: full scan per document
+     * $inv1 = $client->invoices()->findByDocument($docId1); // ~25 s
+     * $inv2 = $client->invoices()->findByDocument($docId2); // ~25 s again
      * ```
      *
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByDocument(int $docId): ?InvoiceDTO
     {
-        foreach ($this->cursor(QueryBuilder::new()->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable'])) as $invoice) {
+        // Stop the cursor scan as soon as the document is found (short-circuit).
+        // pageSize(100) = maximum safe value for the /invoice endpoint
+        // (limit > 100 returns silently empty, live-verified 2026-05-23).
+        foreach ($this->cursor(
+            QueryBuilder::new()
+                ->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable'])
+                ->pageSize(100),
+        ) as $invoice) {
             if ($invoice->getDocBeeDocument() === $docId) {
                 return $invoice;
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a `docId → InvoiceDTO` map for all given document IDs.
+     *
+     * Scans all invoice records **once** and returns all requested mappings in a single
+     * pass — far more efficient than calling {@see findByDocument()} N times:
+     *
+     * ```php
+     * // Build the map for all documents that need billing numbers
+     * $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
+     * foreach ($map as $docId => $invoice) {
+     *     $client->invoices()->update($invoice->getId(), ['invoiceNumber' => "RE-{$docId}"]);
+     * }
+     * ```
+     *
+     * Documents without a matching Invoice record are absent from the returned map
+     * (they will not have an `InvoiceDTO` entry).  Check with `isset($map[$docId])`.
+     *
+     * Use `QueryBuilder::pageSize()` to tune the scan speed:
+     * ```php
+     * $map = $client->invoices()->findByDocuments($ids, QueryBuilder::new()->pageSize(500));
+     * ```
+     *
+     * @param  int[]            $docIds Document IDs to look up.
+     * @param  QueryBuilder|null $query  Optional: override fields or page size for the scan.
+     * @return array<int, InvoiceDTO>   Map of docId → InvoiceDTO.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByDocuments(array $docIds, ?QueryBuilder $query = null): array
+    {
+        if (empty($docIds)) {
+            return [];
+        }
+
+        $target  = array_flip($docIds); // O(1) lookup
+        $results = [];
+        // /invoice endpoint silently returns 0 items for limit > 100 (live-verified 2026-05-23).
+        // Always cap at 100 regardless of what the caller requested.
+        $requestedPageSize = $query?->getPageSize() ?? 100;
+        $safePageSize      = min($requestedPageSize, 100);
+
+        $q = ($query ?? QueryBuilder::new())
+            ->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable', 'agreementInvoice'])
+            ->pageSize($safePageSize);
+
+        foreach ($this->cursor($q) as $invoice) {
+            $docId = $invoice->getDocBeeDocument();
+            if ($docId !== null && isset($target[$docId])) {
+                $results[$docId] = $invoice;
+                // Short-circuit: if we have found all requested documents, stop scanning.
+                if (count($results) === count($target)) {
+                    break;
+                }
+            }
+        }
+
+        return $results;
     }
 
     /**

@@ -39,8 +39,26 @@ abstract class AbstractResource
      */
     protected string $listKey = '';
 
-    /** Default page size for list requests. */
-    private const DEFAULT_PAGE_SIZE = 50;
+    /**
+     * Default number of records fetched per HTTP request in {@see cursor()}.
+     *
+     * Raised from 50 → 100 (live-verified 2026-05-23 against pcs tenant):
+     * all tested Docbee endpoints accept 100 records per page.  Halves round-trip
+     * count vs. the previous default with no other change in behaviour.
+     *
+     * Subclasses may override this to a higher value when the endpoint supports it.
+     * **Do NOT set above 100 on resources backed by `/invoice`** — that endpoint
+     * silently returns 0 items for `limit > 100` (live-verified bug).
+     *
+     * | Endpoint            | Max safe page size | Notes                  |
+     * |---------------------|--------------------|------------------------|
+     * | `/invoice`          | 100                | >100 → silent empty    |
+     * | `/docBeeDocument`   | 500+               | Tested up to 500 ✓     |
+     * | All others          | 100 (conservative) | Not individually tested|
+     *
+     * @var int
+     */
+    protected int $defaultPageSize = 100;
 
     /**
      * Default fields to request in {@see find()} when no explicit fields are passed.
@@ -243,13 +261,15 @@ abstract class AbstractResource
     public function cursor(?QueryBuilder $query = null): Generator
     {
         $offset    = 0;
-        $pageSize  = self::DEFAULT_PAGE_SIZE;
         $baseQuery = $this->applyDefaultListFields($query ?? QueryBuilder::new());
+        // Determine page size: caller's explicit pageSize() > resource $defaultPageSize.
+        // buildForPage() is used instead of ->limit()->build() to bypass the MAX_LIMIT=100
+        // cap in limit() — some endpoints (e.g. /docBeeDocument) support larger pages.
+        $pageSize  = $baseQuery->getPageSize() ?? $this->defaultPageSize;
 
         do {
-            $pageQuery = (clone $baseQuery)->limit($pageSize)->offset($offset);
-            $qs        = $pageQuery->build();
-            $response  = $this->http->get("{$this->endpoint}{$qs}");
+            $qs       = $baseQuery->buildForPage($pageSize, $offset);
+            $response = $this->http->get("{$this->endpoint}{$qs}");
             $items     = $response[$this->listKey] ?? [];
 
             if (!is_array($items)) {

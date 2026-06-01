@@ -8,7 +8,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- **`QueryBuilder::pageSize(int $n): self`** — new method, distinct from `limit()`.
+  Controls the per-page chunk size used by `AbstractResource::cursor()` during
+  auto-pagination.  `pageSize()` is not capped by `MAX_LIMIT` (which applies only to
+  `limit()` / `list()`) — callers can request larger pages for endpoints that support it.
+
+  ```php
+  // 4 000 documents in ~8 requests instead of ~80 (live-verified 4.4 s vs 8.4 s)
+  foreach ($client->documents()->cursor(QueryBuilder::new()->pageSize(500)) as $doc) { … }
+  ```
+
+  See also: `QueryBuilder::getPageSize(): ?int`, `QueryBuilder::getLimit(): int`.
+
+- **`InvoiceResource::findByDocuments(array $docIds): array`** — batch lookup.
+  Returns a `docId → InvoiceDTO` map by scanning all invoice records **once**, vs.
+  calling `findByDocument()` N times (one full scan per call).
+  Short-circuits as soon as all requested documents are found.
+
+  ```php
+  // One scan for any number of documents (live-verified: 10.8 s vs 43.1 s for 3 docs)
+  $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
+  foreach ($map as $docId => $invoice) {
+      $client->invoices()->update($invoice->getId(), ['invoiceNumber' => "RE-{$docId}"]);
+  }
+  ```
+
 ### Fixed
+- **`cursor()` — page size raised from 50 → 100 (2×), endpoint-specific override for documents (up to 9×):**
+
+  **Live measurements against pcs tenant (3 829 invoices, 4 000 documents):**
+
+  | Scenario | Before (limit=50) | After | Improvement |
+  |---|---|---|---|
+  | Invoice cursor (3 829 records) | 22 499 ms | **9 607 ms** (limit=100) | **2.3×** |
+  | Document cursor (4 000 records) | 8 443 ms | **4 374 ms** (limit=500) | **1.9×** |
+  | `findByDocuments([id1,id2,id3])` | 43 121 ms (3 scans) | **10 796 ms** (1 scan) | **4.0×** |
+
+  **Root causes fixed:**
+
+  1. `AbstractResource::cursor()` hardcoded `$pageSize = 50` and ignored any `limit()` set
+     on the caller's QueryBuilder — leading to 77–80 round trips for 3 800–4 000 records.
+     Changed to `$defaultPageSize = 100` (protected property, subclasses can override).
+
+  2. The old `(clone $baseQuery)->limit($pageSize)->build()` pattern was clamped at 100 by
+     `QueryBuilder::limit()`'s `MAX_LIMIT` check — making it impossible for resources with
+     higher-capacity endpoints to benefit from larger pages.  `cursor()` now calls
+     `QueryBuilder::buildForPage(int $pageSize, int $offset)` which bypasses the cap.
+
+  3. `DocumentResource` overrides `$defaultPageSize = 500`.  The `/docBeeDocument`
+     endpoint accepts up to at least 500 records per page (live-verified ✓).
+
+  4. `InvoiceResource` retains `$defaultPageSize = 100`.  **Critical:** the `/invoice`
+     endpoint silently returns **0 items** for `limit > 100` (live-verified, no error, no
+     warning).  Any value above 100 here would silently truncate results to zero.
+
+  **Server-side filter probes (both confirmed NOT available):**
+  - `GET /invoice?docBeeDocument-eq=<id>` — silently ignored; returns all 3 829 invoices.
+    `docBeeDocument`, `docBeeDocument-in`, `docBeeDocumentId`, `docBeeDocumentId-eq` all
+    have the same behaviour.  Full cursor scan remains unavoidable.
+  - `GET /docBeeDocument?customFields.<id>-eq=<value>` — silently ignored; returns all
+    4 000 documents.  No server-side custom-field filter available.
+
+  **Recommended approach for consumers (e.g. docId → invoiceId mapping):**
+  ```php
+  // ✓ Fast: one scan for N documents
+  $map = $client->invoices()->findByDocuments($docIds);
+
+  // ✗ Slow: full scan repeated for every document
+  foreach ($docIds as $id) {
+      $inv = $client->invoices()->findByDocument($id); // ~10 s each
+  }
+  ```
+
 - **`list()` / `cursor()` / `findModifiedSince()` / `findCreatedSince()` — inconsistent default field sets (live-verified bug):**
 
   The Docbee API list endpoint returns a narrower default field set than the single-record
