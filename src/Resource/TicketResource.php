@@ -122,23 +122,23 @@ final class TicketResource extends AbstractResource
     /**
      * Returns tickets whose `erpReferenceNumber` matches the given value exactly.
      *
-     * The Docbee API provides no server-side filter for `erpReferenceNumber` on the
-     * `/ticket` endpoint — neither `erpReferenceNumber-eq` nor the plain parameter form
-     * is recognised; both are silently ignored and return the entire dataset (55 000+
-     * records for large tenants, taking 5+ minutes).
+     * The Docbee API provides **no** server-side filter for `erpReferenceNumber` on the
+     * `/ticket` endpoint — `erpReferenceNumber`, `erpReferenceNumber-eq` and the plain form
+     * are all silently ignored (they return the entire dataset).  There is also no ERP
+     * `creatorSources` shortcut (ERP-referenced tickets are not necessarily ERP-sourced).
      *
-     * **Implemented strategy (confirmed by live tests):**
-     * 1. Issue a server-side `search=<value>` request — Docbee searches across multiple
-     *    fields including `erpReferenceNumber`, returning a small hit set (typically
-     *    0–10 records) in 2–4 seconds regardless of tenant size.
-     * 2. Request `fields=id,erpReferenceNumber` so the field is included in the list
-     *    response without extra individual `find()` calls.
-     * 3. Filter client-side for an exact string match — `search` is a broad full-text
-     *    operation that may also return tickets where the term appears in other fields
-     *    (title, description, reference number, …).
+     * **Implemented strategy (live-verified 2026-05-23, pcs tenant, 55 952 tickets):**
+     * 1. Call the global search endpoint `GET /search/{value}` — it returns a compact list
+     *    of candidate **ticket IDs** (plus other entity types) in ~0.7 s warm, far faster
+     *    than the `/ticket?search=` list endpoint (~2.5–3.3 s, does not warm up).
+     * 2. Fetch those few candidates via `GET /ticket?ids=…&fields=id,erpReferenceNumber`
+     *    (one bounded request, ~70 ms).
+     * 3. Filter client-side for an exact match — search is a broad full-text operation that
+     *    also matches the term in title/description/etc.
      *
-     * **Performance:** O(hits from search) API calls, not O(total tickets).
-     * Typical timing: ≤ 5 seconds for any tenant size.
+     * **Performance:** ~0.8 s end-to-end regardless of tenant size, versus ~2.5–4.8 s for
+     * the previous `/ticket?search=` approach — a ~3–4× speed-up, identical results
+     * (the two search backends return the same candidate set, live-verified).
      *
      * ```php
      * $tickets = $resource->findByErpReferenceNumber('WO-12345');
@@ -150,21 +150,116 @@ final class TicketResource extends AbstractResource
      */
     public function findByErpReferenceNumber(string $erpReferenceNumber): array
     {
-        // search() is a server-side full-text match.  We include erpReferenceNumber
-        // in the field selection so the value comes back in the list response,
-        // enabling exact-match filtering without additional find() round-trips.
-        $hits = $this->listAll(
-            QueryBuilder::new()
-                ->search($erpReferenceNumber)
-                ->fields(['id', 'erpReferenceNumber']),
-        );
+        $candidateIds = $this->searchTicketIds($erpReferenceNumber);
+        if (empty($candidateIds)) {
+            return [];
+        }
 
-        return array_values(
-            array_filter(
-                $hits,
-                fn(TicketDTO $t) => $t->getErpReferenceNumber() === $erpReferenceNumber,
-            ),
-        );
+        return array_values(array_filter(
+            $this->fetchTicketsByIds($candidateIds, ['id', 'erpReferenceNumber']),
+            fn(TicketDTO $t) => $t->getErpReferenceNumber() === $erpReferenceNumber,
+        ));
+    }
+
+    /**
+     * Batch variant of {@see findByErpReferenceNumber()} — resolves many ERP reference
+     * numbers to their tickets in one pass.
+     *
+     * Runs one global search per value (the search step is per-term and unavoidable), but
+     * collects all candidate IDs and fetches them in a **single** chunked `/ticket?ids=`
+     * request, then exact-matches each value.  Useful in delta runs that resolve many
+     * Weclapp order numbers at once.
+     *
+     * ```php
+     * $map = $resource->findByErpReferenceNumbers(['4993', 'WO-12345']);
+     * // ['4993' => [TicketDTO …], 'WO-12345' => [TicketDTO …]]
+     * $ticket = $map['4993'][0] ?? null;
+     * ```
+     *
+     * @param  list<string> $erpReferenceNumbers
+     * @return array<string, list<TicketDTO>> Map of value → exactly-matching tickets.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByErpReferenceNumbers(array $erpReferenceNumbers): array
+    {
+        $values = array_values(array_unique(array_filter(
+            $erpReferenceNumbers,
+            static fn($v) => is_string($v) && $v !== '',
+        )));
+        if (empty($values)) {
+            return [];
+        }
+
+        // 1. One global search per value → candidate ticket IDs.
+        $idsByValue = [];
+        $allIds     = [];
+        foreach ($values as $value) {
+            $ids               = $this->searchTicketIds($value);
+            $idsByValue[$value] = $ids;
+            foreach ($ids as $id) {
+                $allIds[$id] = true;
+            }
+        }
+
+        // 2. Fetch every unique candidate ticket once (chunked at the /ticket page cap).
+        $byId = [];
+        foreach ($this->fetchTicketsByIds(array_keys($allIds), ['id', 'erpReferenceNumber']) as $ticket) {
+            $byId[$ticket->getId()] = $ticket;
+        }
+
+        // 3. Exact-match each value against its own candidate set.
+        $result = [];
+        foreach ($values as $value) {
+            $matches = [];
+            foreach ($idsByValue[$value] as $id) {
+                $ticket = $byId[$id] ?? null;
+                if ($ticket !== null && $ticket->getErpReferenceNumber() === $value) {
+                    $matches[] = $ticket;
+                }
+            }
+            $result[$value] = $matches;
+        }
+        return $result;
+    }
+
+    /**
+     * Returns candidate ticket IDs for a free-text term via the global `GET /search/{term}`
+     * endpoint, which is markedly faster than the `/ticket?search=` list endpoint.
+     *
+     * @return list<int>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    private function searchTicketIds(string $term): array
+    {
+        $response = $this->http->get('search/' . rawurlencode($term));
+        $ids      = $response['tickets'] ?? [];
+        return is_array($ids) ? array_values(array_map('intval', $ids)) : [];
+    }
+
+    /**
+     * Fetches tickets by their IDs, chunked at 50 (the `/ticket` endpoint's page-size cap).
+     *
+     * @param  list<int>    $ids
+     * @param  list<string> $fields
+     * @return list<TicketDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    private function fetchTicketsByIds(array $ids, array $fields): array
+    {
+        $out = [];
+        foreach (array_chunk($ids, 50) as $chunk) {
+            $page = $this->list(
+                QueryBuilder::new()
+                    ->param('ids', implode(',', $chunk))
+                    ->fields($fields)
+                    ->limit(50)
+                    ->pageSize(50),
+            );
+            foreach ($page as $ticket) {
+                $out[] = $ticket;
+            }
+        }
+        return $out;
     }
 
     /**

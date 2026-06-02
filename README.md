@@ -563,9 +563,12 @@ $tickets = $client->tickets()->findByTicketStatus(1);
 $tickets = $client->tickets()->findByReferenceNumber('REF-2024-001');
 $tickets = $client->tickets()->findByOwner(5);
 
-// Find tickets by ERP reference number — uses server-side search + exact-match filter.
-// Fast even on large tenants (2–4 s for 55 000 tickets vs 5+ min with a naive filter).
+// Find tickets by ERP reference number — global search + exact-match filter (~0.8 s).
 $tickets = $client->tickets()->findByErpReferenceNumber('WO-12345');
+
+// Batch: resolve many order numbers at once → value => matching tickets
+$map = $client->tickets()->findByErpReferenceNumbers(['4993', 'WO-12345']);
+$ticket = $map['4993'][0] ?? null;
 
 // Memory-efficient iteration over all non-closed tickets (auto-paginates)
 foreach ($client->tickets()->iterateNonClosed($closedStatusId) as $ticket) {
@@ -573,10 +576,13 @@ foreach ($client->tickets()->iterateNonClosed($closedStatusId) as $ticket) {
 }
 ```
 
-> **Docbee API note:** `erpReferenceNumber-eq=` is silently ignored by the Docbee server
-> for tickets — the parameter is absent from the OpenAPI spec.  `findByErpReferenceNumber()`
-> uses `search=<value>` (the only server-side mechanism) plus client-side exact-match
-> filtering.  Verified live: 2 hits returned in 2.4 s on a 55 070-ticket tenant.
+> **Docbee API note — no server-side `erpReferenceNumber` filter exists.** `erpReferenceNumber`,
+> `erpReferenceNumber-eq` and the plain form are all silently ignored on `/ticket`, and there is
+> no usable `creatorSources=ERP` shortcut (ERP-referenced tickets are not necessarily
+> ERP-*sourced*). `findByErpReferenceNumber()` therefore uses the global `GET /search/{value}`
+> endpoint (candidate ticket IDs in ~0.7 s) → `GET /ticket?ids=…` → client-side exact match.
+> Live-verified: ~0.8 s end-to-end on a 55 952-ticket tenant, versus ~2.5–4.8 s for the older
+> `/ticket?search=` approach (~3–4× faster, identical results).
 
 ### Custom Fields
 

@@ -8,7 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- **`TicketResource::findByErpReferenceNumber()` — ~3–4× faster via the global search endpoint.**
+
+  Previously issued a `/ticket?search=<value>` list request (~2.5–4.8 s on a 55 952-ticket
+  tenant — the `/ticket` full-text search is slow and does not warm up). It now uses the
+  global `GET /search/{value}` endpoint, which returns candidate **ticket IDs** in ~0.7 s,
+  then fetches just those candidates via `GET /ticket?ids=…` and exact-matches client-side.
+
+  **Live benchmark (pcs tenant, erpReferenceNumber "4993", 1 hit):**
+
+  | | Before | After |
+  |---|---|---|
+  | `findByErpReferenceNumber("4993")` | ~2.5–4.8 s | **~0.8 s** |
+
+  Backward-compatible: same signature, same result (exact matches only). The global search
+  returns the **same candidate set** as `/ticket?search=` (live-verified), and the result is
+  exact-filtered either way, so correctness is unchanged.
+
+  **Why not a direct server-side filter?** There is none: `erpReferenceNumber`,
+  `erpReferenceNumber-eq` and the plain form are all silently ignored on `/ticket`, and the
+  `creatorSources=ERP` filter is a dead end (ERP-referenced tickets are not ERP-*sourced* —
+  `creatorSources=ERP` returns 0 tickets on this tenant). The global search is the fastest
+  documented mechanism.
+
 ### Added
+- **`TicketResource::findByErpReferenceNumbers(array): array<string, list<TicketDTO>>`** —
+  batch variant. Runs one global search per value, then a single combined `/ticket?ids=`
+  fetch, returning a `value → matching tickets` map. For delta runs that resolve many
+  order numbers at once.
+
 - **`DocumentResource::exportPdfById()` — render a single Leistung as its "Leistungsnachweis" PDF.**
 
   Returns the raw PDF bytes for **one** document — the single detail page only, **without** the
