@@ -714,14 +714,29 @@ $invoices = $client->invoices()->findByTicket($ticketId);
 $client->invoices()->update($invoice->getId(), ['invoiceNumber' => 'RE-2024-001']);
 
 // ── Exporting billing PDFs ────────────────────────────────────────────────────
+// Combined report (overview cover sheet + one detail page per Leistung) — for ≥1 documents:
+$pdf = $client->invoices()->exportPdfByIds($pdfLayoutId, $invoiceRecordIds);   // Sammelreport
 $pdf = $client->invoices()->exportOverviewPdfByIds($pdfLayoutId, [$invoice->getId()]);
-file_put_contents('sammelreport.pdf', $pdf);
+
+// Single Leistung as its "Leistungsnachweis" PDF — detail page only, NO overview cover sheet:
+$pdf = $client->documents()->exportPdfById($docId);   // alias of documents()->preview($docId)
+file_put_contents('leistungsnachweis.pdf', $pdf);     // %PDF, single page, no layout id needed
 
 // ── Approved & billable documents ────────────────────────────────────────────
 $docs = $client->documents()->findApprovedBillable($customerId);
 $ids  = array_map(fn($d) => $d->getId(), $docs);
 $csv  = $client->documents()->exportByIds($exportProfileId, $ids);
 ```
+
+> **Single Leistung PDF vs. combined report:**
+> - `documents()->exportPdfById($docId)` (= `documents()->preview($docId)`) → **one** document
+>   rendered as its "Leistungsnachweis" detail page, **without** the overview cover. Maps to
+>   `GET /docBeeDocument/{id}/preview`; no PDF layout id is needed (the endpoint uses the
+>   document's own layout — a `pdfLayoutId` has no effect).
+> - `invoices()->exportPdfByIds($pdfLayoutId, $invoiceIds)` → **combined** report with the
+>   overview cover sheet + one detail page per Leistung. Use this for multi-document reports.
+> - There is **no** `docBeeDocument/exportPdfByIds` endpoint (HTTP 404), and document export
+>   profiles (`documents()->exportByIds()`) return **CSV**, not PDF.
 
 > **Performance notes for invoice lookups:**
 > - `findByDocument()` / `findByDocuments()` / `findByTicket()` use the server-side `ticketIds`

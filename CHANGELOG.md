@@ -9,6 +9,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`DocumentResource::exportPdfById()` — render a single Leistung as its "Leistungsnachweis" PDF.**
+
+  Returns the raw PDF bytes for **one** document — the single detail page only, **without** the
+  "Leistungsnachweis-Übersicht" cover sheet that `invoices()->exportPdfByIds()` prepends.
+
+  ```php
+  $pdf = $client->documents()->exportPdfById($docId);   // or ->preview($docId)
+  file_put_contents('leistungsnachweis.pdf', $pdf);
+  ```
+
+  Maps to `GET /docBeeDocument/{id}/preview` (the UI's "Leistung → Drucken/PDF").
+  Live-verified on the pcs tenant (document 165887): `application/pdf`, 130 KB, **single page**,
+  titled "Leistungsnachweis" with the expected Kunde/Datum/Verantwortlicher/Dokumenten-ID fields.
+
+  **No PDF layout needs to be configured.** The endpoint renders with the document's own layout;
+  a `pdfLayoutId` query parameter has no effect (live-verified — identical bytes for layouts
+  625/626/627/628). This is the documented way to obtain a single Leistung PDF — there is **no**
+  `docBeeDocument/exportPdfByIds` endpoint (returns HTTP 404). For a **combined** report over
+  multiple Leistungen, keep using `invoices()->exportPdfByIds($pdfLayoutId, $invoiceIds)`.
+
 - **`InvoiceResource::findByTicket()` / `findByTickets()`** — new server-side invoice lookups.
 
   The `/invoice` endpoint has **no** server-side filter for `docBeeDocument`, but it **does**
@@ -67,6 +87,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ticket fall back to a legacy scan.
 
 ### Fixed
+- **`DocumentResource::preview()` returned `array` and crashed on the binary PDF response.**
+
+  `preview()` called the JSON-parsing `HttpClient::get()` on `GET /docBeeDocument/{id}/preview`,
+  which returns a binary PDF (`application/pdf`) — so `json_decode()` failed with a syntax error.
+  It now returns `string` (raw PDF bytes) via `getRaw()`, the same pattern used by the
+  `export()` / `exportByIds()` methods.
+
+  **Return type changed `array` → `string`.** The previous return type was unusable (the method
+  always threw on the binary response), so no working caller can be affected.
+
 - **`cursor()` — page size raised from 50 → 100 (2×), endpoint-specific override for documents (up to 9×):**
 
   **Live measurements against pcs tenant (3 829 invoices, 4 000 documents):**

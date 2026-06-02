@@ -495,7 +495,42 @@ final class DocumentResource extends AbstractResource
     public function invoice(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/invoice", $data); }
     public function preFinish(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/preFinish", $data); }
     public function releaseDraft(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/releaseDraft", []); }
-    public function preview(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/preview"); }
+    /**
+     * Renders a single document (Leistung) as its "Leistungsnachweis" PDF and returns the raw bytes.
+     *
+     * Maps to `GET /docBeeDocument/{id}/preview` — the same output as "Leistung → Drucken/PDF"
+     * in the Docbee UI.  The result is the **single-document detail page only**, WITHOUT the
+     * "Leistungsnachweis-Übersicht" cover sheet that `invoices()->exportPdfByIds()` prepends.
+     *
+     * **No PDF layout parameter:** the endpoint renders with the document's own configured
+     * layout; passing a `pdfLayoutId` has no effect (live-verified — identical bytes for every
+     * layout ID).  No special document-type layout needs to be set up in Docbee.
+     *
+     * ```php
+     * $pdf = $client->documents()->preview($docId);   // or exportPdfById($docId)
+     * file_put_contents('leistungsnachweis.pdf', $pdf);
+     * ```
+     *
+     * For a **combined** report over multiple documents (overview cover + one detail page per
+     * Leistung), keep using `invoices()->exportPdfByIds($pdfLayoutId, $invoiceIds)` instead.
+     *
+     * @return string Raw PDF bytes (response starts with `%PDF`).
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function preview(int $id): string { return $this->http->getRaw("{$this->endpoint}/{$id}/preview"); }
+
+    /**
+     * Alias of {@see preview()} — renders a single document as its "Leistungsnachweis" PDF.
+     *
+     * Provided for naming symmetry with the export family.  Returns raw PDF bytes for exactly
+     * one document, with no overview cover sheet.  For multi-document combined reports use
+     * `invoices()->exportPdfByIds()`.
+     *
+     * @return string Raw PDF bytes (response starts with `%PDF`).
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function exportPdfById(int $docId): string { return $this->preview($docId); }
+
     public function getMessageData(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/messageData"); }
     public function poke(int $id, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/poke", $data); }
     public function reply(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/reply/{$messageId}", $data); }
