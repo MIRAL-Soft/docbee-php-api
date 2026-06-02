@@ -9,6 +9,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- **`InvoiceResource::findByTicket()` / `findByTickets()`** — new server-side invoice lookups.
+
+  The `/invoice` endpoint has **no** server-side filter for `docBeeDocument`, but it **does**
+  support the documented `ticketIds` filter (discovered in the OpenAPI spec, live-verified).
+  Since every Invoice inherits its document's ticket, these methods locate invoices without
+  scanning the whole collection:
+
+  ```php
+  $invoices = $client->invoices()->findByTicket($ticketId);    // ~70 ms, server-side
+  $invoices = $client->invoices()->findByTickets([$t1, $t2]);  // batched, deduplicated
+  ```
+
+### Changed
+- **`InvoiceResource::findByDocument()` / `findByDocuments()` — 90× faster (live-verified).**
+
+  Both methods previously scanned the entire `/invoice` collection client-side (no server-side
+  `docBeeDocument` filter exists). They now resolve each document's **ticket** first, then query
+  invoices via the server-side `ticketIds` filter — eliminating the full scan.
+
+  **Live benchmark (pcs tenant, ≈ 3 829 invoices, 2026-05-23):**
+
+  | Operation | Before (scan) | After (ticket filter) | Speed-up |
+  |---|---|---|---|
+  | `findByDocument($docId)` | ~13 500 ms | **145 ms** | ~90× |
+  | `findByDocument($docId, $ticketId)` | — | **53 ms** | — |
+  | `findByDocuments([3 ids])` | 13 504 ms | **157 ms** | 86× |
+
+  Results are **identical** to the old scan (verified against the same tenant).
+
+  - `findByDocument(int $docId, ?int $ticketId = null)` — **backward-compatible** signature
+    extension. Pass the document's ticket (e.g. `$doc->getTicket()`) to skip the document
+    fetch entirely (~53 ms total).
+  - `findByDocuments(array $docIds, ?QueryBuilder $query = null)` — same signature; the
+    `$query` parameter is now only used for the rare ticketless-document fallback scan.
+  - **Fallback preserved:** documents that genuinely have no ticket (standalone Leistungen)
+    fall back to the legacy full scan, so no result is ever silently dropped.
+
+  Internally relies on the `/docBeeDocument` `ids` and `ticketIds` filters (both documented,
+  both live-verified) to batch-resolve document tickets in a single request.
+
 - **`QueryBuilder::pageSize(int $n): self`** — new method, distinct from `limit()`.
   Controls the per-page chunk size used by `AbstractResource::cursor()` during
   auto-pagination.  `pageSize()` is not capped by `MAX_LIMIT` (which applies only to
@@ -21,18 +61,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   See also: `QueryBuilder::getPageSize(): ?int`, `QueryBuilder::getLimit(): int`.
 
-- **`InvoiceResource::findByDocuments(array $docIds): array`** — batch lookup.
-  Returns a `docId → InvoiceDTO` map by scanning all invoice records **once**, vs.
-  calling `findByDocument()` N times (one full scan per call).
-  Short-circuits as soon as all requested documents are found.
-
-  ```php
-  // One scan for any number of documents (live-verified: 10.8 s vs 43.1 s for 3 docs)
-  $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
-  foreach ($map as $docId => $invoice) {
-      $client->invoices()->update($invoice->getId(), ['invoiceNumber' => "RE-{$docId}"]);
-  }
-  ```
+- **`InvoiceResource::findByDocuments(array $docIds): array`** — batch `docId → InvoiceDTO`
+  lookup. Now ticket-based (see the *Changed* entry above): resolves the documents' tickets,
+  then a single server-side `ticketIds` invoice query — no full scan. Documents without a
+  ticket fall back to a legacy scan.
 
 ### Fixed
 - **`cursor()` — page size raised from 50 → 100 (2×), endpoint-specific override for documents (up to 9×):**
@@ -63,22 +95,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
      endpoint silently returns **0 items** for `limit > 100` (live-verified, no error, no
      warning).  Any value above 100 here would silently truncate results to zero.
 
-  **Server-side filter probes (both confirmed NOT available):**
+  **Server-side filter probes:**
   - `GET /invoice?docBeeDocument-eq=<id>` — silently ignored; returns all 3 829 invoices.
     `docBeeDocument`, `docBeeDocument-in`, `docBeeDocumentId`, `docBeeDocumentId-eq` all
-    have the same behaviour.  Full cursor scan remains unavoidable.
+    have the same behaviour.  **However**, the documented `ticketIds` filter *is* honoured —
+    so the invoice scan is **avoidable** via the document's ticket (see the *Changed* entry
+    on `findByDocument()` / `findByDocuments()`, which made this 90× faster).
   - `GET /docBeeDocument?customFields.<id>-eq=<value>` — silently ignored; returns all
     4 000 documents.  No server-side custom-field filter available.
 
   **Recommended approach for consumers (e.g. docId → invoiceId mapping):**
   ```php
-  // ✓ Fast: one scan for N documents
+  // ✓ Fastest: ticket-based, server-side filtered (≈ 150 ms regardless of tenant size)
   $map = $client->invoices()->findByDocuments($docIds);
 
-  // ✗ Slow: full scan repeated for every document
-  foreach ($docIds as $id) {
-      $inv = $client->invoices()->findByDocument($id); // ~10 s each
-  }
+  // ✓ Single document, ticket already known → ~50 ms
+  $invoice = $client->invoices()->findByDocument($docId, $doc->getTicket());
   ```
 
 - **`list()` / `cursor()` / `findModifiedSince()` / `findCreatedSince()` — inconsistent default field sets (live-verified bug):**

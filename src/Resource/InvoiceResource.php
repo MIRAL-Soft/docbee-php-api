@@ -33,6 +33,17 @@ use miralsoft\docbee\api\Query\QueryBuilder;
  * - `erpReferenceNumber` on DocBeeDocumentDTO = "Vorgangs-Referenznummer" in CSV
  *   (an ERP integration field set at document creation; silently ignored on `update()`)
  *
+ * **Fast document → invoice lookups (live-verified 2026-05-23):**
+ *
+ * The `/invoice` endpoint has **no** server-side filter for `docBeeDocument`, but it **does**
+ * support the documented `ticketIds` filter.  Because every Invoice inherits its document's
+ * ticket, an invoice can be located via the document's ticket without scanning the whole
+ * collection.  {@see findByDocument()} and {@see findByDocuments()} use this internally:
+ * they resolve each document's ticket, then query invoices by ticket server-side.
+ *
+ * Measured on the pcs tenant (≈ 3 829 invoices): resolving 3 documents dropped from
+ * **13 504 ms** (full scan) to **150 ms** (ticket filter) — a 90× speed-up, identical result.
+ *
  * @extends AbstractResource<InvoiceDTO>
  */
 final class InvoiceResource extends AbstractResource
@@ -59,52 +70,111 @@ final class InvoiceResource extends AbstractResource
     protected array $defaultListFields = ['id', 'docBeeDocument', 'agreementInvoice', 'status', 'invoiceNumber', 'billable'];
 
     /**
-     * Returns the Invoice record for a given document ID, or null when none exists.
+     * Returns all Invoice records linked to a given ticket (fast server-side filter).
      *
-     * **Performance note:** The Docbee API has no server-side filter for `docBeeDocument`,
-     * so this method performs a full cursor scan of all invoice records (O(n) where n is
-     * the total number of invoices in the tenant).  On large tenants this can take 20–30 s.
-     *
-     * When you need to look up invoices for **multiple** documents, call
-     * {@see findByDocuments()} instead — it performs a single scan and returns all
-     * requested mappings at once:
+     * Uses the documented `ticketIds` query parameter — no full-collection scan.
+     * Because each Invoice inherits its document's ticket, this returns one Invoice per
+     * billable document on the ticket (typically a handful).  Live-measured at ~70 ms
+     * regardless of tenant size.
      *
      * ```php
-     * // ✓ Fast: one scan for any number of documents
-     * $map = $client->invoices()->findByDocuments([$docId1, $docId2]);
-     *
-     * // ✗ Slow on large tenants: full scan per document
-     * $inv1 = $client->invoices()->findByDocument($docId1); // ~25 s
-     * $inv2 = $client->invoices()->findByDocument($docId2); // ~25 s again
+     * foreach ($client->invoices()->findByTicket($ticketId) as $invoice) {
+     *     // $invoice->getDocBeeDocument(), $invoice->getInvoiceNumber(), …
+     * }
      * ```
      *
+     * @return list<InvoiceDTO>
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
-    public function findByDocument(int $docId): ?InvoiceDTO
+    public function findByTicket(int $ticketId): array
     {
-        // Stop the cursor scan as soon as the document is found (short-circuit).
-        // pageSize(100) = maximum safe value for the /invoice endpoint
-        // (limit > 100 returns silently empty, live-verified 2026-05-23).
-        foreach ($this->cursor(
-            QueryBuilder::new()
-                ->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable'])
-                ->pageSize(100),
-        ) as $invoice) {
-            if ($invoice->getDocBeeDocument() === $docId) {
-                return $invoice;
+        return $this->listAll(QueryBuilder::new()->param('ticketIds', $ticketId)->pageSize(100));
+    }
+
+    /**
+     * Returns all Invoice records linked to any of the given tickets (server-side, batched).
+     *
+     * Sends the ticket IDs to the `ticketIds` filter in chunks, so a large ticket set still
+     * resolves in a few requests instead of a full-collection scan.
+     *
+     * @param  int[] $ticketIds
+     * @return list<InvoiceDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByTickets(array $ticketIds): array
+    {
+        $ticketIds = array_values(array_unique(array_filter($ticketIds, static fn($t) => $t !== null)));
+        if (empty($ticketIds)) {
+            return [];
+        }
+
+        $out = [];
+        // Chunk to keep the query string a sane length; the /invoice endpoint caps pages at 100.
+        foreach (array_chunk($ticketIds, 50) as $chunk) {
+            foreach ($this->cursor(
+                QueryBuilder::new()->param('ticketIds', implode(',', $chunk))->pageSize(100),
+            ) as $invoice) {
+                $out[] = $invoice;
             }
         }
-        return null;
+        return $out;
+    }
+
+    /**
+     * Returns the Invoice record for a given document ID, or null when none exists.
+     *
+     * **Fast path (default):** resolves the document's ticket, then locates the invoice
+     * via the server-side `ticketIds` filter — no full scan.  Live-measured at ~150 ms
+     * even on a tenant with thousands of invoices.
+     *
+     * Pass `$ticketId` directly when you already know the document's ticket to skip the
+     * extra document fetch entirely (~70 ms total).
+     *
+     * **Fallback:** when the document has no ticket (a rare standalone Leistung), no
+     * server-side filter applies and the method falls back to a full cursor scan.
+     *
+     * ```php
+     * $invoice = $client->invoices()->findByDocument($docId);
+     * if ($invoice) {
+     *     $client->invoices()->update($invoice->getId(), ['invoiceNumber' => 'RE-2024-001']);
+     * }
+     *
+     * // Even faster when the ticket is already known:
+     * $invoice = $client->invoices()->findByDocument($docId, $doc->getTicket());
+     * ```
+     *
+     * @param int      $docId    Document ID to look up.
+     * @param int|null $ticketId Optional: the document's ticket, to skip the document fetch.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function findByDocument(int $docId, ?int $ticketId = null): ?InvoiceDTO
+    {
+        $ticketId ??= $this->resolveDocumentTicket($docId);
+
+        if ($ticketId !== null) {
+            // The invoice inherits its document's ticket, so the ticket filter is
+            // authoritative: if no match here, no invoice exists for this document.
+            foreach ($this->findByTicket($ticketId) as $invoice) {
+                if ($invoice->getDocBeeDocument() === $docId) {
+                    return $invoice;
+                }
+            }
+            return null;
+        }
+
+        // Document has no ticket → no server-side filter available; fall back to a full scan.
+        return $this->findByDocumentsViaScan([$docId])[$docId] ?? null;
     }
 
     /**
      * Returns a `docId → InvoiceDTO` map for all given document IDs.
      *
-     * Scans all invoice records **once** and returns all requested mappings in a single
-     * pass — far more efficient than calling {@see findByDocument()} N times:
+     * **Fast path (default):** batch-resolves the documents' tickets in one request, then
+     * fetches all matching invoices via the server-side `ticketIds` filter.  This replaces
+     * the previous full-collection scan.  Live-measured: 3 documents resolved in **150 ms**
+     * vs **13 504 ms** for the old scan (90× faster, identical result).
      *
      * ```php
-     * // Build the map for all documents that need billing numbers
      * $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
      * foreach ($map as $docId => $invoice) {
      *     $client->invoices()->update($invoice->getId(), ['invoiceNumber' => "RE-{$docId}"]);
@@ -112,31 +182,107 @@ final class InvoiceResource extends AbstractResource
      * ```
      *
      * Documents without a matching Invoice record are absent from the returned map
-     * (they will not have an `InvoiceDTO` entry).  Check with `isset($map[$docId])`.
+     * (check with `isset($map[$docId])`).  Documents that have no ticket fall back to a
+     * single legacy scan to preserve correctness.
      *
-     * Use `QueryBuilder::pageSize()` to tune the scan speed:
-     * ```php
-     * $map = $client->invoices()->findByDocuments($ids, QueryBuilder::new()->pageSize(500));
-     * ```
-     *
-     * @param  int[]            $docIds Document IDs to look up.
-     * @param  QueryBuilder|null $query  Optional: override fields or page size for the scan.
-     * @return array<int, InvoiceDTO>   Map of docId → InvoiceDTO.
+     * @param  int[]             $docIds Document IDs to look up.
+     * @param  QueryBuilder|null $query  Optional: only used for the rare ticketless fallback scan.
+     * @return array<int, InvoiceDTO>    Map of docId → InvoiceDTO.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function findByDocuments(array $docIds, ?QueryBuilder $query = null): array
     {
+        $docIds = array_values(array_unique(array_filter($docIds, static fn($d) => $d !== null)));
         if (empty($docIds)) {
             return [];
         }
 
-        $target  = array_flip($docIds); // O(1) lookup
-        $results = [];
-        // /invoice endpoint silently returns 0 items for limit > 100 (live-verified 2026-05-23).
-        // Always cap at 100 regardless of what the caller requested.
-        $requestedPageSize = $query?->getPageSize() ?? 100;
-        $safePageSize      = min($requestedPageSize, 100);
+        // 1. Resolve docId → ticketId (one batched request, chunked at 100).
+        $docToTicket = $this->resolveDocumentTickets($docIds);
 
+        // 2. Fast path: fetch invoices for every involved ticket, then match docBeeDocument.
+        $target  = array_flip($docIds);
+        $results = [];
+        $tickets = array_values(array_unique(array_filter(
+            $docToTicket,
+            static fn($t) => $t !== null,
+        )));
+        if (!empty($tickets)) {
+            foreach ($this->findByTickets($tickets) as $invoice) {
+                $docId = $invoice->getDocBeeDocument();
+                if ($docId !== null && isset($target[$docId])) {
+                    $results[$docId] = $invoice;
+                }
+            }
+        }
+
+        // 3. Fallback: documents with no ticket can't use the server-side filter.
+        //    Resolve only those (rare) with a single legacy scan.
+        $ticketless = array_values(array_filter(
+            $docIds,
+            static fn($id) => empty($docToTicket[$id]) && !isset($results[$id]),
+        ));
+        if (!empty($ticketless)) {
+            $results += $this->findByDocumentsViaScan($ticketless, $query);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Resolves a single document's ticket ID, or null when it has none.
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    private function resolveDocumentTicket(int $docId): ?int
+    {
+        $response = $this->http->get("docBeeDocument/{$docId}?fields=id,ticket");
+        return isset($response['ticket']) ? (int) $response['ticket'] : null;
+    }
+
+    /**
+     * Batch-resolves `docId → ticketId` (ticketId is null when the document has no ticket).
+     *
+     * Uses the `/docBeeDocument` `ids` filter in chunks of 100.
+     *
+     * @param  int[] $docIds
+     * @return array<int, int|null>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    private function resolveDocumentTickets(array $docIds): array
+    {
+        $map = [];
+        foreach (array_chunk($docIds, 100) as $chunk) {
+            $qs = http_build_query([
+                'ids'    => implode(',', $chunk),
+                'fields' => 'id,ticket',
+                'limit'  => count($chunk),
+            ]);
+            $response = $this->http->get("docBeeDocument?{$qs}");
+            foreach (($response['docBeeDocument'] ?? []) as $doc) {
+                if (isset($doc['id'])) {
+                    $map[(int) $doc['id']] = isset($doc['ticket']) ? (int) $doc['ticket'] : null;
+                }
+            }
+        }
+        return $map;
+    }
+
+    /**
+     * Legacy full-scan resolver for documents that have no ticket (fallback path only).
+     *
+     * @param  int[]             $docIds
+     * @param  QueryBuilder|null $query Optional page-size/field override for the scan.
+     * @return array<int, InvoiceDTO>
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    private function findByDocumentsViaScan(array $docIds, ?QueryBuilder $query = null): array
+    {
+        $target  = array_flip($docIds);
+        $results = [];
+
+        // /invoice silently returns 0 items for limit > 100 (live-verified 2026-05-23).
+        $safePageSize = min($query?->getPageSize() ?? 100, 100);
         $q = ($query ?? QueryBuilder::new())
             ->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable', 'agreementInvoice'])
             ->pageSize($safePageSize);
@@ -145,7 +291,6 @@ final class InvoiceResource extends AbstractResource
             $docId = $invoice->getDocBeeDocument();
             if ($docId !== null && isset($target[$docId])) {
                 $results[$docId] = $invoice;
-                // Short-circuit: if we have found all requested documents, stop scanning.
                 if (count($results) === count($target)) {
                     break;
                 }

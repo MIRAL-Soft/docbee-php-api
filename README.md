@@ -440,8 +440,8 @@ For large datasets, request fewer round trips with `QueryBuilder::pageSize(N)`:
 // (live-measured: 4.4 s vs 8.4 s, pcs tenant 2026-05-23)
 foreach ($client->documents()->cursor(QueryBuilder::new()->pageSize(500)) as $doc) { … }
 
-// Invoice batch lookup: findByDocuments() in one scan instead of N × findByDocument()
-// (live-measured: 10.8 s vs 43.1 s for 3 documents, pcs tenant 2026-05-23)
+// Invoice batch lookup: ticket-filtered, server-side — no full scan
+// (live-measured: 0.16 s vs 13.5 s old scan for 3 documents, pcs tenant 2026-05-23)
 $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
 ```
 
@@ -459,53 +459,52 @@ $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
 ### Benchmarks & realistic expectations
 
 All figures below were measured live against the `pcs` tenant (≈ 3 829 invoice records,
-≈ 4 000 documents, PHP 8.3, 2026-05-23). Your numbers scale with **tenant size**, not with
-the size of the result you actually want — see the note on the invoice-scan floor below.
+≈ 4 000 documents, PHP 8.3, 2026-05-23).
 
 | Operation | Before | After | Speed-up |
 |---|---|---|---|
-| Invoice cursor (full, 3 829 records) | 22.5 s | **9.6 s** | 2.3× |
-| Document cursor (full, 4 000 records) | 8.4 s | **4.4 s** | 1.9× |
-| `findByDocuments([3 ids])` | 43.1 s (3 scans) | **10.8 s** (1 scan) | 4.0× |
-| `findByTicket($id)` (server-side filter) | — | **0.7 s** | n/a |
+| `findByDocument($docId)` | ~13.5 s (full scan) | **0.15 s** (ticket filter) | **~90×** |
+| `findByDocument($docId, $ticketId)` | — | **0.05 s** | n/a |
+| `findByDocuments([3 ids])` | 13.5 s (1 scan) | **0.16 s** (ticket filter) | **~85×** |
+| `findByTicket($ticketId)` | — | **0.07 s** | n/a |
+| Invoice cursor (full, 3 829 records) | 22.5 s | **9.6 s** (page size 50→100) | 2.3× |
+| Document cursor (full, 4 000 records) | 8.4 s | **4.4 s** (page size 50→500) | 1.9× |
 
-**Why some operations have a hard time floor.** The Docbee API offers **no server-side
-filter** for `invoice.docBeeDocument` or for document custom-field values (both confirmed
-silently ignored — see notes below). Any lookup that depends on those must scan the whole
-collection client-side. For invoices that means **~10 s minimum** on a 3 800-record tenant,
-*no matter how few documents you are looking up* — the cost is the scan, not the match.
-
-This is why a `document → invoice` mapping cannot be brought "under 5 s" through the library
-alone. The two ways to go faster are both **consumer-side**:
-
-1. **Look up by ticket instead of by document where possible.** `findByTicket($ticketId)`
-   uses the server-side `ticketIds` filter and returns in well under a second regardless of
-   tenant size. If your sync key can be resolved to a ticket, prefer this path.
-
-2. **Cache the `docId → invoiceId` map.** Build it once per run with a single
-   `findByDocuments()` / cursor scan and reuse it for all subsequent lookups in that run,
-   rather than scanning again per document.
+**The document → invoice mapping no longer requires a full scan.** The `/invoice` endpoint
+has no server-side filter for `docBeeDocument`, but it *does* honour the documented
+`ticketIds` filter. Since every Invoice inherits its document's ticket, the library resolves
+a document's invoice via its ticket — server-side — instead of scanning all invoices:
 
 ```php
-// Build once …
-$invoiceByDoc = $client->invoices()->findByDocuments($allDocIdsThisRun); // one ~10 s scan
-
-// … then reuse for every document — O(1), no further API calls
+// docId → InvoiceDTO map, all server-side filtered (≈ 150 ms regardless of tenant size)
+$map = $client->invoices()->findByDocuments($docIds);
 foreach ($docsToBill as $doc) {
-    $invoice = $invoiceByDoc[$doc->getId()] ?? null;
+    $invoice = $map[$doc->getId()] ?? null;
     if ($invoice !== null) {
         $client->invoices()->update($invoice->getId(), ['invoiceNumber' => $doc->getErpRef()]);
     }
 }
+
+// Single document — pass the ticket you already have to skip the document fetch (~50 ms)
+$invoice = $client->invoices()->findByDocument($docId, $doc->getTicket());
+
+// All invoices on a ticket (e.g. every billable Leistung of a Vorgang)
+$invoices = $client->invoices()->findByTicket($ticketId);
 ```
 
-> **Server-side filters that do NOT exist (confirmed silently ignored, not errors):**
-> - `/invoice?docBeeDocument-eq=<id>` (and `-in`, `docBeeDocumentId-eq`, plain forms) →
->   returns the full invoice set; the filter has no effect.
-> - `/docBeeDocument?customFields.<id>-eq=<value>` → returns all documents; no effect.
+> **Server-side filters — what works and what doesn't (live-verified):**
+> - ✅ `/invoice?ticketIds=<id>` (and comma-separated `t1,t2,…`) → **honoured.** This is the
+>   fast path used by `findByDocument()` / `findByDocuments()` / `findByTicket()`.
+> - ✅ `/docBeeDocument?ids=<id1,id2,…>` → honoured (used to batch-resolve document tickets).
+> - ❌ `/invoice?docBeeDocument-eq=<id>` (and `-in`, `docBeeDocumentId-eq`, plain forms) →
+>   silently ignored; returns the full invoice set. Never relied upon.
+> - ❌ `/docBeeDocument?customFields.<id>-eq=<value>` → silently ignored; returns all
+>   documents. Custom-field-value lookups still require a customer-scoped scan
+>   (`findByCustomFieldValue()`); prefer `findByTicket()` on the document side where possible.
 >
-> When a future Docbee API version adds these filters, the corresponding `findBy…()` methods
-> can drop the client-side scan and the floor disappears. Until then the scan is unavoidable.
+> **Edge case:** a document with no ticket (a rare standalone Leistung) has no ticket to filter
+> by, so `findByDocument()` / `findByDocuments()` fall back to the legacy full scan for those
+> documents only — correctness is never sacrificed for speed.
 
 ---
 
@@ -696,13 +695,19 @@ foreach ($client->documents()->cursorWithCustomFields($customerId) as $doc) {
 ```php
 // ── Finding the Invoice record for a document ─────────────────────────────────
 // Each approved+billable document has exactly one Invoice record.
-// findByDocument() performs a full cursor scan (no server-side filter available).
+// Fast: resolves the document's ticket, then a server-side ticketIds filter (~150 ms).
 $invoice = $client->invoices()->findByDocument($docId);
 
-// ✓ Batch lookup: ONE scan for multiple documents (4× faster than calling findByDocument() N times)
-// live-measured: 10.8 s for all 3 docs vs 43.1 s with 3 individual calls (pcs tenant)
+// ✓ Fastest single lookup: pass the ticket you already have to skip the document fetch (~50 ms)
+$invoice = $client->invoices()->findByDocument($docId, $doc->getTicket());
+
+// ✓ Batch lookup: ONE server-side ticketIds query for many documents
+// live-measured: 0.16 s for 3 docs vs 13.5 s with the old full scan (pcs tenant)
 $map = $client->invoices()->findByDocuments([$docId1, $docId2, $docId3]);
 // $map is array<int, InvoiceDTO> keyed by document ID
+
+// ✓ All invoices on a ticket (e.g. every billable Leistung of a Vorgang)
+$invoices = $client->invoices()->findByTicket($ticketId);
 
 // ── Setting the billing number (Abrechnungsnummer) ───────────────────────────
 // invoices()->update() sets invoiceNumber AND transitions status OPEN → INVOICED.
@@ -718,13 +723,14 @@ $ids  = array_map(fn($d) => $d->getId(), $docs);
 $csv  = $client->documents()->exportByIds($exportProfileId, $ids);
 ```
 
-> **Performance notes for invoice scans:**
+> **Performance notes for invoice lookups:**
+> - `findByDocument()` / `findByDocuments()` / `findByTicket()` use the server-side `ticketIds`
+>   filter — no full scan. Resolving 3 documents dropped from ~13.5 s to ~0.16 s (90×, live-verified).
+> - There is **no** server-side filter for `docBeeDocument` (all variants silently ignored), so
+>   the library goes via the document's **ticket** instead. A document with no ticket falls back
+>   to a full scan for that document only.
 > - The `/invoice` endpoint silently returns **0 items** for `limit > 100` (live-verified bug).
->   `InvoiceResource` enforces `$defaultPageSize = 100` automatically.
-> - No server-side filter for `docBeeDocument` exists — all variants (`docBeeDocument-eq`,
->   `docBeeDocument-in`, `docBeeDocumentId-eq`) are silently ignored; the full 3 800+ invoice
->   set is returned regardless.  Full cursor scan is unavoidable.
-> - Prefer `findByDocuments(array $docIds)` over multiple `findByDocument()` calls.
+>   `InvoiceResource` enforces `$defaultPageSize = 100` automatically for any fallback scan.
 
 ### Material Items
 
