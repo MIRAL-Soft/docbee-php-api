@@ -60,10 +60,24 @@ final class ProtocolResource extends AbstractResource
         return ProtocolDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/cancelAndClone", []));
     }
 
-    /** Get PDF preview data. */
-    public function preview(int $id): array
+    /**
+     * Renders a protocol as a PDF and returns the raw bytes.
+     *
+     * Maps to `GET /protocol/{id}/preview`, which returns a binary PDF (`application/pdf`),
+     * not JSON.  The response is fetched via `getRaw()` — the same pattern as
+     * {@see export()} / {@see exportByIds()} — so the binary content is returned intact.
+     *
+     * ```php
+     * $pdf = $client->protocols()->preview($protocolId);
+     * file_put_contents('protocol.pdf', $pdf);   // %PDF…
+     * ```
+     *
+     * @return string Raw PDF bytes (response starts with `%PDF`).
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function preview(int $id): string
     {
-        return $this->http->get("{$this->endpoint}/{$id}/preview");
+        return $this->http->getRaw("{$this->endpoint}/{$id}/preview");
     }
 
     /** Instant finish for a protocol by ID. */

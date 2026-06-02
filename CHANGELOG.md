@@ -116,15 +116,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ticket fall back to a legacy scan.
 
 ### Fixed
-- **`DocumentResource::preview()` returned `array` and crashed on the binary PDF response.**
+- **`DocumentResource::preview()` and `ProtocolResource::preview()` returned `array` and crashed
+  on the binary PDF response.**
 
-  `preview()` called the JSON-parsing `HttpClient::get()` on `GET /docBeeDocument/{id}/preview`,
-  which returns a binary PDF (`application/pdf`) — so `json_decode()` failed with a syntax error.
-  It now returns `string` (raw PDF bytes) via `getRaw()`, the same pattern used by the
-  `export()` / `exportByIds()` methods.
+  Both `preview()` methods called the JSON-parsing `HttpClient::get()` on
+  `GET /docBeeDocument/{id}/preview` and `GET /protocol/{id}/preview` respectively — endpoints
+  that return a binary PDF (`application/pdf`, live-verified `%PDF-1.4`), so `json_decode()`
+  failed with a syntax error. They now return `string` (raw PDF bytes) via `getRaw()`, the same
+  pattern used by the `export()` / `exportByIds()` methods.
 
-  **Return type changed `array` → `string`.** The previous return type was unusable (the method
-  always threw on the binary response), so no working caller can be affected.
+  **Return type changed `array` → `string`** on both. The previous return type was unusable
+  (the method always threw on the binary response), so no working caller can be affected.
 
 - **`cursor()` — page size raised from 50 → 100 (2×), endpoint-specific override for documents (up to 9×):**
 
