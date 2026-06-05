@@ -78,6 +78,7 @@ final class DocumentResource extends AbstractResource
         'releasedDate', 'personInCharge', 'priority', 'type',
         'sendMessage', 'needSignature', 'needFinishPin',
         'completedSuccessfully', 'totalInvoicePrice', 'totalTasksInvoicePrice',
+        'tags',
     ];
 
     /**
@@ -113,6 +114,7 @@ final class DocumentResource extends AbstractResource
         'releasedDate', 'personInCharge', 'priority', 'type',
         'sendMessage', 'needSignature', 'needFinishPin',
         'completedSuccessfully', 'totalInvoicePrice', 'totalTasksInvoicePrice',
+        'tags',
     ];
 
     /**
@@ -413,6 +415,56 @@ final class DocumentResource extends AbstractResource
 
         $this->http->put("{$this->endpoint}/{$docId}", ['customFields' => $customFields]);
     }
+
+    /**
+     * Adds a tag to a document, preserving any tags it already has.
+     *
+     * Read-modify-write over the generic {@see update()}: reads the document's current
+     * `tags`, appends `$tagId` if absent, then writes the merged list back.  The Docbee
+     * `tags` field is replace-on-write, so the merge step is what keeps existing tags.
+     *
+     * **Idempotent:** if the tag is already present, no request is sent.
+     *
+     * ```php
+     * $client->documents()->addTag($docId, 42);
+     * ```
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function addTag(int $docId, int $tagId): void
+    {
+        $current = $this->find($docId, ['id', 'tags'])->getTags() ?? [];
+        if (in_array($tagId, $current, true)) {
+            return; // already tagged — nothing to do
+        }
+        $current[] = $tagId;
+        $this->update($docId, ['tags' => array_values($current)]);
+    }
+
+    /**
+     * Removes a tag from a document, preserving its remaining tags.
+     *
+     * Read-modify-write over the generic {@see update()}: reads the document's current
+     * `tags`, drops `$tagId`, then writes the remaining list back.
+     *
+     * **Idempotent:** if the tag is not present, no request is sent.
+     *
+     * ```php
+     * $client->documents()->removeTag($docId, 42);
+     * ```
+     *
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function removeTag(int $docId, int $tagId): void
+    {
+        $current = $this->find($docId, ['id', 'tags'])->getTags() ?? [];
+        if (!in_array($tagId, $current, true)) {
+            return; // not tagged — nothing to do
+        }
+        $merged = array_values(array_filter($current, static fn(int $id) => $id !== $tagId));
+        $this->update($docId, ['tags' => $merged]);
+    }
+
     /**
      * Creates a new document from a template.
      *

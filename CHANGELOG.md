@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- **Document tags — `DocBeeDocumentDTO::getTags()` + `DocumentResource::addTag()` / `removeTag()`.**
+
+  Docbee documents carry a `tags` field (array of tag IDs, analogous to `TicketDTO.tags`).
+  `DocBeeDocumentDTO` now parses it:
+  - `getTags(): ?list<int>` — the document's tag IDs (null when none).
+  - `fromArray()` reads `tags`; `toArray()` emits it (omitted when null).
+  - `tags` added to `DocumentResource::$findFields` / `$defaultListFields`, so `find()`,
+    `list()` and `findModifiedSince()` populate it by default.
+
+  Convenience methods on `DocumentResource` (read-modify-write over the generic `update()`,
+  so other tags are preserved; live-verified persistent + partial on the pcs tenant):
+  - `addTag(int $docId, int $tagId): void` — appends the tag if absent. **Idempotent** (no
+    request when already present).
+  - `removeTag(int $docId, int $tagId): void` — drops the tag if present. **Idempotent** (no
+    request when absent).
+
+  ```php
+  $client->documents()->addTag($docId, 42);     // preserves existing tags
+  $tags = $client->documents()->find($docId)->getTags();   // [37, 42]
+  $client->documents()->removeTag($docId, 37);  // → [42]
+  ```
+
+  Non-breaking: the DTO constructor gains an optional trailing `?array $tags = null`
+  parameter; existing positional callers are unaffected.
+
+  > Note: `DELETE /tag/{id}` is server-side 403 (tags cannot be deleted via the API) — out
+  > of scope here, mentioned for awareness.
+
 ### Changed
 - **`TicketResource::findByErpReferenceNumber()` — ~3–4× faster via the global search endpoint.**
 

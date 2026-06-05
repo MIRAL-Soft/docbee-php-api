@@ -658,6 +658,27 @@ Available parent-type and field-type constants:
 > definitions and the same assignment list.  `ensureAssignedToDocument()` covers both —
 > see the [Document Templates](#document-templates) section for the full CF workflow.
 
+### Document Tags
+
+Documents carry a `tags` field (array of tag IDs, like tickets). The DTO exposes it via
+`getTags()`, and `addTag()` / `removeTag()` manage it with a read-modify-write that
+preserves the document's other tags. Both are **idempotent** (no request when there is
+nothing to change).
+
+```php
+// Read
+$tagIds = $client->documents()->find($docId)->getTags();   // e.g. [37, 50] or null
+
+// Add a tag, keeping existing ones (no-op if already present)
+$client->documents()->addTag($docId, 42);
+
+// Remove a tag, keeping the rest (no-op if not present)
+$client->documents()->removeTag($docId, 37);
+```
+
+> **Note:** Tags cannot be **deleted** through the API (`DELETE /tag/{id}` → HTTP 403);
+> `removeTag()` only detaches a tag from a document, it does not delete the tag itself.
+
 ### Documents — Performance-Optimised Lookups
 
 ```php

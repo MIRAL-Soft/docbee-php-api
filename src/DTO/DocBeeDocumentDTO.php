@@ -135,7 +135,9 @@ final class DocBeeDocumentDTO extends AbstractDTO
         /** @var TravelLogDTO[]|null list of travel logs */
         private ?array $travelLog,
         /** drafted */
-        private ?bool $type
+        private ?bool $type,
+        /** @var list<int>|null tag identifiers */
+        private ?array $tags = null
     ) {}
 
     #[Override]
@@ -218,7 +220,10 @@ final class DocBeeDocumentDTO extends AbstractDTO
             travelLog: isset($data['travelLog']) && is_array($data['travelLog'])
                 ? array_map(fn($x) => TravelLogDTO::fromArray($x), $data['travelLog'])
                 : null,
-            type: isset($data['type']) ? self::toBool($data['type']) : null
+            type: isset($data['type']) ? self::toBool($data['type']) : null,
+            tags: isset($data['tags']) && is_array($data['tags'])
+                ? array_values(array_map('intval', $data['tags']))
+                : null
         );
     }
 
@@ -247,7 +252,8 @@ final class DocBeeDocumentDTO extends AbstractDTO
             'sendMessage' => $this->sendMessage,
             'ticket' => $this->ticket,
             'travelLog' => $this->travelLog,
-            'type' => $this->type
+            'type' => $this->type,
+            'tags' => $this->tags
         ], fn($v) => $v !== null);
     }
 
@@ -314,4 +320,11 @@ final class DocBeeDocumentDTO extends AbstractDTO
     public function getTicket(): ?int { return $this->ticket; }
     public function getTravelLog(): ?array { return $this->travelLog; }
     public function getType(): ?bool { return $this->type; }
+
+    /**
+     * Returns the document's tag identifiers, or null when none are set.
+     *
+     * @return list<int>|null
+     */
+    public function getTags(): ?array { return $this->tags; }
 }
