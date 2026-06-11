@@ -62,7 +62,7 @@ final class TravelLogTemplateDTO extends AbstractDTO
             'worker'     => $this->worker,
             'time'       => $this->time,
             'startNow'   => $this->startNow,
-            'startTime'  => $this->startTime,
+            'startTime'  => self::toInt($this->startTime), // spec: integer (ms of day)
             'travelType' => $this->travelType,
             'distance'   => $this->distance,
             'comment'    => $this->comment,

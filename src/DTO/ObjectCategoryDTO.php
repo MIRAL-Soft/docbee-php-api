@@ -38,9 +38,7 @@ final class ObjectCategoryDTO extends AbstractDTO
             created: self::toString($data['created'] ?? null),
             modified: self::toString($data['modified'] ?? null),
             link: self::toString($data['link'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldMappingDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldMappingDTO::class),
             isMonitored: isset($data['isMonitored']) ? self::toBool($data['isMonitored']) : null,
             name: self::toString($data['name'] ?? null),
             regex: self::toString($data['regex'] ?? null),

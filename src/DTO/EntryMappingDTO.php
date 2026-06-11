@@ -33,7 +33,7 @@ final class EntryMappingDTO extends AbstractDTO
             link: self::toString($data['link'] ?? null),
             entryStyle: self::toInt($data['entryStyle'] ?? null),
             protocolTemplateEntry: self::toInt($data['protocolTemplateEntry'] ?? null),
-            isMultiGroupLabel: self::toBool($data['isMultiGroupLabel'] ?? null)
+            isMultiGroupLabel: isset($data['isMultiGroupLabel']) ? self::toBool($data['isMultiGroupLabel']) : null
         );
     }
 

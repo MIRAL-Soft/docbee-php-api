@@ -46,10 +46,10 @@ final class ProtocolTemplateTypeDTO extends AbstractDTO
             name: self::toString($data['name'] ?? null),
             createLabel: self::toString($data['createLabel'] ?? null),
             specialDocumentNumberPattern: self::toString($data['specialDocumentNumberPattern'] ?? null),
-            withSpecialDocumentNumber: self::toBool($data['withSpecialDocumentNumber'] ?? null),
-            showInNavigation: self::toBool($data['showInNavigation'] ?? null),
-            showInNavigationForCustomer: self::toBool($data['showInNavigationForCustomer'] ?? null),
-            displayAsTileInApp: self::toBool($data['displayAsTileInApp'] ?? null),
+            withSpecialDocumentNumber: isset($data['withSpecialDocumentNumber']) ? self::toBool($data['withSpecialDocumentNumber']) : null,
+            showInNavigation: isset($data['showInNavigation']) ? self::toBool($data['showInNavigation']) : null,
+            showInNavigationForCustomer: isset($data['showInNavigationForCustomer']) ? self::toBool($data['showInNavigationForCustomer']) : null,
+            displayAsTileInApp: isset($data['displayAsTileInApp']) ? self::toBool($data['displayAsTileInApp']) : null,
             icon: self::toInt($data['icon'] ?? null),
             navigationIcon: self::toInt($data['navigationIcon'] ?? null)
         );

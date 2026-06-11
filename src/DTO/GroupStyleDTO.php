@@ -49,8 +49,8 @@ final class GroupStyleDTO extends AbstractDTO
             id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
             name: self::toString($data['name'] ?? null),
-            showHeader: self::toBool($data['showHeader'] ?? null),
-            showBorder: self::toBool($data['showBorder'] ?? null),
+            showHeader: isset($data['showHeader']) ? self::toBool($data['showHeader']) : null,
+            showBorder: isset($data['showBorder']) ? self::toBool($data['showBorder']) : null,
             weight: self::toFloat($data['weight'] ?? null),
             valueColumnCount: self::toInt($data['valueColumnCount'] ?? null),
             headerSize: self::toInt($data['headerSize'] ?? null),
@@ -59,8 +59,8 @@ final class GroupStyleDTO extends AbstractDTO
             headerAlignment: self::toString($data['headerAlignment'] ?? null),
             borderThickness: self::toFloat($data['borderThickness'] ?? null),
             borderColor: self::toString($data['borderColor'] ?? null),
-            startOnNewPage: self::toBool($data['startOnNewPage'] ?? null),
-            isDefault: self::toBool($data['isDefault'] ?? null)
+            startOnNewPage: isset($data['startOnNewPage']) ? self::toBool($data['startOnNewPage']) : null,
+            isDefault: isset($data['isDefault']) ? self::toBool($data['isDefault']) : null
         );
     }
 

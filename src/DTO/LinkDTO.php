@@ -34,7 +34,7 @@ final class LinkDTO extends AbstractDTO
             link: self::toString($data['link'] ?? null),
             name: self::toString($data['name'] ?? null),
             url: self::toString($data['url'] ?? null),
-            startTimer: self::toBool($data['startTimer'] ?? null),
+            startTimer: isset($data['startTimer']) ? self::toBool($data['startTimer']) : null,
             timerName: self::toString($data['timerName'] ?? null),
             type: self::toString($data['type'] ?? null)
         );

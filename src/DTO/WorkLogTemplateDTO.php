@@ -53,7 +53,7 @@ final class WorkLogTemplateDTO extends AbstractDTO
             'worker'    => $this->worker,
             'time'      => $this->time,
             'startNow'  => $this->startNow,
-            'startTime' => $this->startTime,
+            'startTime' => self::toInt($this->startTime), // spec: integer (ms of day) — string was rejected/coerced server-side
         ], fn($v) => $v !== null);
     }
 

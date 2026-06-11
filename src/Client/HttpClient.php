@@ -79,8 +79,12 @@ final class HttpClient implements HttpClientInterface
     {
         $url      = $this->buildUrl($path);
         $start    = hrtime(true);
+        // POST is not idempotent: a 5xx may occur AFTER the server processed the
+        // request (e.g. record created, then timeout) — retrying risks duplicates.
+        // 429 is still retried (a rate-limited request was rejected unprocessed).
         $response = $this->withRetry(
-            fn() => $this->guzzle->post($url, $this->headers(['json' => $data]))
+            fn() => $this->guzzle->post($url, $this->headers(['json' => $data])),
+            retryServerErrors: false,
         );
         $ms = $this->elapsed($start);
 
@@ -162,8 +166,10 @@ final class HttpClient implements HttpClientInterface
     {
         $url      = $this->buildUrl($path);
         $start    = hrtime(true);
+        // See post(): POST is not idempotent, 5xx is not retried.
         $response = $this->withRetry(
-            fn() => $this->guzzle->post($url, $this->headersRaw(['json' => $data]))
+            fn() => $this->guzzle->post($url, $this->headersRaw(['json' => $data])),
+            retryServerErrors: false,
         );
         $ms = $this->elapsed($start);
 
@@ -242,13 +248,15 @@ final class HttpClient implements HttpClientInterface
      * Wraps a Guzzle request with rate-limit / server-error retry logic.
      *
      * @param callable $callable
+     * @param bool     $retryServerErrors Whether 5xx may be retried — pass false
+     *                                    for non-idempotent requests (POST).
      */
-    private function withRetry(callable $callable): \Psr\Http\Message\ResponseInterface
+    private function withRetry(callable $callable, bool $retryServerErrors = true): \Psr\Http\Message\ResponseInterface
     {
         $limiter = new RateLimiter($this->config->getMaxRetries());
 
         try {
-            return $limiter->execute($callable);
+            return $limiter->execute($callable, $retryServerErrors);
         } catch (ConnectException $e) {
             // Do not include $e->getMessage() directly — it can contain the full URL
             // (including path segments that may reveal internal tenant/token info).

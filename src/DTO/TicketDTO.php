@@ -131,9 +131,7 @@ final class TicketDTO extends AbstractDTO
             mergedTickets: isset($data['mergedTickets']) && is_array($data['mergedTickets']) ? $data['mergedTickets'] : null,
             protocols: isset($data['protocols']) && is_array($data['protocols']) ? $data['protocols'] : null,
             slaProfile: self::toInt($data['slaProfile'] ?? null),
-            slaReports: isset($data['slaReports']) && is_array($data['slaReports'])
-                ? array_map(fn($x) => TicketSlaReportDTO::fromArray($x), $data['slaReports'])
-                : null,
+            slaReports: self::toDtoList($data['slaReports'] ?? null, TicketSlaReportDTO::class),
             ticketNumber: self::toString($data['ticketNumber'] ?? null),
             webLink: self::toString($data['webLink'] ?? null),
             additionalData: isset($data['additionalData']) && is_array($data['additionalData']) ? $data['additionalData'] : null,

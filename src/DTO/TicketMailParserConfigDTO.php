@@ -75,9 +75,7 @@ final class TicketMailParserConfigDTO extends AbstractDTO
             mailParserConfig: $data['mailParserConfig'] ?? null,
             name: self::toString($data['name'] ?? null),
             newStatus: $data['newStatus'] ?? null,
-            newTags: isset($data['newTags']) && is_array($data['newTags'])
-                ? array_map(fn($x) => TagDTO::fromArray($x), $data['newTags'])
-                : null,
+            newTags: self::toDtoList($data['newTags'] ?? null, TagDTO::class),
             newTicketResponseMessageTemplate: $data['newTicketResponseMessageTemplate'] ?? null,
             requireMandantShotnameInSubject: isset($data['requireMandantShotnameInSubject']) ? self::toBool($data['requireMandantShotnameInSubject']) : null,
             searchByDocBeeDocumentErpReferenceNumber: isset($data['searchByDocBeeDocumentErpReferenceNumber']) ? self::toBool($data['searchByDocBeeDocumentErpReferenceNumber']) : null,

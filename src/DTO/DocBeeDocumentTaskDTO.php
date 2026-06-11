@@ -139,15 +139,9 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
             alternativeLocationAddress:    self::toString($data['alternativeLocationAddress'] ?? null),
             alternativeLocationLatitude:   isset($data['alternativeLocationLatitude']) ? (float) $data['alternativeLocationLatitude'] : null,
             alternativeLocationLongitude:  isset($data['alternativeLocationLongitude']) ? (float) $data['alternativeLocationLongitude'] : null,
-            workLogs:                      isset($data['workLogs']) && is_array($data['workLogs'])
-                                               ? array_map(fn($w) => WorkLogDTO::fromArray($w), $data['workLogs'])
-                                               : null,
-            planningTimes:                 isset($data['planningTimes']) && is_array($data['planningTimes'])
-                                               ? array_map(fn($p) => PlanningTimeDTO::fromArray($p), $data['planningTimes'])
-                                               : null,
-            materials:                     isset($data['materials']) && is_array($data['materials'])
-                                               ? array_map(fn($m) => MaterialDTO::fromArray($m), $data['materials'])
-                                               : null,
+            workLogs:                      self::toDtoList($data['workLogs'] ?? null, WorkLogDTO::class),
+            planningTimes:                 self::toDtoList($data['planningTimes'] ?? null, PlanningTimeDTO::class),
+            materials:                     self::toDtoList($data['materials'] ?? null, MaterialDTO::class),
         );
     }
 
@@ -178,6 +172,11 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
             'alternativeLocationAddress' => $this->alternativeLocationAddress,
             'alternativeLocationLatitude'  => $this->alternativeLocationLatitude,
             'alternativeLocationLongitude' => $this->alternativeLocationLongitude,
+            // UpdateTask accepts nested workLogs/planningTimes/materials — these were
+            // parsed by fromArray() but lost on the way back (round-trip data loss).
+            'workLogs'                   => $this->workLogs,
+            'planningTimes'              => $this->planningTimes,
+            'materials'                  => $this->materials,
         ], fn($v) => $v !== null);
     }
 

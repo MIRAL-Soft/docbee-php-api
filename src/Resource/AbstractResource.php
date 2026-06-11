@@ -316,7 +316,9 @@ abstract class AbstractResource
      */
     public function findModifiedSince(DateTimeInterface $since, ?QueryBuilder $query = null): array
     {
-        $q = ($query ?? QueryBuilder::new())->modifiedSince($since);
+        // Clone before adding the filter — QueryBuilder methods mutate the instance,
+        // and the caller's builder must not permanently accumulate a changedSince filter.
+        $q = ($query !== null ? clone $query : QueryBuilder::new())->modifiedSince($since);
         return $this->listAll($q);
     }
 
@@ -331,7 +333,8 @@ abstract class AbstractResource
      */
     public function findCreatedSince(DateTimeInterface $since, ?QueryBuilder $query = null): array
     {
-        $q = ($query ?? QueryBuilder::new())->createdSince($since);
+        // Clone before adding the filter — see findModifiedSince().
+        $q = ($query !== null ? clone $query : QueryBuilder::new())->createdSince($since);
         return $this->listAll($q);
     }
 

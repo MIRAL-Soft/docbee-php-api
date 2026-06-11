@@ -30,15 +30,9 @@ final class TicketBoardDTO extends AbstractDTO
         return new self(
             id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
-            columns: isset($data['columns']) && is_array($data['columns'])
-                ? array_map(fn($x) => TicketBoardColumnDTO::fromArray($x), $data['columns'])
-                : null,
-            fields: isset($data['fields']) && is_array($data['fields'])
-                ? array_map(fn($x) => TableConfigStorageFieldDTO::fromArray($x), $data['fields'])
-                : null,
-            filters: isset($data['filters']) && is_array($data['filters'])
-                ? array_map(fn($x) => TableConfigStorageFilterDTO::fromArray($x), $data['filters'])
-                : null,
+            columns: self::toDtoList($data['columns'] ?? null, TicketBoardColumnDTO::class),
+            fields: self::toDtoList($data['fields'] ?? null, TableConfigStorageFieldDTO::class),
+            filters: self::toDtoList($data['filters'] ?? null, TableConfigStorageFilterDTO::class),
             name: self::toString($data['name'] ?? null)
         );
     }

@@ -101,6 +101,9 @@ final class AgreementDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
+            // `type` is required by NewAgreement — without it create($dto->toArray())
+            // could never produce a valid payload.
+            'type' => $this->type,
             'agreementCategory' => $this->agreementCategory,
             'autoRenew' => $this->autoRenew,
             'customer' => $this->customer,

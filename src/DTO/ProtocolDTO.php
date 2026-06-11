@@ -92,13 +92,9 @@ final class ProtocolDTO extends AbstractDTO
             dueDate: self::toString($data['dueDate'] ?? null),
             file: self::toInt($data['file'] ?? null),
             groupData: isset($data['groupData']) && is_array($data['groupData']) ? $data['groupData'] : null,
-            groups: isset($data['groups']) && is_array($data['groups'])
-                ? array_map(fn($x) => ProtocolGroupDataDTO::fromArray($x), $data['groups'])
-                : null,
+            groups: self::toDtoList($data['groups'] ?? null, ProtocolGroupDataDTO::class),
             personInCharge: self::toInt($data['personInCharge'] ?? null),
-            protocolEntries: isset($data['protocolEntries']) && is_array($data['protocolEntries'])
-                ? array_map(fn($x) => ProtocolEntryDTO::fromArray($x), $data['protocolEntries'])
-                : null,
+            protocolEntries: self::toDtoList($data['protocolEntries'] ?? null, ProtocolEntryDTO::class),
             sendMessage: isset($data['sendMessage']) ? self::toBool($data['sendMessage']) : null,
             ticket: self::toInt($data['ticket'] ?? null)
         );
@@ -108,6 +104,9 @@ final class ProtocolDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
+            // `protocolTemplate` is required by NewProtocol — without it
+            // create($dto->toArray()) could never produce a valid payload.
+            'protocolTemplate' => $this->protocolTemplate,
             'confidentialTag' => $this->confidentialTag,
             'customer' => $this->customer,
             'customerContact' => $this->customerContact,

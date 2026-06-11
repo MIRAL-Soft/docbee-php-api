@@ -32,9 +32,7 @@ final class DocBeeScriptDTO extends AbstractDTO
             logFile: self::toInt($data['logFile'] ?? null),
             description: self::toString($data['description'] ?? null),
             name: self::toString($data['name'] ?? null),
-            params: isset($data['params']) && is_array($data['params'])
-                ? array_map(fn($x) => DocBeeScriptParameterDTO::fromArray($x), $data['params'])
-                : null,
+            params: self::toDtoList($data['params'] ?? null, DocBeeScriptParameterDTO::class),
             script: self::toString($data['script'] ?? null)
         );
     }

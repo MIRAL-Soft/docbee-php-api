@@ -211,12 +211,13 @@ final class QueryBuilder
      * @note The Docbee API requires the exact format `YYYY-MM-DDTHH:mm:ss.mmmZ`
      *       (ISO 8601 UTC with millisecond precision).  Any other format — plain
      *       ISO without timezone, epoch milliseconds, date-only — yields HTTP 400
-     *       with "changedSince has invalid date format".  The `.000Z` suffix is
-     *       appended automatically here; no caller adjustment is needed.
+     *       with "changedSince has invalid date format".  The value is converted
+     *       to UTC and the `.000Z` suffix appended automatically; the caller may
+     *       pass a DateTime in any timezone.
      */
     public function modifiedSince(DateTimeInterface $since): self
     {
-        $this->filters['changedSince'] = $since->format('Y-m-d\TH:i:s') . '.000Z';
+        $this->filters['changedSince'] = self::toUtcTimestamp($since);
         return $this;
     }
 
@@ -228,8 +229,24 @@ final class QueryBuilder
      */
     public function createdSince(DateTimeInterface $since): self
     {
-        $this->filters['createdSince'] = $since->format('Y-m-d\TH:i:s') . '.000Z';
+        $this->filters['createdSince'] = self::toUtcTimestamp($since);
         return $this;
+    }
+
+    /**
+     * Formats a date as the UTC timestamp string the Docbee API expects.
+     *
+     * The previous implementation formatted the clock time of the DateTime's OWN
+     * timezone but declared it as UTC (`…Z`) — a `new DateTimeImmutable('-1 hour')`
+     * on a Europe/Berlin server shifted the delta-sync window by 1–2 hours and
+     * silently missed recently-changed records.  The value is now converted to UTC
+     * before formatting.
+     */
+    private static function toUtcTimestamp(DateTimeInterface $since): string
+    {
+        return \DateTimeImmutable::createFromInterface($since)
+            ->setTimezone(new \DateTimeZone('UTC'))
+            ->format('Y-m-d\TH:i:s') . '.000Z';
     }
 
     // -------------------------------------------------------------------------

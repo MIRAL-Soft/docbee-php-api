@@ -217,9 +217,7 @@ final class DocBeeDocumentDTO extends AbstractDTO
             referenceNumber: self::toString($data['referenceNumber'] ?? null),
             sendMessage: isset($data['sendMessage']) ? self::toBool($data['sendMessage']) : null,
             ticket: self::toInt($data['ticket'] ?? null),
-            travelLog: isset($data['travelLog']) && is_array($data['travelLog'])
-                ? array_map(fn($x) => TravelLogDTO::fromArray($x), $data['travelLog'])
-                : null,
+            travelLog: self::toDtoList($data['travelLog'] ?? null, TravelLogDTO::class),
             type: isset($data['type']) ? self::toBool($data['type']) : null,
             tags: isset($data['tags']) && is_array($data['tags'])
                 ? array_values(array_map('intval', $data['tags']))

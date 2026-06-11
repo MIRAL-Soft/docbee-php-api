@@ -122,6 +122,11 @@ final class CustomerContactDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
+            // `customer` is required by NewCustomerContact; customerLocation and
+            // temporary are writable — all three were missing from the payload.
+            'customer' => $this->customer,
+            'customerLocation' => $this->customerLocation,
+            'temporary' => $this->temporary,
             'customFields' => $this->customFields,
             'email' => $this->email,
             'firstName' => $this->firstName,

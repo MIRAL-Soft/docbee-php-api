@@ -47,7 +47,7 @@ final class EntryStyleDTO extends AbstractDTO
             id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
             name: self::toString($data['name'] ?? null),
-            underline: self::toBool($data['underline'] ?? null),
+            underline: isset($data['underline']) ? self::toBool($data['underline']) : null,
             weight: self::toFloat($data['weight'] ?? null),
             descriptionSize: self::toInt($data['descriptionSize'] ?? null),
             descriptionColor: self::toString($data['descriptionColor'] ?? null),
@@ -57,7 +57,7 @@ final class EntryStyleDTO extends AbstractDTO
             contentColor: self::toString($data['contentColor'] ?? null),
             contentFontStyle: self::toString($data['contentFontStyle'] ?? null),
             contentAlignment: self::toString($data['contentAlignment'] ?? null),
-            isDefault: self::toBool($data['isDefault'] ?? null)
+            isDefault: isset($data['isDefault']) ? self::toBool($data['isDefault']) : null
         );
     }
 

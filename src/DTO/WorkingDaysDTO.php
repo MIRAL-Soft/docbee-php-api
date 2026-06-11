@@ -31,8 +31,12 @@ final class WorkingDaysDTO extends AbstractDTO
     #[Override]
     public function toArray(): array
     {
+        // UpdateWorkingDays accepts workingHolidays/workingHours — both were parsed
+        // by fromArray() but lost on the way back (round-trip data loss).
         return array_filter([
-            'calendarRegion' => $this->calendarRegion,
+            'calendarRegion'  => $this->calendarRegion,
+            'workingHolidays' => $this->workingHolidays,
+            'workingHours'    => $this->workingHours,
         ], fn($v) => $v !== null);
     }
 

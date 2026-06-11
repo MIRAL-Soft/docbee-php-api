@@ -283,7 +283,8 @@ final class InvoiceResource extends AbstractResource
 
         // /invoice silently returns 0 items for limit > 100 (live-verified 2026-05-23).
         $safePageSize = min($query?->getPageSize() ?? 100, 100);
-        $q = ($query ?? QueryBuilder::new())
+        // Clone before mutating — the caller's builder must not be modified.
+        $q = ($query !== null ? clone $query : QueryBuilder::new())
             ->fields(['id', 'docBeeDocument', 'status', 'invoiceNumber', 'billable', 'agreementInvoice'])
             ->pageSize($safePageSize);
 

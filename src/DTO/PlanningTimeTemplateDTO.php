@@ -46,7 +46,7 @@ final class PlanningTimeTemplateDTO extends AbstractDTO
     public function toArray(): array
     {
         return array_filter([
-            'startTime'    => $this->startTime,
+            'startTime'    => self::toInt($this->startTime), // spec: integer (ms of day)
             'startOffset'  => $this->startOffset,
             'estimate'     => $this->estimate,
             'estimateType' => $this->estimateType,

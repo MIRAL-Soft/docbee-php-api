@@ -36,9 +36,7 @@ final class DashboardDTO extends AbstractDTO
             name: self::toString($data['name'] ?? null),
             shared: isset($data['shared']) ? self::toBool($data['shared']) : null,
             user: self::toInt($data['user'] ?? null),
-            widgets: isset($data['widgets']) && is_array($data['widgets'])
-                ? array_map(fn($x) => DashboardWidgetDTO::fromArray($x), $data['widgets'])
-                : null
+            widgets: self::toDtoList($data['widgets'] ?? null, DashboardWidgetDTO::class)
         );
     }
 

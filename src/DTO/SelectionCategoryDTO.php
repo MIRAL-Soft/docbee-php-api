@@ -38,9 +38,7 @@ final class SelectionCategoryDTO extends AbstractDTO
             created: self::toString($data['created'] ?? null),
             modified: self::toString($data['modified'] ?? null),
             link: self::toString($data['link'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldMappingDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldMappingDTO::class),
             detailsPattern: self::toString($data['detailsPattern'] ?? null),
             name: self::toString($data['name'] ?? null),
             uniqueValues: isset($data['uniqueValues']) ? self::toBool($data['uniqueValues']) : null,
