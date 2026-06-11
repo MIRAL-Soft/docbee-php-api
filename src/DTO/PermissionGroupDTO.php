@@ -32,7 +32,7 @@ final class PermissionGroupDTO extends AbstractDTO
         private ?array $tableConfigStorages
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -49,7 +49,7 @@ final class PermissionGroupDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

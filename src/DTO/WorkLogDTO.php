@@ -56,7 +56,7 @@ final class WorkLogDTO extends AbstractDTO
         private ?int             $remainingEstimate,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -85,7 +85,7 @@ final class WorkLogDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

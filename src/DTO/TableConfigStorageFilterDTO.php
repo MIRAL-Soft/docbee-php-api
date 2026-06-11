@@ -30,7 +30,7 @@ final class TableConfigStorageFilterDTO extends AbstractDTO
         private ?string          $selectionCategoryName,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -46,7 +46,7 @@ final class TableConfigStorageFilterDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

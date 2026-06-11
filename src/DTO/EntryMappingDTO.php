@@ -24,7 +24,7 @@ final class EntryMappingDTO extends AbstractDTO
         private ?bool $isMultiGroupLabel
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -37,7 +37,7 @@ final class EntryMappingDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

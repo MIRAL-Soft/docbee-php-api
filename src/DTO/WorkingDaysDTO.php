@@ -18,7 +18,7 @@ final class WorkingDaysDTO extends AbstractDTO
         private ?array $workingHours
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -28,7 +28,7 @@ final class WorkingDaysDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         // UpdateWorkingDays accepts workingHolidays/workingHours — both were parsed

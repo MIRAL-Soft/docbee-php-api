@@ -30,7 +30,7 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
         private ?bool $selectable,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static {
         return new self(
             id: self::toInt($data['id'] ?? null),
@@ -61,7 +61,7 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array {
         return array_filter([
             'templateName' => $this->templateName,

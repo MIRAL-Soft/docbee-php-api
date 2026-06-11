@@ -18,7 +18,7 @@ final class ProtocolDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** finished */
+        /** canceled */
         private readonly ?bool $canceled,
         /** canceledDate */
         private readonly ?string $canceledDate,
@@ -66,7 +66,7 @@ final class ProtocolDTO extends AbstractDTO
         private ?int $ticket
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -100,7 +100,7 @@ final class ProtocolDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

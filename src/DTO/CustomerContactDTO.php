@@ -88,7 +88,7 @@ final class CustomerContactDTO extends AbstractDTO
         private ?string $website,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -118,7 +118,7 @@ final class CustomerContactDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

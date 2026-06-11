@@ -52,7 +52,7 @@ final class CustomFieldDTO extends AbstractDTO
         private ?bool $visibleForCustomer
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -80,7 +80,7 @@ final class CustomFieldDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

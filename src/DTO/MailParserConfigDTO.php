@@ -58,7 +58,7 @@ final class MailParserConfigDTO extends AbstractDTO
         private ?string $versionName
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -88,7 +88,7 @@ final class MailParserConfigDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

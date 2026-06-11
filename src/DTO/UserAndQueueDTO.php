@@ -42,7 +42,7 @@ final class UserAndQueueDTO extends AbstractDTO
         private ?string $userType
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -64,7 +64,7 @@ final class UserAndQueueDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

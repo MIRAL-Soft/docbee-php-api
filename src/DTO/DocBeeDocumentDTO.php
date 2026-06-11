@@ -140,7 +140,7 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private ?array $tags = null
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -225,7 +225,7 @@ final class DocBeeDocumentDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

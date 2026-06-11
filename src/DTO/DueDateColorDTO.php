@@ -24,7 +24,7 @@ final class DueDateColorDTO extends AbstractDTO
         private ?int $timeOffset
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -37,7 +37,7 @@ final class DueDateColorDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

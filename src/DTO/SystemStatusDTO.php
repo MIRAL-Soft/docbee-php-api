@@ -14,7 +14,7 @@ final class SystemStatusDTO extends AbstractDTO
         private ?array $jobs
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -22,7 +22,7 @@ final class SystemStatusDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter(['jobs' => $this->jobs], fn($v) => $v !== null);

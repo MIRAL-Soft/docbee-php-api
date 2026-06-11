@@ -34,7 +34,7 @@ final class CostEstimationSubTaskDTO extends AbstractDTO
         private ?int $serviceType
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -52,7 +52,7 @@ final class CostEstimationSubTaskDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

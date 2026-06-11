@@ -32,7 +32,7 @@ final class MandantSettingsDTO extends AbstractDTO
         private ?int $adminUser
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -49,7 +49,7 @@ final class MandantSettingsDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

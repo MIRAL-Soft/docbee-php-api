@@ -28,7 +28,7 @@ final class AgreementComponentDTO extends AbstractDTO
         private ?bool            $withinWorkingSla,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -43,7 +43,7 @@ final class AgreementComponentDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

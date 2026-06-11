@@ -78,6 +78,9 @@ final class DocbeeConfig
         if ($connectTimeout <= 0) {
             throw new InvalidArgumentException('DocbeeConfig: connectTimeout must be greater than 0.');
         }
+        if ($maxRetries < 0) {
+            throw new InvalidArgumentException('DocbeeConfig: maxRetries must not be negative.');
+        }
 
         $this->tenant = $tenant;
         $this->token  = $token;
@@ -103,8 +106,8 @@ final class DocbeeConfig
      */
     public static function fromEnv(): self
     {
-        $tenant = getenv('DOCBEE_TENANT') ?: '';
-        $token  = getenv('DOCBEE_TOKEN')  ?: '';
+        $tenant = self::env('DOCBEE_TENANT');
+        $token  = self::env('DOCBEE_TOKEN');
 
         if ($tenant === '') {
             throw new InvalidArgumentException('Environment variable DOCBEE_TENANT is not set.');
@@ -116,10 +119,26 @@ final class DocbeeConfig
         return new self(
             tenant:         $tenant,
             token:          $token,
-            timeout:        (int) (getenv('DOCBEE_TIMEOUT')         ?: self::DEFAULT_TIMEOUT),
-            connectTimeout: (int) (getenv('DOCBEE_CONNECT_TIMEOUT') ?: self::DEFAULT_CONNECT_TIMEOUT),
-            maxRetries:     (int) (getenv('DOCBEE_MAX_RETRIES')     ?: self::DEFAULT_MAX_RETRIES),
+            timeout:        (int) (self::env('DOCBEE_TIMEOUT')         ?: self::DEFAULT_TIMEOUT),
+            connectTimeout: (int) (self::env('DOCBEE_CONNECT_TIMEOUT') ?: self::DEFAULT_CONNECT_TIMEOUT),
+            maxRetries:     (int) (self::env('DOCBEE_MAX_RETRIES')     ?: self::DEFAULT_MAX_RETRIES),
         );
+    }
+
+    /**
+     * Reads an environment variable from getenv() with a $_ENV fallback.
+     *
+     * getenv() alone misses variables when PHP's `variables_order` excludes "E"
+     * or when frameworks populate $_ENV directly (e.g. some dotenv loaders).
+     */
+    private static function env(string $name): string
+    {
+        $value = getenv($name);
+        if ($value !== false && $value !== '') {
+            return $value;
+        }
+        $fromEnvArray = $_ENV[$name] ?? '';
+        return is_string($fromEnvArray) ? $fromEnvArray : '';
     }
 
     /**

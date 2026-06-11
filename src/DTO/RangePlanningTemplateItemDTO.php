@@ -28,7 +28,7 @@ final class RangePlanningTemplateItemDTO extends AbstractDTO
         private ?array $elements
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -43,7 +43,7 @@ final class RangePlanningTemplateItemDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

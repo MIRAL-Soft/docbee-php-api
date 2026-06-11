@@ -18,7 +18,7 @@ final class ProtocolTemplateProfileDTO extends AbstractDTO
         private ?array $protocolTemplates
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -28,7 +28,7 @@ final class ProtocolTemplateProfileDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

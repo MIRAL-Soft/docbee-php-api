@@ -26,7 +26,7 @@ final class PaymentProfileMappingDTO extends AbstractDTO
         private ?string $started
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -40,7 +40,7 @@ final class PaymentProfileMappingDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

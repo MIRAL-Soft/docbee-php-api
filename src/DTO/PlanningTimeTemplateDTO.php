@@ -28,7 +28,7 @@ final class PlanningTimeTemplateDTO extends AbstractDTO
         private ?string          $estimateType,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -42,7 +42,7 @@ final class PlanningTimeTemplateDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

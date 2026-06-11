@@ -288,7 +288,11 @@ abstract class AbstractResource
 
             $offset += $pageSize;
             $total   = (int) ($response['totalCount'] ?? 0);
-        } while ($offset < $total);
+            // Keep paginating while the page was FULL, even when totalCount is
+            // missing or zero — previously a missing totalCount silently stopped
+            // after the first page (silent data loss). At worst this costs one
+            // extra request that returns an empty page and breaks above.
+        } while ($offset < $total || count($items) === $pageSize);
     }
 
     // -------------------------------------------------------------------------

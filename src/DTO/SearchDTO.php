@@ -62,7 +62,7 @@ final class SearchDTO extends AbstractDTO
         private readonly ?array $users
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -94,7 +94,7 @@ final class SearchDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return [];

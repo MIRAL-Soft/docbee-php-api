@@ -55,13 +55,23 @@ abstract class AbstractDTO implements \JsonSerializable
     }
 
     /**
-     * Safely casts a value to int, returning null when the value is null/empty.
+     * Safely casts a value to int, returning null when the value is null/empty
+     * or not numeric.
+     *
+     * Non-numeric strings previously cast to 0 silently (`(int) 'abc' === 0`),
+     * turning malformed API data into a plausible-looking ID — null is honest.
      *
      * @param mixed $value
      */
     protected static function toInt(mixed $value): ?int
     {
-        return ($value === null || $value === '') ? null : (int) $value;
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (is_int($value) || is_float($value) || is_bool($value)) {
+            return (int) $value;
+        }
+        return is_numeric($value) ? (int) $value : null;
     }
 
     /**
@@ -78,13 +88,20 @@ abstract class AbstractDTO implements \JsonSerializable
     }
 
     /**
-     * Safely casts a value to float, returning null when the value is null/empty.
+     * Safely casts a value to float, returning null when the value is null/empty
+     * or not numeric (see {@see toInt()} for the rationale).
      *
      * @param mixed $value
      */
     protected static function toFloat(mixed $value): ?float
     {
-        return ($value === null || $value === '') ? null : (float) $value;
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (is_int($value) || is_float($value) || is_bool($value)) {
+            return (float) $value;
+        }
+        return is_numeric($value) ? (float) $value : null;
     }
 
     /**

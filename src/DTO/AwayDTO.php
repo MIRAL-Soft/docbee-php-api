@@ -30,7 +30,7 @@ final class AwayDTO extends AbstractDTO
         private ?int $user
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -46,7 +46,7 @@ final class AwayDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

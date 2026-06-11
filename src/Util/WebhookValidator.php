@@ -10,6 +10,15 @@ use miralsoft\docbee\api\Resource\WebhookResource;
 /**
  * Validates incoming Docbee webhook payload data before processing.
  *
+ * ⚠ **Structure only — NOT authenticity.** This validator checks that the payload
+ * is well-formed JSON with the expected fields. It does NOT verify that the request
+ * actually came from Docbee: the Docbee API provides no signature/HMAC mechanism
+ * for webhooks, so anyone who knows your receiver URL can submit a valid-looking
+ * payload. Mitigate on your side: keep the receiver URL secret and unguessable
+ * (e.g. include a random token in the path), restrict by source IP where possible,
+ * and treat payload content as untrusted input (re-fetch the referenced record via
+ * the API instead of trusting embedded data).
+ *
  * Use this in your receiving application to safely handle webhook submissions:
  *
  * ```php
@@ -24,7 +33,7 @@ use miralsoft\docbee\api\Resource\WebhookResource;
  *     exit($e->getMessage());
  * }
  *
- * // Payload is safe to process
+ * // Payload is structurally safe to process (authenticity NOT verified — see above)
  * processWebhook($payload);
  * ```
  */

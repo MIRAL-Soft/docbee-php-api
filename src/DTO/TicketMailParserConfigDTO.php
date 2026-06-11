@@ -59,7 +59,7 @@ final class TicketMailParserConfigDTO extends AbstractDTO
         private mixed $updateTicketResponseMessageTemplate
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -91,7 +91,7 @@ final class TicketMailParserConfigDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

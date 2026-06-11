@@ -28,7 +28,7 @@ final class SlaProfileDTO extends AbstractDTO
         private ?array $workingHours
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -43,7 +43,7 @@ final class SlaProfileDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

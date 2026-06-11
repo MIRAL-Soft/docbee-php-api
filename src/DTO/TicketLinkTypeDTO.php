@@ -22,7 +22,7 @@ final class TicketLinkTypeDTO extends AbstractDTO
         private ?string $outward
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -34,7 +34,7 @@ final class TicketLinkTypeDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

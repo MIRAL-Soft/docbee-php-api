@@ -96,7 +96,7 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
         private ?array           $materials,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -145,7 +145,7 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

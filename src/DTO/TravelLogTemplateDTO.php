@@ -37,7 +37,7 @@ final class TravelLogTemplateDTO extends AbstractDTO
         private ?string          $comment,
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -55,7 +55,7 @@ final class TravelLogTemplateDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([

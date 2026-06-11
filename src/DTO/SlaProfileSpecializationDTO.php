@@ -30,7 +30,7 @@ final class SlaProfileSpecializationDTO extends AbstractDTO
         private ?float $weight
     ) {}
 
-    #[Override]
+    #[\Override]
     public static function fromArray(array $data): static
     {
         return new self(
@@ -46,7 +46,7 @@ final class SlaProfileSpecializationDTO extends AbstractDTO
         );
     }
 
-    #[Override]
+    #[\Override]
     public function toArray(): array
     {
         return array_filter([
