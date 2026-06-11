@@ -540,3 +540,15 @@ local.properties
 # Re-include project-specific bin/ directory (overrides Eclipse template rules above)
 !bin/
 !bin/**
+
+# Ad-hoc live-probe / diagnose scripts — they target real tenants and historically
+# contained credentials. Everything in scripts/ is ignored except the token-free
+# template (which loads tests/.env.test). The bin/diagnose-*.php rule comes AFTER
+# the !bin/** re-include above so it wins (last matching rule applies).
+/scripts/*
+!/scripts/probe-template.php
+bin/diagnose-*.php
+
+# Local tool state
+.claude/
+.phpunit.result.cache
