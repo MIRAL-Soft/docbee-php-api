@@ -1096,6 +1096,13 @@ WebhookValidator::validateType($payload['type']);
 handleWebhook($payload['type'], $payload);
 ```
 
+> ⚠ **Structure only — NOT authenticity.** Docbee provides no webhook signature/HMAC
+> mechanism, so the validator cannot verify that a request actually came from Docbee —
+> anyone who knows your receiver URL can submit a valid-looking payload. Mitigations:
+> keep the receiver URL secret and unguessable (random token in the path), restrict by
+> source IP where possible, and treat payload content as untrusted — re-fetch the
+> referenced record via the API instead of trusting embedded data.
+
 ---
 
 ## Error Handling
@@ -1124,6 +1131,11 @@ try {
     echo $e->getMessage();
 }
 ```
+
+> **Logging note:** `DocbeeApiException::getResponseBody()` carries the raw API response,
+> which can contain customer data (names, addresses, ticket content). If your application
+> logs exceptions verbatim, that content ends up in your logs — consider logging only
+> `getMessage()` + `getStatusCode()` + `getRequestUrl()` in production.
 
 ### Exception hierarchy
 

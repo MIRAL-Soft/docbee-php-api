@@ -97,11 +97,56 @@ final class DocbeeConfigTest extends TestCase
 
     public function testFromEnvThrowsWhenVarsNotSet(): void
     {
+        // fromEnv() now also falls back to $_ENV (set by tests/bootstrap.php when
+        // tests/.env.test exists), so BOTH sources must be cleared — and restored
+        // afterwards so later integration tests still find their credentials.
+        $backup = [
+            'DOCBEE_TENANT' => $_ENV['DOCBEE_TENANT'] ?? null,
+            'DOCBEE_TOKEN'  => $_ENV['DOCBEE_TOKEN'] ?? null,
+        ];
         putenv('DOCBEE_TENANT');
         putenv('DOCBEE_TOKEN');
+        unset($_ENV['DOCBEE_TENANT'], $_ENV['DOCBEE_TOKEN']);
 
-        $this->expectException(InvalidArgumentException::class);
-        DocbeeConfig::fromEnv();
+        try {
+            $this->expectException(InvalidArgumentException::class);
+            DocbeeConfig::fromEnv();
+        } finally {
+            foreach ($backup as $key => $value) {
+                if ($value !== null) {
+                    $_ENV[$key] = $value;
+                    putenv("{$key}={$value}");
+                }
+            }
+        }
+    }
+
+    public function testFromEnvFallsBackToEnvSuperglobal(): void
+    {
+        // getenv() empty but $_ENV populated (variables_order without "E",
+        // dotenv loaders) — fromEnv() must still find the credentials.
+        $backup = [
+            'DOCBEE_TENANT' => $_ENV['DOCBEE_TENANT'] ?? null,
+            'DOCBEE_TOKEN'  => $_ENV['DOCBEE_TOKEN'] ?? null,
+        ];
+        putenv('DOCBEE_TENANT');
+        putenv('DOCBEE_TOKEN');
+        $_ENV['DOCBEE_TENANT'] = 'envcompany';
+        $_ENV['DOCBEE_TOKEN']  = 'envsecret';
+
+        try {
+            $config = DocbeeConfig::fromEnv();
+            $this->assertSame('envcompany', $config->getTenant());
+            $this->assertSame('envsecret', $config->getToken());
+        } finally {
+            unset($_ENV['DOCBEE_TENANT'], $_ENV['DOCBEE_TOKEN']);
+            foreach ($backup as $key => $value) {
+                if ($value !== null) {
+                    $_ENV[$key] = $value;
+                    putenv("{$key}={$value}");
+                }
+            }
+        }
     }
 
     public function testFromArrayThrowsOnWhitespaceOnlyTenant(): void

@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Security & full-code review (2026-06) — consumer notes
+
+A complete security/bug review of the library produced the fixes below.
+**There are no hard breaking changes for working consumer code**, but consumers
+should be aware of these **behavioral changes**:
+
+1. **`export*ByIds([])` now throws `InvalidArgumentException`** instead of sending an
+   empty ID list to the server. Pass at least one ID.
+2. **POST requests are no longer auto-retried on 5xx** (429 still is). A 5xx during
+   `create()` now surfaces immediately as `ServerException` instead of risking
+   duplicate records through blind retries. GET/PUT/DELETE retry as before.
+3. **`findModifiedSince()`/`findCreatedSince()` now convert to UTC correctly.** If you
+   compensated for the old 1–2 h timezone shift on the consumer side, remove that
+   workaround.
+4. **Methods taking string path parameters now throw `InvalidArgumentException` on
+   empty strings** (`findByNumber('')`, `findByScanCode('')`, `ModuleResource::delete('')`, …)
+   and URL-encode the value. Previously an empty string silently hit the collection endpoint.
+5. **`UserResource::resetPasswordForUser()` is deprecated** (it always reset 2FA, never
+   the password — the name was wrong). It still works identically but triggers
+   `E_USER_DEPRECATED`; use `reset2FA()` or `changePassword()`.
+6. **Return types changed `array` → `string` on methods that previously always crashed**
+   (they JSON-parsed binary responses): `FileResource::download()/show()`,
+   `MisResource::get*ChartCsv()`. No working caller can be affected.
+7. **DTO getters for missing bool fields now return `null` instead of `false`** in 8 DTOs
+   (Group, GroupStyle, EntryMapping, EntryStyle, Link, PriceCalculationBehavior,
+   ProtocolTemplateEntry, ProtocolTemplateType) — and the field is no longer written
+   as `false` on update when it was never present.
+8. **`CustomFieldValueDTO::toArray()` now emits `{id, value}`** (write schema) instead of
+   `{value, type}` — custom-field updates through parent DTOs now actually work.
+9. **`toInt()`/`toFloat()` return `null` for non-numeric strings** instead of silently
+   casting to 0.
+10. **Webhook payload validation is structure-only** (now documented prominently):
+    Docbee offers no signature/HMAC mechanism, so authenticity cannot be verified —
+    keep receiver URLs secret and re-fetch referenced records instead of trusting
+    payload content.
+
 ### Added
 - **Document tags — `DocBeeDocumentDTO::getTags()` + `DocumentResource::addTag()` / `removeTag()`.**
 
