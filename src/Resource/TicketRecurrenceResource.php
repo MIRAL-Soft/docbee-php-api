@@ -19,6 +19,6 @@ final class TicketRecurrenceResource extends AbstractResource
     protected string $listKey  = 'ticketRecurrence';
 
     public function export(int $exportProfileId): string { return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}"); }
-    public function exportByIds(int $exportProfileId, array $ids): string { return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]); }
+    public function exportByIds(int $exportProfileId, array $ids): string { return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
     public function clone(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/clone", []); }
 }

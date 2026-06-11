@@ -368,6 +368,29 @@ abstract class AbstractResource
     // -------------------------------------------------------------------------
 
     /**
+     * Posts an export-by-ids request and returns the raw file bytes.
+     *
+     * Centralises two things every `export*ByIds()` method needs:
+     *  - the `{"ids": [...]}` body shape (live-verified: the server rejects a raw
+     *    JSON array with HTTP 400, despite the OpenAPI spec claiming otherwise),
+     *  - a guard against an empty ID list (depending on the endpoint an empty
+     *    list either fails or silently produces an empty/complete export).
+     *
+     * @param  int[] $ids
+     * @throws \InvalidArgumentException when $ids is empty.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    protected function postExportByIds(string $path, array $ids): string
+    {
+        if (empty($ids)) {
+            throw new \InvalidArgumentException(
+                static::class . ': $ids must not be empty for an export-by-ids request.'
+            );
+        }
+        return $this->http->postRaw($path, ['ids' => array_values($ids)]);
+    }
+
+    /**
      * Returns a QueryBuilder with the resource's `$defaultListFields` injected,
      * but **only** when the caller did not already set an explicit field selector.
      *

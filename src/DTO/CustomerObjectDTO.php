@@ -76,9 +76,7 @@ final class CustomerObjectDTO extends AbstractDTO
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
             acquisitionDate: self::toString($data['acquisitionDate'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             details: self::toString($data['details'] ?? null),
             extendedName: self::toString($data['extendedName'] ?? null),
             itChassisType: self::toString($data['itChassisType'] ?? null),

@@ -38,9 +38,7 @@ final class ServiceProviderDTO extends AbstractDTO
             email: self::toString($data['email'] ?? null),
             number: self::toString($data['number'] ?? null),
             shortName: self::toString($data['shortName'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             name: self::toString($data['name'] ?? null)
         );
     }

@@ -320,7 +320,7 @@ final class InvoiceResource extends AbstractResource
      */
     public function exportByIds(int $exportProfileId, array $ids): string
     {
-        return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]);
+        return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);
     }
 
     /**
@@ -341,7 +341,7 @@ final class InvoiceResource extends AbstractResource
      */
     public function exportOverviewPdfByIds(int $pdfLayoutId, array $ids): string
     {
-        return $this->http->postRaw("{$this->endpoint}/exportOverviewPdfByIds/{$pdfLayoutId}", ['ids' => $ids]);
+        return $this->postExportByIds("{$this->endpoint}/exportOverviewPdfByIds/{$pdfLayoutId}", $ids);
     }
 
     /**
@@ -354,7 +354,7 @@ final class InvoiceResource extends AbstractResource
      */
     public function exportOverviewPricePdfByIds(int $pdfLayoutId, array $ids): string
     {
-        return $this->http->postRaw("{$this->endpoint}/exportOverviewPricePdfByIds/{$pdfLayoutId}", ['ids' => $ids]);
+        return $this->postExportByIds("{$this->endpoint}/exportOverviewPricePdfByIds/{$pdfLayoutId}", $ids);
     }
 
     /**
@@ -367,6 +367,6 @@ final class InvoiceResource extends AbstractResource
      */
     public function exportPdfByIds(int $pdfLayoutId, array $ids): string
     {
-        return $this->http->postRaw("{$this->endpoint}/exportPdfByIds/{$pdfLayoutId}", ['ids' => $ids]);
+        return $this->postExportByIds("{$this->endpoint}/exportPdfByIds/{$pdfLayoutId}", $ids);
     }
 }

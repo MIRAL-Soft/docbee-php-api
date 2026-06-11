@@ -47,9 +47,7 @@ final class CustomerLocationDTO extends AbstractDTO
             customer: self::toInt($data['customer'] ?? null),
             temporary: isset($data['temporary']) ? self::toBool($data['temporary']) : null,
             city: self::toString($data['city'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             name: self::toString($data['name'] ?? null),
             street: self::toString($data['street'] ?? null),
             syncToApp: isset($data['syncToApp']) ? self::toBool($data['syncToApp']) : null,

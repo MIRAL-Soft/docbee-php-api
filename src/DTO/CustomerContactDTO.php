@@ -98,9 +98,7 @@ final class CustomerContactDTO extends AbstractDTO
             customer: self::toInt($data['customer'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),
             temporary: isset($data['temporary']) ? self::toBool($data['temporary']) : null,
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             email: self::toString($data['email'] ?? null),
             firstName: self::toString($data['firstName'] ?? null),
             gender: self::toString($data['gender'] ?? null),

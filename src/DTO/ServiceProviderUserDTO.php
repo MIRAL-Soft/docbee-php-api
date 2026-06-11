@@ -47,9 +47,7 @@ final class ServiceProviderUserDTO extends AbstractDTO
             id: self::toInt($data['id'] ?? null),
             link: self::toString($data['link'] ?? null),
             serviceProvider: self::toInt($data['serviceProvider'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             email: self::toString($data['email'] ?? null),
             enabled: isset($data['enabled']) ? self::toBool($data['enabled']) : null,
             mobile: self::toString($data['mobile'] ?? null),

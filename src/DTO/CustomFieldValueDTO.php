@@ -49,10 +49,15 @@ final class CustomFieldValueDTO extends AbstractDTO
     #[Override]
     public function toArray(): array
     {
-        return array_filter([
-            'value' => $this->value,
-            'type'  => $this->type,
-        ], fn($v) => $v !== null);
+        // Write schema (UpdateCustomFieldValue / NewCustomFieldValue): {id, value} —
+        // both required. `id` identifies WHICH custom field the value belongs to;
+        // without it an update payload is invalid. `type` is read-only and not sent.
+        // `value` is kept even when null (null clears the field).
+        $out = ['value' => $this->value];
+        if ($this->id !== null) {
+            $out = ['id' => $this->id] + $out;
+        }
+        return $out;
     }
 
     public function getId(): ?int              { return $this->id; }

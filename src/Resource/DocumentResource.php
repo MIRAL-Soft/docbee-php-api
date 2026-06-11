@@ -640,6 +640,6 @@ final class DocumentResource extends AbstractResource
      */
     public function exportByIds(int $exportProfileId, array $ids): string
     {
-        return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", ['ids' => $ids]);
+        return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);
     }
 }

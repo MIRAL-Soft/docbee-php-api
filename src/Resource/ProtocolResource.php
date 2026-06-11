@@ -102,6 +102,6 @@ final class ProtocolResource extends AbstractResource
     /** Export specific protocols (by IDs) for the given export profile. Returns raw file bytes (PDF/CSV). */
     public function exportByIds(int $exportProfileId, array $ids): string
     {
-        return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);
+        return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);
     }
 }

@@ -139,9 +139,7 @@ final class TicketDTO extends AbstractDTO
             additionalData: isset($data['additionalData']) && is_array($data['additionalData']) ? $data['additionalData'] : null,
             billable: isset($data['billable']) ? self::toBool($data['billable']) : null,
             confidentialTag: self::toInt($data['confidentialTag'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             customer: self::toInt($data['customer'] ?? null),
             customerContact: self::toInt($data['customerContact'] ?? null),
             customerLocation: self::toInt($data['customerLocation'] ?? null),

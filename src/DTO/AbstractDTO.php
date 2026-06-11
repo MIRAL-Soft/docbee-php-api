@@ -96,4 +96,33 @@ abstract class AbstractDTO implements \JsonSerializable
     {
         return $value === null ? null : (string) $value;
     }
+
+    /**
+     * Maps a raw API list to nested DTOs, skipping non-array elements.
+     *
+     * The Docbee API returns two different shapes for nested collections depending
+     * on the `?fields=` parameter:
+     *   `?fields=customFields`                       → `[102, 104]` (plain IDs)
+     *   `?fields=customFields.id,customFields.value` → `[{...}, {...}]` (objects)
+     * Mapping a plain ID through `fromArray()` would throw a TypeError, so only
+     * array elements are mapped; an ID-only list yields an empty DTO list.
+     *
+     * @template T of AbstractDTO
+     * @param  mixed           $items    Raw value from the API response.
+     * @param  class-string<T> $dtoClass DTO class to map array elements to.
+     * @return list<T>|null Null when $items is not an array at all.
+     */
+    protected static function toDtoList(mixed $items, string $dtoClass): ?array
+    {
+        if (!is_array($items)) {
+            return null;
+        }
+        $out = [];
+        foreach ($items as $item) {
+            if (is_array($item)) {
+                $out[] = $dtoClass::fromArray($item);
+            }
+        }
+        return $out;
+    }
 }

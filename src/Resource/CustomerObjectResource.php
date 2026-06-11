@@ -36,5 +36,5 @@ final class CustomerObjectResource extends AbstractResource
         return $this->http->get("{$this->endpoint}/findByScanCode/" . rawurlencode($scanCode));
     }
     public function export(int $exportProfileId): string { return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}"); }
-    public function exportByIds(int $exportProfileId, array $ids): string { return $this->http->postRaw("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
+    public function exportByIds(int $exportProfileId, array $ids): string { return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
 }

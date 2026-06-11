@@ -31,7 +31,13 @@ final class ProtocolGroupDataDTO extends AbstractDTO
     #[Override]
     public function toArray(): array
     {
+        // Write schema (ProtocolGroupData): `finished` and `templateGroup` are the
+        // required write fields, `id` identifies the group. This was previously an
+        // empty array literal, which made every Protocol update with groups send `[[]]`.
         return array_filter([
+            'id'            => $this->id,
+            'finished'      => $this->finished,
+            'templateGroup' => $this->templateGroup,
         ], fn($v) => $v !== null);
     }
 

@@ -18,15 +18,30 @@ final class FileResource
         return FileDTO::fromArray($this->http->post('file/upload', $data));
     }
 
-    /** Get file download URL data. */
-    public function download(int $id): array
+    /**
+     * Downloads a file and returns its raw bytes.
+     *
+     * The endpoint returns `application/octet-stream` (binary, per OpenAPI spec) —
+     * previously this method JSON-parsed the response and always failed on real files.
+     *
+     * @return string Raw file bytes.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function download(int $id): string
     {
-        return $this->http->get("file/{$id}/download");
+        return $this->http->getRaw("file/{$id}/download");
     }
 
-    /** Get file show data. */
-    public function show(int $id): array
+    /**
+     * Returns the file's raw bytes for inline display (`Content-Disposition: inline`).
+     *
+     * Same binary response as {@see download()} (`application/octet-stream` per spec).
+     *
+     * @return string Raw file bytes.
+     * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
+     */
+    public function show(int $id): string
     {
-        return $this->http->get("file/{$id}/show");
+        return $this->http->getRaw("file/{$id}/show");
     }
 }

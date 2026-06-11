@@ -39,9 +39,7 @@ final class SelectionValueDTO extends AbstractDTO
             modified: self::toString($data['modified'] ?? null),
             link: self::toString($data['link'] ?? null),
             details: self::toString($data['details'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             filterNames: isset($data['filterNames']) && is_array($data['filterNames']) ? $data['filterNames'] : null,
             name: self::toString($data['name'] ?? null),
             scanCode: self::toString($data['scanCode'] ?? null)

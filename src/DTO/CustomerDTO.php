@@ -54,9 +54,7 @@ final class CustomerDTO extends AbstractDTO
             link: self::toString($data['link'] ?? null),
             defaultCustomerLocation: self::toInt($data['defaultCustomerLocation'] ?? null),
             companyData: self::toInt($data['companyData'] ?? null),
-            customFields: isset($data['customFields']) && is_array($data['customFields'])
-                ? array_map(fn($x) => CustomFieldValueDTO::fromArray($x), $data['customFields'])
-                : null,
+            customFields: self::toDtoList($data['customFields'] ?? null, CustomFieldValueDTO::class),
             customerId: self::toString($data['customerId'] ?? null),
             customerStatus: self::toInt($data['customerStatus'] ?? null),
             info: self::toString($data['info'] ?? null),
