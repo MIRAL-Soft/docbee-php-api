@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace miralsoft\docbee\api\Resource;
 
+use InvalidArgumentException;
 use miralsoft\docbee\api\Client\HttpClientInterface;
 use miralsoft\docbee\api\DTO\ModuleDTO;
 
@@ -18,21 +19,47 @@ final class ModuleResource
         return $this->http->get('module')['module'] ?? [];
     }
 
-    /** Returns a specific module by name. */
+    /**
+     * Returns a specific module by name.
+     *
+     * @throws InvalidArgumentException when $moduleName is empty.
+     */
     public function find(string $moduleName): ModuleDTO
     {
-        return ModuleDTO::fromArray($this->http->get("module/{$moduleName}"));
+        return ModuleDTO::fromArray($this->http->get('module/' . $this->encodeName($moduleName)));
     }
 
-    /** Updates a module setting. */
+    /**
+     * Updates a module setting.
+     *
+     * @throws InvalidArgumentException when $moduleName is empty.
+     */
     public function update(string $moduleName, array $data): ModuleDTO
     {
-        return ModuleDTO::fromArray($this->http->put("module/{$moduleName}", $data));
+        return ModuleDTO::fromArray($this->http->put('module/' . $this->encodeName($moduleName), $data));
     }
 
-    /** Deletes a module. */
+    /**
+     * Deletes a module.
+     *
+     * @throws InvalidArgumentException when $moduleName is empty.
+     */
     public function delete(string $moduleName): void
     {
-        $this->http->delete("module/{$moduleName}");
+        $this->http->delete('module/' . $this->encodeName($moduleName));
+    }
+
+    /**
+     * Validates and URL-encodes a module name for use as a path segment.
+     *
+     * An empty name would silently hit the collection endpoint (`DELETE /module`!),
+     * and an unencoded name could redirect the request to a different resource.
+     */
+    private function encodeName(string $moduleName): string
+    {
+        if (trim($moduleName) === '') {
+            throw new InvalidArgumentException('ModuleResource: moduleName must not be empty.');
+        }
+        return rawurlencode($moduleName);
     }
 }

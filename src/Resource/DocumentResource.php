@@ -537,8 +537,23 @@ final class DocumentResource extends AbstractResource
         );
     }
 
-    public function findByNumber(string $number): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
-    public function findByExternalId(string $externalId): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByExternalId/{$externalId}")); }
+    /** @throws \InvalidArgumentException when $number is empty. */
+    public function findByNumber(string $number): DocBeeDocumentDTO
+    {
+        if (trim($number) === '') {
+            throw new \InvalidArgumentException('findByNumber(): number must not be empty.');
+        }
+        return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/" . rawurlencode($number)));
+    }
+
+    /** @throws \InvalidArgumentException when $externalId is empty. */
+    public function findByExternalId(string $externalId): DocBeeDocumentDTO
+    {
+        if (trim($externalId) === '') {
+            throw new \InvalidArgumentException('findByExternalId(): externalId must not be empty.');
+        }
+        return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByExternalId/" . rawurlencode($externalId)));
+    }
     public function clone(int $id): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }
     public function approve(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/approve", $data); }
     public function finish(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/finish", $data); }

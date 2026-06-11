@@ -301,7 +301,14 @@ final class TicketResource extends AbstractResource
             $this->http->post("{$this->endpoint}/fromTemplate", array_merge(['templateId' => $templateId], $data))
         );
     }
-    public function findByNumber(string $number): TicketDTO { return TicketDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}")); }
+    /** @throws \InvalidArgumentException when $number is empty. */
+    public function findByNumber(string $number): TicketDTO
+    {
+        if (trim($number) === '') {
+            throw new \InvalidArgumentException('findByNumber(): number must not be empty.');
+        }
+        return TicketDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/" . rawurlencode($number)));
+    }
     public function clone(int $id): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }
     public function merge(int $id, int $sourceTicketId): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/merge/{$sourceTicketId}", [])); }
     public function isMerged(int $id): bool { $r = $this->http->get("{$this->endpoint}/{$id}/isMerged"); return (bool)($r['isMerged'] ?? false); }

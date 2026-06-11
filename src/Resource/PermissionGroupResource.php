@@ -18,7 +18,14 @@ final class PermissionGroupResource extends AbstractResource
     protected string $dtoClass = PermissionGroupDTO::class;
     protected string $listKey  = 'permissionGroup';
 
-    public function getHierarchy(string $type): array { return $this->http->get("{$this->endpoint}/{$type}/hierarchy"); }
+    /** @throws \InvalidArgumentException when $type is empty. */
+    public function getHierarchy(string $type): array
+    {
+        if (trim($type) === '') {
+            throw new \InvalidArgumentException('getHierarchy(): type must not be empty.');
+        }
+        return $this->http->get("{$this->endpoint}/" . rawurlencode($type) . '/hierarchy');
+    }
     public function getCalendarSiteConfig(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/calendarSiteConfig"); }
     public function updateCalendarSiteConfig(int $id, array $data): array { return $this->http->put("{$this->endpoint}/{$id}/calendarSiteConfig", $data); }
     public function getDocBeeDocumentSiteConfig(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/docBeeDocumentSiteConfig"); }

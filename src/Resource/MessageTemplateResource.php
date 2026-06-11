@@ -19,5 +19,13 @@ final class MessageTemplateResource extends AbstractResource
     protected string $listKey  = 'messageTemplate';
 
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
-    public function getDefault(string $type, string $format): array { return $this->http->get("{$this->endpoint}/default/{$type}/{$format}"); }
+
+    /** @throws \InvalidArgumentException when $type or $format is empty. */
+    public function getDefault(string $type, string $format): array
+    {
+        if (trim($type) === '' || trim($format) === '') {
+            throw new \InvalidArgumentException('getDefault(): type and format must not be empty.');
+        }
+        return $this->http->get("{$this->endpoint}/default/" . rawurlencode($type) . '/' . rawurlencode($format));
+    }
 }

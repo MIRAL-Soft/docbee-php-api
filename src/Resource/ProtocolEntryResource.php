@@ -59,19 +59,39 @@ final class ProtocolEntryResource extends AbstractResource
         );
     }
 
-    /** Find a protocol entry by its template placeholder name. */
+    /**
+     * Find a protocol entry by its template placeholder name.
+     *
+     * The name is URL-encoded — placeholder names are free text from templates
+     * and must not be able to alter the request path.
+     *
+     * @throws \InvalidArgumentException when $name is empty.
+     */
     public function findByPlaceholderName(string $name): ProtocolEntryDTO
     {
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException('findByPlaceholderName(): name must not be empty.');
+        }
         return ProtocolEntryDTO::fromArray(
-            $this->http->get("{$this->endpoint}/findByPlaceholderName/{$name}")
+            $this->http->get("{$this->endpoint}/findByPlaceholderName/" . rawurlencode($name))
         );
     }
 
-    /** Update a protocol entry by its template placeholder name. */
+    /**
+     * Update a protocol entry by its template placeholder name.
+     *
+     * The name is URL-encoded — this is a WRITE operation; an unencoded name
+     * could redirect the PUT to a different endpoint entirely.
+     *
+     * @throws \InvalidArgumentException when $name is empty.
+     */
     public function updateByPlaceholderName(string $name, array $data): ProtocolEntryDTO
     {
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException('updateByPlaceholderName(): name must not be empty.');
+        }
         return ProtocolEntryDTO::fromArray(
-            $this->http->put("{$this->endpoint}/updateByPlaceholderName/{$name}", $data)
+            $this->http->put("{$this->endpoint}/updateByPlaceholderName/" . rawurlencode($name), $data)
         );
     }
 }

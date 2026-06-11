@@ -18,10 +18,17 @@ final class ProtocolResource extends AbstractResource
     protected string $dtoClass = ProtocolDTO::class;
     protected string $listKey  = 'protocol';
 
-    /** Find a protocol by its number. */
+    /**
+     * Find a protocol by its number.
+     *
+     * @throws \InvalidArgumentException when $number is empty.
+     */
     public function findByNumber(string $number): ProtocolDTO
     {
-        return ProtocolDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/{$number}"));
+        if (trim($number) === '') {
+            throw new \InvalidArgumentException('findByNumber(): number must not be empty.');
+        }
+        return ProtocolDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/" . rawurlencode($number)));
     }
 
     /** Instantly finish a protocol. */

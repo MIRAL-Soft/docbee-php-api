@@ -14,6 +14,9 @@ final class SearchResource
 
     public function search(string $query): SearchDTO
     {
-        return SearchDTO::fromArray($this->http->get('search/' . urlencode($query)));
+        // rawurlencode, not urlencode: in a PATH segment a space must become %20.
+        // urlencode produces '+', which the server reads as a literal plus sign —
+        // a search for "a b" would silently search for "a+b".
+        return SearchDTO::fromArray($this->http->get('search/' . rawurlencode($query)));
     }
 }

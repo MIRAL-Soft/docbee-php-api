@@ -24,9 +24,22 @@ final class SelectionValueResource extends AbstractResource
         parent::__construct($http);
     }
 
+    /**
+     * Finds a selection value by its scan code (barcode/QR).
+     *
+     * The scan code is URL-encoded — scan codes come from physical labels and
+     * must never be able to alter the request path or query.
+     *
+     * @throws \InvalidArgumentException when $scanCode is empty.
+     */
     public function findByScanCode(int $selectionCategoryId, string $scanCode): array
     {
-        return $this->http->get("selectionCategory/{$selectionCategoryId}/selectionValue/findByScanCode/{$scanCode}");
+        if (trim($scanCode) === '') {
+            throw new \InvalidArgumentException('findByScanCode(): scanCode must not be empty.');
+        }
+        return $this->http->get(
+            "selectionCategory/{$selectionCategoryId}/selectionValue/findByScanCode/" . rawurlencode($scanCode)
+        );
     }
 
     public function guess(int $selectionCategoryId, array $data): array

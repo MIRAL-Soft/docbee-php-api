@@ -11,8 +11,12 @@ final class TableConfigStorageTypeResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
+    /** @throws \InvalidArgumentException when $type is empty. */
     public function get(string $type): array
     {
-        return $this->http->get("tableConfigStorageType/{$type}");
+        if (trim($type) === '') {
+            throw new \InvalidArgumentException('get(): type must not be empty.');
+        }
+        return $this->http->get('tableConfigStorageType/' . rawurlencode($type));
     }
 }

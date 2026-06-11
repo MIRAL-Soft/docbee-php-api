@@ -62,22 +62,63 @@ final class UserResource extends AbstractResource
         return UserDTO::fromArray($this->http->get('user/me'));
     }
 
-    /** Reset 2FA for a specific user (admin). */
-    public function resetPasswordForUser(int $id): void
+    /**
+     * Resets two-factor authentication for a specific user (admin).
+     *
+     * Maps to `PUT user/{id}/reset2FA`.
+     */
+    public function reset2FA(int $id): void
     {
         $this->http->put("{$this->endpoint}/{$id}/reset2FA", []);
     }
 
-    /** Find user by email address via API endpoint. */
-    public function findFirstByEmail(string $email): UserDTO
+    /**
+     * @deprecated Misleading name — this method has always called `PUT user/{id}/reset2FA`
+     *             and therefore resets **two-factor authentication**, NOT the password.
+     *             Use {@see reset2FA()} for the identical behaviour, or
+     *             {@see changePassword()} to actually change a user's password
+     *             (the API has no per-user password-*reset* endpoint).
+     *             This alias will be removed in the next major version.
+     */
+    public function resetPasswordForUser(int $id): void
     {
-        return UserDTO::fromArray($this->http->get("{$this->endpoint}/findFirstByEmail/{$email}"));
+        @trigger_error(
+            'UserResource::resetPasswordForUser() is deprecated: it resets 2FA, not the password. '
+            . 'Use reset2FA() or changePassword() instead.',
+            E_USER_DEPRECATED,
+        );
+        $this->reset2FA($id);
     }
 
-    /** Find user by external ERP number. */
+    /**
+     * Find user by email address via API endpoint.
+     *
+     * The email is URL-encoded — emails legitimately contain `+` and other
+     * URL-significant characters that must not alter the request path.
+     *
+     * @throws \InvalidArgumentException when $email is empty.
+     */
+    public function findFirstByEmail(string $email): UserDTO
+    {
+        if (trim($email) === '') {
+            throw new \InvalidArgumentException('findFirstByEmail(): email must not be empty.');
+        }
+        return UserDTO::fromArray($this->http->get("{$this->endpoint}/findFirstByEmail/" . rawurlencode($email)));
+    }
+
+    /**
+     * Find user by external ERP number.
+     *
+     * @throws \InvalidArgumentException when $number is empty.
+     */
     public function findFirstByExternalErpNumber(string $number): UserDTO
     {
-        return UserDTO::fromArray($this->http->get("{$this->endpoint}/findFirstByExternalErpNumber/{$number}"));
+        if (trim($number) === '') {
+            throw new \InvalidArgumentException('findFirstByExternalErpNumber(): number must not be empty.');
+        }
+        return UserDTO::fromArray(
+            $this->http->get("{$this->endpoint}/findFirstByExternalErpNumber/" . rawurlencode($number))
+        );
     }
 
     /** Get user settings for current user. */
