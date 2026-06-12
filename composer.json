@@ -31,9 +31,9 @@
     }
   },
   "scripts": {
-    "test": "phpunit --testdox",
+    "test": "phpunit --testsuite Unit",
     "test:integration": "phpunit --testsuite Integration --testdox",
-    "analyse": "phpstan analyse src --level=8"
+    "analyse": "phpstan analyse"
   },
   "config": {
     "sort-packages": true

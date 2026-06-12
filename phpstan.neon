@@ -1,0 +1,7 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    # No baseline: the codebase is fully type-clean at level 8. New errors must be
+    # fixed, not frozen. Run `composer analyse` (or `vendor/bin/phpstan analyse`) locally
+    # before pushing; CI enforces the same on every push and pull request.

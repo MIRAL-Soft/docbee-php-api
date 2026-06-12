@@ -1232,12 +1232,34 @@ The spec URL and all paths are configured in `config/api-compat.php`.  This file
 
 ---
 
+## Development
+
+**PHP 8.3+ is required** (the library uses typed class constants and `#[\Override]`).
+Note that a default XAMPP/PHP 8.2 will refuse to install the dev dependencies — use a
+PHP 8.3 or 8.4 binary.
+
+`composer.lock` is intentionally **not** committed (this is a library). Use
+`composer update` to install dependencies for development:
+
+```bash
+composer update
+composer test       # unit tests (offline, mocked)
+composer analyse    # PHPStan level 8 (config in phpstan.neon, no baseline)
+```
+
+### Continuous Integration
+
+`.github/workflows/ci.yml` runs on every push and pull request to `main` / `DocbeeAPIv2`:
+the **unit suite** and **PHPStan level 8** on **PHP 8.3 and 8.4**. The build fails on any
+test failure or new static-analysis error. Integration tests are **not** run in CI (they
+require live credentials) — run them locally as described below.
+
 ## Testing
 
 ### Unit tests
 
 ```bash
-composer install
+composer update
 composer test
 ```
 
