@@ -55,11 +55,12 @@ final class DocBeeDocumentTaskMaterialResource extends AbstractResource
      */
     public function addOrIncrementByMaterialItemId(int $materialItemId, float $quantity): MaterialDTO
     {
-        $existing = $this->findByMaterialItemId($materialItemId);
+        $existing   = $this->findByMaterialItemId($materialItemId);
+        $existingId = $existing?->getId();
 
-        if ($existing !== null) {
+        if ($existing !== null && $existingId !== null) {
             /** @var MaterialDTO */
-            return $this->update($existing->getId(), [
+            return $this->update($existingId, [
                 'amount' => ($existing->getAmount() ?? 0.0) + $quantity,
             ]);
         }

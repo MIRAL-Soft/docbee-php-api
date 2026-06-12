@@ -25,9 +25,15 @@ final class RateLimiter
     /** Maximum delay cap in milliseconds (5 minutes). */
     private const MAX_DELAY_MS = 300_000;
 
+    /**
+     * @param (\Closure(int): void)|null $sleeper Optional sleep implementation, used to make
+     *        retries instant in tests.  Defaults to a real sleep — production behaviour is
+     *        unchanged whether or not this is supplied.
+     */
     public function __construct(
         private readonly int $maxRetries  = 3,
         private readonly int $baseDelayMs = 1_000,
+        private readonly ?\Closure $sleeper = null,
     ) {}
 
     /**
@@ -116,7 +122,8 @@ final class RateLimiter
         }
 
         // Pure exponential backoff: 1 s → 2 s → 4 s …
-        return min($this->baseDelayMs * (2 ** $attempt), self::MAX_DELAY_MS);
+        // (int) — 2 ** $attempt is typed as float by PHPStan; the delay is always whole ms.
+        return (int) min($this->baseDelayMs * (2 ** $attempt), self::MAX_DELAY_MS);
     }
 
     /**
@@ -127,6 +134,11 @@ final class RateLimiter
      */
     private function sleep(int $delayMs): void
     {
+        if ($this->sleeper !== null) {
+            ($this->sleeper)($delayMs);
+            return;
+        }
+
         $seconds = intdiv($delayMs, 1_000);
         $microseconds = ($delayMs % 1_000) * 1_000;
 

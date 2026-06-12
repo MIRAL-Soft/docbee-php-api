@@ -89,7 +89,7 @@ final class SecurityReviewFixesTest extends TestCase
         $calls    = 0;
         $response = new \GuzzleHttp\Psr7\Response(500);
 
-        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 1);
+        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 1, sleeper: static fn(int $ms) => null);
         try {
             $limiter->execute(function () use (&$calls, $response) {
                 $calls++;
@@ -105,7 +105,7 @@ final class SecurityReviewFixesTest extends TestCase
     public function testServerErrorIsStillRetriedForIdempotentRequests(): void
     {
         $calls = 0;
-        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 1);
+        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 1, sleeper: static fn(int $ms) => null);
         try {
             $limiter->execute(function () use (&$calls) {
                 $calls++;
@@ -120,7 +120,7 @@ final class SecurityReviewFixesTest extends TestCase
     public function testRateLimitIsRetriedEvenWithoutServerErrorRetries(): void
     {
         $calls = 0;
-        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 1);
+        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 1, sleeper: static fn(int $ms) => null);
         $result  = $limiter->execute(function () use (&$calls) {
             $calls++;
             // 429 then success — a rate-limited request was never processed, retry is safe.

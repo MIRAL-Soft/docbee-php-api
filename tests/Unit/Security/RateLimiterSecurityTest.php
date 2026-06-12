@@ -26,7 +26,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function testSuccessResponseReturnedImmediately(): void
     {
-        $limiter  = new RateLimiter(maxRetries: 3, baseDelayMs: 0);
+        $limiter  = new RateLimiter(maxRetries: 3, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls    = 0;
         $response = $limiter->execute(function () use (&$calls): Response {
             $calls++;
@@ -39,7 +39,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function testClientError4xxReturnedImmediately(): void
     {
-        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         $response = $limiter->execute(function () use (&$calls): Response {
@@ -53,7 +53,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function test401ReturnedImmediately(): void
     {
-        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         $response = $limiter->execute(function () use (&$calls): Response {
@@ -67,7 +67,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function test404ReturnedImmediately(): void
     {
-        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         $response = $limiter->execute(function () use (&$calls): Response {
@@ -85,7 +85,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function test429IsRetriedUpToMaxRetries(): void
     {
-        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         // Always return 429 so we exhaust all retries.
@@ -106,13 +106,13 @@ final class RateLimiterSecurityTest extends TestCase
     {
         $this->expectException(RateLimitException::class);
 
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $limiter->execute(fn() => new Response(429));
     }
 
     public function test429ResolvedOnRetryDoesNotThrow(): void
     {
-        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 3, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         $response = $limiter->execute(function () use (&$calls): Response {
@@ -131,7 +131,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function test500IsRetriedUpToMaxRetries(): void
     {
-        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         try {
@@ -150,7 +150,7 @@ final class RateLimiterSecurityTest extends TestCase
     {
         $this->expectException(ServerException::class);
 
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $limiter->execute(fn() => new Response(503));
     }
 
@@ -162,7 +162,7 @@ final class RateLimiterSecurityTest extends TestCase
     {
         // We just verify the value is accepted without throwing – actual delay
         // is not testable in unit tests without mocking usleep.
-        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 2, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         $response = $limiter->execute(function () use (&$calls): Response {
@@ -181,7 +181,7 @@ final class RateLimiterSecurityTest extends TestCase
         // internal 5-minute maximum so the process is not locked indefinitely.
         // We verify the cap by using Retry-After=0 for a code path that would
         // exercise the cap logic, and that no exception is thrown unexpectedly.
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         try {
@@ -201,7 +201,7 @@ final class RateLimiterSecurityTest extends TestCase
     {
         // A malicious or buggy server may send a negative Retry-After value.
         // This must NOT be forwarded as-is to usleep() (negative microseconds).
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         try {
@@ -219,7 +219,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function testZeroRetryAfterIsSafelyHandled(): void
     {
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         try {
@@ -237,7 +237,7 @@ final class RateLimiterSecurityTest extends TestCase
     public function testNonNumericRetryAfterFallsBackToExponentialBackoff(): void
     {
         // An HTTP-date or garbage value must not crash the limiter.
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         try {
@@ -254,7 +254,7 @@ final class RateLimiterSecurityTest extends TestCase
 
     public function testMissingRetryAfterHeaderFallsBackToExponentialBackoff(): void
     {
-        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0);
+        $limiter = new RateLimiter(maxRetries: 1, baseDelayMs: 0, sleeper: static fn(int $ms) => null);
         $calls   = 0;
 
         try {
