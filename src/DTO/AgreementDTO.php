@@ -16,13 +16,22 @@ final class AgreementDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** component identifiers */
+        /**
+         * component identifiers
+         * @var list<int>|null
+         */
         private readonly ?array $components,
         /** finished */
         private readonly ?bool $finished,
-        /** invoice identifiers */
+        /**
+         * invoice identifiers
+         * @var list<int>|null
+         */
         private readonly ?array $invoices,
-        /** period identifiers */
+        /**
+         * period identifiers
+         * @var list<int>|null
+         */
         private readonly ?array $periods,
         /** type */
         private readonly ?string $type,
@@ -34,11 +43,17 @@ final class AgreementDTO extends AbstractDTO
         private ?int $customer,
         /** customerLocation identifier */
         private ?int $customerLocation,
-        /** customerObject identifiers */
+        /**
+         * customerObject identifiers
+         * @var list<int>|null
+         */
         private ?array $customerObjects,
         /** description */
         private ?string $description,
-        /** file identifiers */
+        /**
+         * file identifiers
+         * @var list<int>|null
+         */
         private ?array $infoFiles,
         /** invoiceCycle */
         private ?string $invoiceCycle,
@@ -64,6 +79,9 @@ final class AgreementDTO extends AbstractDTO
         private ?bool $withinWorkingSla
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -97,6 +115,9 @@ final class AgreementDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -128,17 +149,22 @@ final class AgreementDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<int>|null */
     public function getComponents(): ?array { return $this->components; }
     public function getFinished(): ?bool { return $this->finished; }
+    /** @return list<int>|null */
     public function getInvoices(): ?array { return $this->invoices; }
+    /** @return list<int>|null */
     public function getPeriods(): ?array { return $this->periods; }
     public function getType(): ?string { return $this->type; }
     public function getAgreementCategory(): ?int { return $this->agreementCategory; }
     public function getAutoRenew(): ?bool { return $this->autoRenew; }
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    /** @return list<int>|null */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function getDescription(): ?string { return $this->description; }
+    /** @return list<int>|null */
     public function getInfoFiles(): ?array { return $this->infoFiles; }
     public function getInvoiceCycle(): ?string { return $this->invoiceCycle; }
     public function getName(): ?string { return $this->name; }

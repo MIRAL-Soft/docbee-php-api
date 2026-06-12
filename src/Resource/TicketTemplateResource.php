@@ -18,6 +18,13 @@ final class TicketTemplateResource extends AbstractResource
     protected string $dtoClass = TicketTemplateDTO::class;
     protected string $listKey  = 'ticketTemplate';
 
+    /**
+     * @return array<string, mixed>
+     */
     public function clone(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/clone", []); }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function createPayloadForTicket(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/createPayloadForTicket"); }
 }

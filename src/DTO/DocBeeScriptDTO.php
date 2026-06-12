@@ -24,6 +24,9 @@ final class DocBeeScriptDTO extends AbstractDTO
         private ?string $script
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -37,6 +40,9 @@ final class DocBeeScriptDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -53,6 +59,9 @@ final class DocBeeScriptDTO extends AbstractDTO
     public function getLogFile(): ?int { return $this->logFile; }
     public function getDescription(): ?string { return $this->description; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return list<DocBeeScriptParameterDTO>|null
+     */
     public function getParams(): ?array { return $this->params; }
     public function getScript(): ?string { return $this->script; }
 }

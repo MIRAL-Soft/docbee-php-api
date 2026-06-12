@@ -14,12 +14,18 @@ final class DepartmentProfileDTO extends AbstractDTO
         private readonly ?int $id,
         /** REST API Link */
         private readonly ?string $link,
-        /** department identifiers */
+        /**
+         * department identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $links,
         /** name */
         private ?string $name
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -31,6 +37,9 @@ final class DepartmentProfileDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -42,6 +51,9 @@ final class DepartmentProfileDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getLinks(): ?array { return $this->links; }
     public function getName(): ?string { return $this->name; }
 }

@@ -24,7 +24,10 @@ final class ProtocolTemplateDTO extends AbstractDTO
         private readonly ?string $releasedDate,
         /** revision */
         private readonly ?int $revision,
-        /** actions */
+        /**
+         * actions
+         * @var array<int|string, mixed>|null
+         */
         private ?array $actions,
         /** additionalEmails */
         private ?string $additionalEmails,
@@ -34,15 +37,27 @@ final class ProtocolTemplateDTO extends AbstractDTO
         private ?bool $allowInheritData,
         /** HTML color code in hexadecimal representation */
         private ?string $color,
-        /** entryStyles */
+        /**
+         * entryStyles
+         * @var array<int|string, mixed>|null
+         */
         private ?array $entryStyles,
         /** finishText */
         private ?string $finishText,
-        /** groupContainers, */
+        /**
+         * groupContainers,
+         * @var array<int|string, mixed>|null
+         */
         private ?array $groupContainers,
-        /** groupStyles */
+        /**
+         * groupStyles
+         * @var array<int|string, mixed>|null
+         */
         private ?array $groupStyles,
-        /** groups */
+        /**
+         * groups
+         * @var array<int|string, mixed>|null
+         */
         private ?array $groups,
         /** hide protocols with inheritable data */
         private ?bool $hideDocumentViewInList,
@@ -158,15 +173,30 @@ final class ProtocolTemplateDTO extends AbstractDTO
     public function getReleased(): ?bool { return $this->released; }
     public function getReleasedDate(): ?string { return $this->releasedDate; }
     public function getRevision(): ?int { return $this->revision; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getActions(): ?array { return $this->actions; }
     public function getAdditionalEmails(): ?string { return $this->additionalEmails; }
     public function getAdditionalFaxes(): ?string { return $this->additionalFaxes; }
     public function getAllowInheritData(): ?bool { return $this->allowInheritData; }
     public function getColor(): ?string { return $this->color; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getEntryStyles(): ?array { return $this->entryStyles; }
     public function getFinishText(): ?string { return $this->finishText; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getGroupContainers(): ?array { return $this->groupContainers; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getGroupStyles(): ?array { return $this->groupStyles; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getGroups(): ?array { return $this->groups; }
     public function getHideDocumentViewInList(): ?bool { return $this->hideDocumentViewInList; }
     public function getInheritCriterion(): ?string { return $this->inheritCriterion; }

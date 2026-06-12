@@ -19,5 +19,6 @@ final class AwayResource extends AbstractResource
     protected string $listKey  = 'away';
 
     public function export(int $exportProfileId): string { return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}"); }
+    /** @param int[] $ids */
     public function exportByIds(int $exportProfileId, array $ids): string { return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
 }

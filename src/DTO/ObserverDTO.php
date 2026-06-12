@@ -32,7 +32,10 @@ final class ObserverDTO extends AbstractDTO
         private ?string $telefax,
         /** message delivery method */
         private ?string $messageDelivery,
-        /** list of custom fields */
+        /**
+         * list of custom fields
+         * @var array<int|string, mixed>|null
+         */
         private ?array $customFields
     ) {}
 
@@ -78,5 +81,8 @@ final class ObserverDTO extends AbstractDTO
     public function getEmail(): ?string { return $this->email; }
     public function getTelefax(): ?string { return $this->telefax; }
     public function getMessageDelivery(): ?string { return $this->messageDelivery; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getCustomFields(): ?array { return $this->customFields; }
 }

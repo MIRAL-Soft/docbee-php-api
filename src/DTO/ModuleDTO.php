@@ -12,7 +12,10 @@ final class ModuleDTO extends AbstractDTO
     public function __construct(
         /** enabled state */
         private ?bool $enabled,
-        /** module settings */
+        /**
+         * module settings
+         * @var array<string, mixed>|null
+         */
         private ?array $settings
     ) {}
 
@@ -36,5 +39,8 @@ final class ModuleDTO extends AbstractDTO
 
     public function getId(): ?int { return null; }
     public function isEnabled(): ?bool { return $this->enabled; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getSettings(): ?array { return $this->settings; }
 }

@@ -7,13 +7,12 @@ namespace miralsoft\docbee\api\Resource;
 use miralsoft\docbee\api\DTO\CustomerStatusDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 /**
  * Provides access to Docbee CustomerStatus records.
  *
  * @extends AbstractResource<CustomerStatusDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class CustomerStatusResource extends AbstractResource
 {
     use NotSearchable;

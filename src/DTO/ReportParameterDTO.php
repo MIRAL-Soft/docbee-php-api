@@ -18,7 +18,9 @@ final class ReportParameterDTO extends AbstractDTO
         private ?string $typeName,
         /** type */
         private ?string $type,
-        /** @var array|null ids */
+        /**
+         * @var array<int|string, mixed>|null ids
+         */
         private ?array $ids
     ) {}
 
@@ -48,5 +50,8 @@ final class ReportParameterDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getTypeName(): ?string { return $this->typeName; }
     public function getType(): ?string { return $this->type; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getIds(): ?array { return $this->ids; }
 }

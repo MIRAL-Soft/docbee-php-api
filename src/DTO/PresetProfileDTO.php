@@ -14,9 +14,15 @@ final class PresetProfileDTO extends AbstractDTO
         private readonly ?int $id,
         /** REST API Link */
         private readonly ?string $link,
-        /** presetValue identifiers */
+        /**
+         * presetValue identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $presetValues,
-        /** user identifiers */
+        /**
+         * user identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $users,
         /** name */
         private ?string $name
@@ -44,7 +50,13 @@ final class PresetProfileDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getPresetValues(): ?array { return $this->presetValues; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getUsers(): ?array { return $this->users; }
     public function getName(): ?string { return $this->name; }
 }

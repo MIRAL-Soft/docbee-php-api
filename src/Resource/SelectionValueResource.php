@@ -31,6 +31,8 @@ final class SelectionValueResource extends AbstractResource
      * must never be able to alter the request path or query.
      *
      * @throws \InvalidArgumentException when $scanCode is empty.
+     *
+     * @return array<string, mixed>
      */
     public function findByScanCode(int $selectionCategoryId, string $scanCode): array
     {
@@ -42,6 +44,10 @@ final class SelectionValueResource extends AbstractResource
         );
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(int $selectionCategoryId, array $data): array
     {
         return $this->http->post("selectionCategory/{$selectionCategoryId}/selectionValue/guess", $data);

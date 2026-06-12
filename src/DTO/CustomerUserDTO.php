@@ -16,7 +16,10 @@ final class CustomerUserDTO extends AbstractDTO
         private readonly ?string $link,
         /** customerContact identifier */
         private ?int $customerContact,
-        /** customerProfile identifiers */
+        /**
+         * customerProfile identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $customerProfiles,
         /** email */
         private ?string $email,
@@ -34,7 +37,10 @@ final class CustomerUserDTO extends AbstractDTO
         private ?string $shorthandName,
         /** telephone */
         private ?string $telephone,
-        /** ticketCategory identifiers */
+        /**
+         * ticketCategory identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $ticketCategories,
         /** use2FA */
         private ?bool $use2FA,
@@ -42,6 +48,9 @@ final class CustomerUserDTO extends AbstractDTO
         private ?string $username
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -64,6 +73,9 @@ final class CustomerUserDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -87,6 +99,9 @@ final class CustomerUserDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getCustomerProfiles(): ?array { return $this->customerProfiles; }
     public function getEmail(): ?string { return $this->email; }
     public function getEnabled(): ?bool { return $this->enabled; }
@@ -96,6 +111,9 @@ final class CustomerUserDTO extends AbstractDTO
     public function getPermissionGroup(): ?int { return $this->permissionGroup; }
     public function getShorthandName(): ?string { return $this->shorthandName; }
     public function getTelephone(): ?string { return $this->telephone; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getTicketCategories(): ?array { return $this->ticketCategories; }
     public function getUse2FA(): ?bool { return $this->use2FA; }
     public function getUsername(): ?string { return $this->username; }

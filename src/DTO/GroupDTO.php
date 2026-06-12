@@ -18,7 +18,9 @@ final class GroupDTO extends AbstractDTO
         private readonly ?string $link,
         /** component */
         private readonly ?int $component,
-        /** @var array|null list of entryMappings */
+        /**
+         * @var array<int|string, mixed>|null list of entryMappings
+         */
         private ?array $entryMappings,
         /** name */
         private ?string $name,
@@ -114,6 +116,9 @@ final class GroupDTO extends AbstractDTO
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
     public function getComponent(): ?int { return $this->component; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getEntryMappings(): ?array { return $this->entryMappings; }
     public function getName(): ?string { return $this->name; }
     public function getInternalName(): ?string { return $this->internalName; }

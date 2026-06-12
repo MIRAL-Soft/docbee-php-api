@@ -82,6 +82,7 @@ final class ServiceProviderUserDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getServiceProvider(): ?int { return $this->serviceProvider; }
+    /** @return list<CustomFieldValueDTO>|null */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getEmail(): ?string { return $this->email; }
     public function getEnabled(): ?bool { return $this->enabled; }

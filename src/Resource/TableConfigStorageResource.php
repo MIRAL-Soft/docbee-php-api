@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\TableConfigStorageDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee TableConfigStorage records.
  *
  * @extends AbstractResource<TableConfigStorageDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class TableConfigStorageResource extends AbstractResource
 {
     use NotSearchable;

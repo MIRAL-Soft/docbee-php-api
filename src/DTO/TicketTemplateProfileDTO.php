@@ -16,7 +16,7 @@ final class TicketTemplateProfileDTO extends AbstractDTO
         private readonly ?string $link,
         /** name */
         private ?string $name,
-        /** @var array|null list of ticketTemplates */
+        /** @var list<int>|null list of ticketTemplate identifiers */
         private ?array $ticketTemplates
     ) {}
 
@@ -43,5 +43,6 @@ final class TicketTemplateProfileDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getName(): ?string { return $this->name; }
+    /** @return list<int>|null */
     public function getTicketTemplates(): ?array { return $this->ticketTemplates; }
 }

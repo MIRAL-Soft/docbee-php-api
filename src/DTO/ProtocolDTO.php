@@ -44,7 +44,10 @@ final class ProtocolDTO extends AbstractDTO
         private ?int $customerContact,
         /** customerLocation identifier */
         private ?int $customerLocation,
-        /** customerObject identifiers */
+        /**
+         * customerObject identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $customerObjects,
         /** docBeeDocument identifier */
         private ?int $docBeeDocument,
@@ -52,13 +55,20 @@ final class ProtocolDTO extends AbstractDTO
         private ?string $dueDate,
         /** file identifier */
         private ?int $file,
-        /** list of protocolGroupData */
+        /**
+         * list of protocolGroupData
+         * @var array<int|string, mixed>|null
+         */
         private ?array $groupData,
-        /** @var ProtocolGroupDataDTO[]|null list of protocol groups */
+        /**
+         * @var list<ProtocolGroupDataDTO>|null list of protocol groups
+         */
         private ?array $groups,
         /** user or queue identifier */
         private ?int $personInCharge,
-        /** @var ProtocolEntryDTO[]|null list of protocol entries */
+        /**
+         * @var list<ProtocolEntryDTO>|null list of protocol entries
+         */
         private ?array $protocolEntries,
         /** sendMessage */
         private ?bool $sendMessage,
@@ -141,13 +151,25 @@ final class ProtocolDTO extends AbstractDTO
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function getDocBeeDocument(): ?int { return $this->docBeeDocument; }
     public function getDueDate(): ?string { return $this->dueDate; }
     public function getFile(): ?int { return $this->file; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getGroupData(): ?array { return $this->groupData; }
+    /**
+     * @return list<ProtocolGroupDataDTO>|null
+     */
     public function getGroups(): ?array { return $this->groups; }
     public function getPersonInCharge(): ?int { return $this->personInCharge; }
+    /**
+     * @return list<ProtocolEntryDTO>|null
+     */
     public function getProtocolEntries(): ?array { return $this->protocolEntries; }
     public function getSendMessage(): ?bool { return $this->sendMessage; }
     public function getTicket(): ?int { return $this->ticket; }

@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\TicketBoardProfileDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee TicketBoardProfile records.
  *
  * @extends AbstractResource<TicketBoardProfileDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class TicketBoardProfileResource extends AbstractResource
 {
     use NotSearchable;

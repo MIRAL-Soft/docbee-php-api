@@ -22,7 +22,10 @@ final class ContingentDTO extends AbstractDTO
         private readonly ?string $behavior,
         /** customer identifier */
         private readonly ?int $customer,
-        /** item identifiers */
+        /**
+         * item identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $items,
         /** moneyStat */
         private readonly ?float $moneyStat,
@@ -32,7 +35,10 @@ final class ContingentDTO extends AbstractDTO
         private readonly ?string $type,
         /** deactivated */
         private ?bool $deactivated,
-        /** file identifiers */
+        /**
+         * file identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $files,
         /** moneyThreshold */
         private ?float $moneyThreshold,
@@ -46,6 +52,9 @@ final class ContingentDTO extends AbstractDTO
         private ?bool $visibleForCustomer
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -70,6 +79,9 @@ final class ContingentDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -90,11 +102,17 @@ final class ContingentDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getBehavior(): ?string { return $this->behavior; }
     public function getCustomer(): ?int { return $this->customer; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getItems(): ?array { return $this->items; }
     public function getMoneyStat(): ?float { return $this->moneyStat; }
     public function getTimeStat(): ?int { return $this->timeStat; }
     public function getType(): ?string { return $this->type; }
     public function isDeactivated(): ?bool { return $this->deactivated; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getFiles(): ?array { return $this->files; }
     public function getMoneyThreshold(): ?float { return $this->moneyThreshold; }
     public function getName(): ?string { return $this->name; }

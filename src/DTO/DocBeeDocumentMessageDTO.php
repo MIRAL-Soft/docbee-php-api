@@ -26,7 +26,10 @@ final class DocBeeDocumentMessageDTO extends AbstractDTO
         private readonly ?string $senderType,
         /** user identifier */
         private readonly ?int $user,
-        /** file identifiers */
+        /**
+         * file identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $attachments,
         /** content */
         private ?string $content,
@@ -38,6 +41,9 @@ final class DocBeeDocumentMessageDTO extends AbstractDTO
         private ?string $subject
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -58,6 +64,9 @@ final class DocBeeDocumentMessageDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -78,6 +87,9 @@ final class DocBeeDocumentMessageDTO extends AbstractDTO
     public function getSender(): ?string { return $this->sender; }
     public function getSenderType(): ?string { return $this->senderType; }
     public function getUser(): ?int { return $this->user; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getAttachments(): ?array { return $this->attachments; }
     public function getContent(): ?string { return $this->content; }
     public function getHidden(): ?bool { return $this->hidden; }

@@ -61,6 +61,7 @@ final class SelectionCategoryDTO extends AbstractDTO
     public function getCreated(): ?string { return $this->created; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<CustomFieldMappingDTO>|null */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getDetailsPattern(): ?string { return $this->detailsPattern; }
     public function getName(): ?string { return $this->name; }

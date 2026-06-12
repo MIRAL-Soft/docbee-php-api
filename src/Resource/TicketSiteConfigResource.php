@@ -17,6 +17,9 @@ final class TicketSiteConfigResource
         return SiteConfigDTO::fromArray($this->http->get('ticketSiteConfig'));
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(array $data): SiteConfigDTO
     {
         return SiteConfigDTO::fromArray($this->http->put('ticketSiteConfig', $data));

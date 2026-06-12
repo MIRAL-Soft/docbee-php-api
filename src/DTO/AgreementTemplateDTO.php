@@ -16,7 +16,10 @@ final class AgreementTemplateDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** component template identifiers */
+        /**
+         * component template identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $components,
         /** agreementCategory identifier */
         private ?int $agreementCategory,
@@ -52,6 +55,9 @@ final class AgreementTemplateDTO extends AbstractDTO
         private ?bool $withinWorkingSla
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -79,6 +85,9 @@ final class AgreementTemplateDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -105,6 +114,9 @@ final class AgreementTemplateDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getComponents(): ?array { return $this->components; }
     public function getAgreementCategory(): ?int { return $this->agreementCategory; }
     public function getAutoRenew(): ?bool { return $this->autoRenew; }

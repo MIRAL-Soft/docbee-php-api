@@ -10,55 +10,55 @@ namespace miralsoft\docbee\api\DTO;
 final class SearchDTO extends AbstractDTO
 {
     public function __construct(
-        /** agreements search results */
+        /** @var list<mixed>|null agreements search results */
         private readonly ?array $agreements,
-        /** cost estimations search results */
+        /** @var list<mixed>|null cost estimations search results */
         private readonly ?array $costEstimations,
-        /** SLA profiles search results */
+        /** @var list<mixed>|null SLA profiles search results */
         private readonly ?array $slaProfiles,
-        /** object categories search results */
+        /** @var list<mixed>|null object categories search results */
         private readonly ?array $objectCategories,
-        /** objects search results */
+        /** @var list<mixed>|null objects search results */
         private readonly ?array $objects,
-        /** customer objects search results */
+        /** @var list<mixed>|null customer objects search results */
         private readonly ?array $customerObjects,
-        /** customer contacts search results */
+        /** @var list<mixed>|null customer contacts search results */
         private readonly ?array $customerContacts,
-        /** customer locations search results */
+        /** @var list<mixed>|null customer locations search results */
         private readonly ?array $customerLocations,
-        /** customer profiles search results */
+        /** @var list<mixed>|null customer profiles search results */
         private readonly ?array $customerProfiles,
-        /** customers search results */
+        /** @var list<mixed>|null customers search results */
         private readonly ?array $customers,
-        /** DocBee scripts search results */
+        /** @var list<mixed>|null DocBee scripts search results */
         private readonly ?array $docBeeScripts,
-        /** contingents search results */
+        /** @var list<mixed>|null contingents search results */
         private readonly ?array $contingents,
-        /** DocBee documents search results */
+        /** @var list<mixed>|null DocBee documents search results */
         private readonly ?array $docBeeDocuments,
-        /** service types search results */
+        /** @var list<mixed>|null service types search results */
         private readonly ?array $serviceTypes,
-        /** priorities search results */
+        /** @var list<mixed>|null priorities search results */
         private readonly ?array $priorities,
-        /** service providers search results */
+        /** @var list<mixed>|null service providers search results */
         private readonly ?array $serviceProviders,
-        /** protocols search results */
+        /** @var list<mixed>|null protocols search results */
         private readonly ?array $protocols,
-        /** protocol templates search results */
+        /** @var list<mixed>|null protocol templates search results */
         private readonly ?array $protocolTemplates,
-        /** protocol template types search results */
+        /** @var list<mixed>|null protocol template types search results */
         private readonly ?array $protocolTemplateTypes,
-        /** status search results */
+        /** @var list<mixed>|null status search results */
         private readonly ?array $status,
-        /** ticket categories search results */
+        /** @var list<mixed>|null ticket categories search results */
         private readonly ?array $ticketCategories,
-        /** ticket link types search results */
+        /** @var list<mixed>|null ticket link types search results */
         private readonly ?array $ticketLinkTypes,
-        /** ticket messages search results */
+        /** @var list<mixed>|null ticket messages search results */
         private readonly ?array $ticketMessages,
-        /** tickets search results */
+        /** @var list<mixed>|null tickets search results */
         private readonly ?array $tickets,
-        /** users search results */
+        /** @var list<mixed>|null users search results */
         private readonly ?array $users
     ) {}
 
@@ -101,29 +101,54 @@ final class SearchDTO extends AbstractDTO
     }
 
     public function getId(): ?int { return null; }
+    /** @return list<mixed>|null */
     public function getAgreements(): ?array { return $this->agreements; }
+    /** @return list<mixed>|null */
     public function getCostEstimations(): ?array { return $this->costEstimations; }
+    /** @return list<mixed>|null */
     public function getSlaProfiles(): ?array { return $this->slaProfiles; }
+    /** @return list<mixed>|null */
     public function getObjectCategories(): ?array { return $this->objectCategories; }
+    /** @return list<mixed>|null */
     public function getObjects(): ?array { return $this->objects; }
+    /** @return list<mixed>|null */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
+    /** @return list<mixed>|null */
     public function getCustomerContacts(): ?array { return $this->customerContacts; }
+    /** @return list<mixed>|null */
     public function getCustomerLocations(): ?array { return $this->customerLocations; }
+    /** @return list<mixed>|null */
     public function getCustomerProfiles(): ?array { return $this->customerProfiles; }
+    /** @return list<mixed>|null */
     public function getCustomers(): ?array { return $this->customers; }
+    /** @return list<mixed>|null */
     public function getDocBeeScripts(): ?array { return $this->docBeeScripts; }
+    /** @return list<mixed>|null */
     public function getContingents(): ?array { return $this->contingents; }
+    /** @return list<mixed>|null */
     public function getDocBeeDocuments(): ?array { return $this->docBeeDocuments; }
+    /** @return list<mixed>|null */
     public function getServiceTypes(): ?array { return $this->serviceTypes; }
+    /** @return list<mixed>|null */
     public function getPriorities(): ?array { return $this->priorities; }
+    /** @return list<mixed>|null */
     public function getServiceProviders(): ?array { return $this->serviceProviders; }
+    /** @return list<mixed>|null */
     public function getProtocols(): ?array { return $this->protocols; }
+    /** @return list<mixed>|null */
     public function getProtocolTemplates(): ?array { return $this->protocolTemplates; }
+    /** @return list<mixed>|null */
     public function getProtocolTemplateTypes(): ?array { return $this->protocolTemplateTypes; }
+    /** @return list<mixed>|null */
     public function getStatus(): ?array { return $this->status; }
+    /** @return list<mixed>|null */
     public function getTicketCategories(): ?array { return $this->ticketCategories; }
+    /** @return list<mixed>|null */
     public function getTicketLinkTypes(): ?array { return $this->ticketLinkTypes; }
+    /** @return list<mixed>|null */
     public function getTicketMessages(): ?array { return $this->ticketMessages; }
+    /** @return list<mixed>|null */
     public function getTickets(): ?array { return $this->tickets; }
+    /** @return list<mixed>|null */
     public function getUsers(): ?array { return $this->users; }
 }

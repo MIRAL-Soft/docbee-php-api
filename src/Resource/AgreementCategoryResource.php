@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\AgreementCategoryDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee AgreementCategory records.
  *
  * @extends AbstractResource<AgreementCategoryDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class AgreementCategoryResource extends AbstractResource
 {
     use NotSearchable;

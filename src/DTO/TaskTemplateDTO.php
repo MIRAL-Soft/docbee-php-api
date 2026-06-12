@@ -16,11 +16,11 @@ final class TaskTemplateDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** materialTemplate identifiers */
+        /** @var list<int>|null materialTemplate identifiers */
         private readonly ?array $materialTemplates,
-        /** planningTimeTemplate identifiers */
+        /** @var list<int>|null planningTimeTemplate identifiers */
         private readonly ?array $planningTimeTemplates,
-        /** workLogTemplate identifiers */
+        /** @var list<int>|null workLogTemplate identifiers */
         private readonly ?array $workLogTemplates,
         /** alternativeLocationAddress */
         private ?string $alternativeLocationAddress,
@@ -38,7 +38,7 @@ final class TaskTemplateDTO extends AbstractDTO
         private ?int $customerContact,
         /** customerLocation identifier */
         private ?int $customerLocation,
-        /** customerObject identifiers */
+        /** @var list<int>|null customerObject identifiers */
         private ?array $customerObjects,
         /** description */
         private ?string $description,
@@ -62,7 +62,7 @@ final class TaskTemplateDTO extends AbstractDTO
         private ?int $serviceType,
         /** templateName */
         private ?string $templateName,
-        /** user identifiers */
+        /** @var list<int>|null user identifiers */
         private ?array $workers
     ) {}
 
@@ -131,8 +131,11 @@ final class TaskTemplateDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<int>|null */
     public function getMaterialTemplates(): ?array { return $this->materialTemplates; }
+    /** @return list<int>|null */
     public function getPlanningTimeTemplates(): ?array { return $this->planningTimeTemplates; }
+    /** @return list<int>|null */
     public function getWorkLogTemplates(): ?array { return $this->workLogTemplates; }
     public function getAlternativeLocationAddress(): ?string { return $this->alternativeLocationAddress; }
     public function getAlternativeLocationLatitude(): ?float { return $this->alternativeLocationLatitude; }
@@ -142,6 +145,7 @@ final class TaskTemplateDTO extends AbstractDTO
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    /** @return list<int>|null */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function getDescription(): ?string { return $this->description; }
     public function getDueDateOffset(): ?int { return $this->dueDateOffset; }
@@ -154,5 +158,6 @@ final class TaskTemplateDTO extends AbstractDTO
     public function getReturnEstimate(): ?int { return $this->returnEstimate; }
     public function getServiceType(): ?int { return $this->serviceType; }
     public function getTemplateName(): ?string { return $this->templateName; }
+    /** @return list<int>|null */
     public function getWorkers(): ?array { return $this->workers; }
 }

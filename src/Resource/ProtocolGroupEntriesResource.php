@@ -27,7 +27,12 @@ final class ProtocolGroupEntriesResource extends AbstractResource
         parent::__construct($http);
     }
 
-    /** Replace all group instances at once. */
+    /**
+     * Replace all group instances at once.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateAll(array $data): array
     {
         return $this->http->put($this->endpoint, $data);

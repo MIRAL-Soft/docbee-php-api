@@ -16,7 +16,7 @@ final class UserProfileDTO extends AbstractDTO
         private readonly ?string $link,
         /** name */
         private ?string $name,
-        /** User users */
+        /** @var list<int>|null user identifiers */
         private ?array $users
     ) {}
 
@@ -43,5 +43,6 @@ final class UserProfileDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getName(): ?string { return $this->name; }
+    /** @return list<int>|null */
     public function getUsers(): ?array { return $this->users; }
 }

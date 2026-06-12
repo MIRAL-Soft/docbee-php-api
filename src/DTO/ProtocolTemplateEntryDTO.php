@@ -22,7 +22,9 @@ final class ProtocolTemplateEntryDTO extends AbstractDTO
         private readonly ?string $releasedDate,
         /** revision */
         private readonly ?int $revision,
-        /** @var array|null list of elements */
+        /**
+         * @var array<int|string, mixed>|null list of elements
+         */
         private readonly ?array $elements,
         /** name */
         private ?string $name,
@@ -177,6 +179,9 @@ final class ProtocolTemplateEntryDTO extends AbstractDTO
     public function getReleased(): ?bool { return $this->released; }
     public function getReleasedDate(): ?string { return $this->releasedDate; }
     public function getRevision(): ?int { return $this->revision; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getElements(): ?array { return $this->elements; }
     public function getName(): ?string { return $this->name; }
     public function getColumnName(): ?string { return $this->columnName; }

@@ -12,7 +12,11 @@ final class FileResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** Upload a file. */
+    /**
+     * Upload a file.
+     *
+     * @param array<string, mixed> $data
+     */
     public function upload(array $data): FileDTO
     {
         return FileDTO::fromArray($this->http->post('file/upload', $data));

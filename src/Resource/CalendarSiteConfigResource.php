@@ -17,6 +17,7 @@ final class CalendarSiteConfigResource
         return SiteConfigDTO::fromArray($this->http->get('calendarSiteConfig'));
     }
 
+    /** @param array<string, mixed> $data */
     public function update(array $data): SiteConfigDTO
     {
         return SiteConfigDTO::fromArray($this->http->put('calendarSiteConfig', $data));

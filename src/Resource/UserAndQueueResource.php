@@ -17,6 +17,10 @@ final class UserAndQueueResource extends AbstractResource
     protected string $dtoClass = UserAndQueueDTO::class;
     protected string $listKey  = 'userAndQueue';
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(array $data): array
     {
         return $this->http->post("{$this->endpoint}/guess", $data);

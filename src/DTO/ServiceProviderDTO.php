@@ -58,6 +58,7 @@ final class ServiceProviderDTO extends AbstractDTO
     public function getEmail(): ?string { return $this->email; }
     public function getNumber(): ?string { return $this->number; }
     public function getShortName(): ?string { return $this->shortName; }
+    /** @return list<CustomFieldValueDTO>|null */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getName(): ?string { return $this->name; }
 }

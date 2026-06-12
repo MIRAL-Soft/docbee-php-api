@@ -133,6 +133,7 @@ final class TicketMailParserConfigDTO extends AbstractDTO
     public function getMailParserConfig(): mixed { return $this->mailParserConfig; }
     public function getName(): ?string { return $this->name; }
     public function getNewStatus(): mixed { return $this->newStatus; }
+    /** @return list<TagDTO>|null */
     public function getNewTags(): ?array { return $this->newTags; }
     public function getNewTicketResponseMessageTemplate(): mixed { return $this->newTicketResponseMessageTemplate; }
     public function getRequireMandantShotnameInSubject(): ?bool { return $this->requireMandantShotnameInSubject; }

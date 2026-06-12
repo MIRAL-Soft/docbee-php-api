@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\ProtocolTemplateEntryDTO;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee ProtocolTemplateEntry records.
  *
  * @extends AbstractResource<ProtocolTemplateEntryDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class ProtocolTemplateEntryResource extends AbstractResource
 {
     use NotSearchable;

@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\ObserverUserDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee ObserverUser records.
  *
  * @extends AbstractResource<ObserverUserDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class ObserverUserResource extends AbstractResource
 {
     use NotSearchable;

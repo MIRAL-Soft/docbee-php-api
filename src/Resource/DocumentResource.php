@@ -311,7 +311,12 @@ final class DocumentResource extends AbstractResource
         return $results;
     }
 
+    /** @return array<string, mixed> */
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
 
     /**
@@ -487,7 +492,7 @@ final class DocumentResource extends AbstractResource
      * `erpReferenceNumber`, and `billable` via its `$overrides` parameter.
      *
      * @param int   $templateId Docbee template ID (used as `templateId` in the payload).
-     * @param array $data       Additional fields merged into the request body.
+     * @param array<string, mixed> $data       Additional fields merged into the request body.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function fromTemplate(int $templateId, array $data = []): DocBeeDocumentDTO
@@ -525,7 +530,7 @@ final class DocumentResource extends AbstractResource
      * ```
      *
      * @param int   $templateId Docbee document template ID.
-     * @param array $overrides  Fields merged into the template payload before creation.
+     * @param array<string, mixed> $overrides  Fields merged into the template payload before creation.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function createFromTemplate(int $templateId, array $overrides = []): DocBeeDocumentDTO
@@ -555,12 +560,33 @@ final class DocumentResource extends AbstractResource
         return DocBeeDocumentDTO::fromArray($this->http->get("{$this->endpoint}/findByExternalId/" . rawurlencode($externalId)));
     }
     public function clone(int $id): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function approve(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/approve", $data); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function finish(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/finish", $data); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function cancel(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/cancel", $data); }
     public function cancelAndClone(int $id): DocBeeDocumentDTO { return DocBeeDocumentDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/cancelAndClone", [])); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function invoice(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/invoice", $data); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function preFinish(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/preFinish", $data); }
+    /** @return array<string, mixed> */
     public function releaseDraft(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/releaseDraft", []); }
     /**
      * Renders a single document (Leistung) as its "Leistungsnachweis" PDF and returns the raw bytes.
@@ -598,9 +624,22 @@ final class DocumentResource extends AbstractResource
      */
     public function exportPdfById(int $docId): string { return $this->preview($docId); }
 
+    /** @return array<string, mixed> */
     public function getMessageData(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/messageData"); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function poke(int $id, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/poke", $data); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function reply(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/reply/{$messageId}", $data); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function forward(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/forward/{$messageId}", $data); }
     /**
      * Exports all documents matching a given export profile and returns raw file bytes.

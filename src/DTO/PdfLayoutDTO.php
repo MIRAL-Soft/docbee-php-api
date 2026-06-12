@@ -20,7 +20,10 @@ final class PdfLayoutDTO extends AbstractDTO
         /** name */
         private ?string $name,
         private mixed $otherPageLayout,
-        /** settings */
+        /**
+         * settings
+         * @var array<string, mixed>|null
+         */
         private ?array $settings,
         /** tableConfigStorage identifier */
         private ?int $tableConfigStorage,
@@ -64,6 +67,9 @@ final class PdfLayoutDTO extends AbstractDTO
     public function getIsDefault(): ?bool { return $this->isDefault; }
     public function getName(): ?string { return $this->name; }
     public function getOtherPageLayout(): mixed { return $this->otherPageLayout; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getSettings(): ?array { return $this->settings; }
     public function getTableConfigStorage(): ?int { return $this->tableConfigStorage; }
     public function getType(): ?string { return $this->type; }

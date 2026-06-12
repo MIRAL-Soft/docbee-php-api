@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\ServiceTypeProfileDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee ServiceTypeProfile records.
  *
  * @extends AbstractResource<ServiceTypeProfileDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class ServiceTypeProfileResource extends AbstractResource
 {
     use NotSearchable;

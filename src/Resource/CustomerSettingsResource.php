@@ -17,6 +17,7 @@ final class CustomerSettingsResource
         return CustomerSettingsDTO::fromArray($this->http->get('customerSettings'));
     }
 
+    /** @param array<string, mixed> $data */
     public function update(array $data): CustomerSettingsDTO
     {
         return CustomerSettingsDTO::fromArray($this->http->put('customerSettings', $data));

@@ -18,7 +18,10 @@ final class DailyClosingConfigDTO extends AbstractDTO
         private ?bool $countOnlyExternalTimes,
         /** if this is active only finished times are counted for minTime */
         private ?bool $countOnlyFinishedTimes,
-        /** mail MessageTemplate */
+        /**
+         * mail MessageTemplate
+         * @var array<string, mixed>|null
+         */
         private ?array $messageTemplate,
         /** minimum time per day in miliseconds */
         private ?int $minTime,
@@ -32,10 +35,16 @@ final class DailyClosingConfigDTO extends AbstractDTO
         private ?bool $showReminder,
         /** offset to midnight */
         private ?int $timeOffset,
-        /** webNotification MessageTemplate */
+        /**
+         * webNotification MessageTemplate
+         * @var array<string, mixed>|null
+         */
         private ?array $webNotificationTemplate
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -55,6 +64,9 @@ final class DailyClosingConfigDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -77,6 +89,9 @@ final class DailyClosingConfigDTO extends AbstractDTO
     public function getCcMailRecievers(): ?string { return $this->ccMailRecievers; }
     public function getCountOnlyExternalTimes(): ?bool { return $this->countOnlyExternalTimes; }
     public function getCountOnlyFinishedTimes(): ?bool { return $this->countOnlyFinishedTimes; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getMessageTemplate(): ?array { return $this->messageTemplate; }
     public function getMinTime(): ?int { return $this->minTime; }
     public function getName(): ?string { return $this->name; }
@@ -84,5 +99,8 @@ final class DailyClosingConfigDTO extends AbstractDTO
     public function getSendWebNotification(): ?bool { return $this->sendWebNotification; }
     public function getShowReminder(): ?bool { return $this->showReminder; }
     public function getTimeOffset(): ?int { return $this->timeOffset; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getWebNotificationTemplate(): ?array { return $this->webNotificationTemplate; }
 }

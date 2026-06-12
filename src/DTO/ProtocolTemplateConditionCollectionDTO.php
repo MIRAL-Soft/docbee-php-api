@@ -18,7 +18,9 @@ final class ProtocolTemplateConditionCollectionDTO extends AbstractDTO
         private readonly ?int $superordinate,
         /** treeLevel */
         private readonly ?int $treeLevel,
-        /** @var array|null list of conditions */
+        /**
+         * @var array<int|string, mixed>|null list of conditions
+         */
         private readonly ?array $conditions,
         /** type */
         private ?string $type
@@ -49,6 +51,9 @@ final class ProtocolTemplateConditionCollectionDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getSuperordinate(): ?int { return $this->superordinate; }
     public function getTreeLevel(): ?int { return $this->treeLevel; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getConditions(): ?array { return $this->conditions; }
     public function getType(): ?string { return $this->type; }
 }

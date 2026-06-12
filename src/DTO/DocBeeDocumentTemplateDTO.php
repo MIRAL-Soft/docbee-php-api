@@ -16,11 +16,20 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** taskTemplate identifiers */
+        /**
+         * taskTemplate identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $taskTemplates,
-        /** travelLogTemplate identifiers */
+        /**
+         * travelLogTemplate identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $travelLogTemplates,
-        /** worker identifiers */
+        /**
+         * worker identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $workers,
         /** billable */
         private ?bool $billable,
@@ -28,7 +37,10 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
         private ?bool $completedSuccessfully,
         /** confidentialTag identifier */
         private ?int $confidentialTag,
-        /** list of customFieldValues */
+        /**
+         * list of customFieldValues
+         * @var array<int, CustomFieldValueDTO>|null
+         */
         private ?array $customFields,
         /** customer identifier */
         private ?int $customer,
@@ -52,7 +64,10 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
         private ?int $personInCharge,
         /** priority identifier */
         private ?int $priority,
-        /** protocolDocumentTemplate identifiers */
+        /**
+         * protocolDocumentTemplate identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $protocolDocumentTemplates,
         /** record travel time after prefinish */
         private ?bool $recordTravelTimeAfterPreFinished,
@@ -62,10 +77,16 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
         private ?int $releaseOffset,
         /** sendMessage */
         private ?bool $sendMessage,
-        /** tag identifiers */
+        /**
+         * tag identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $tags
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -111,6 +132,9 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -142,12 +166,16 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /** @return array<int|string, mixed>|null */
     public function getTaskTemplates(): ?array { return $this->taskTemplates; }
+    /** @return array<int|string, mixed>|null */
     public function getTravelLogTemplates(): ?array { return $this->travelLogTemplates; }
+    /** @return array<int|string, mixed>|null */
     public function getWorkers(): ?array { return $this->workers; }
     public function getBillable(): ?bool { return $this->billable; }
     public function getCompletedSuccessfully(): ?bool { return $this->completedSuccessfully; }
     public function getConfidentialTag(): ?int { return $this->confidentialTag; }
+    /** @return array<int, CustomFieldValueDTO>|null */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
@@ -160,10 +188,12 @@ final class DocBeeDocumentTemplateDTO extends AbstractDTO
     public function getNeedSignature(): ?bool { return $this->needSignature; }
     public function getPersonInCharge(): ?int { return $this->personInCharge; }
     public function getPriority(): ?int { return $this->priority; }
+    /** @return array<int|string, mixed>|null */
     public function getProtocolDocumentTemplates(): ?array { return $this->protocolDocumentTemplates; }
     public function getRecordTravelTimeAfterPreFinished(): ?bool { return $this->recordTravelTimeAfterPreFinished; }
     public function getReferenceNumber(): ?string { return $this->referenceNumber; }
     public function getReleaseOffset(): ?int { return $this->releaseOffset; }
     public function getSendMessage(): ?bool { return $this->sendMessage; }
+    /** @return array<int|string, mixed>|null */
     public function getTags(): ?array { return $this->tags; }
 }

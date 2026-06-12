@@ -5,8 +5,11 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
     public function __construct(
         private readonly ?int $id,
         private readonly ?string $modified,
+        /** @var array<int|string, mixed>|null */
         private readonly ?array $materialTemplates,
+        /** @var array<int|string, mixed>|null */
         private readonly ?array $planningTimeTemplates,
+        /** @var array<int|string, mixed>|null */
         private readonly ?array $workLogTemplates,
         private readonly ?string $link,
         private ?string $templateName,
@@ -25,11 +28,16 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
         private ?string $alternativeLocationAddress,
         private ?float $alternativeLocationLatitude,
         private ?float $alternativeLocationLongitude,
+        /** @var array<int|string, mixed>|null */
         private ?array $workers,
+        /** @var array<int|string, mixed>|null */
         private ?array $customerObjects,
         private ?bool $selectable,
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static {
         return new self(
@@ -61,6 +69,9 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array {
         return array_filter([
@@ -88,8 +99,11 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
 
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
+    /** @return array<int|string, mixed>|null */
     public function getMaterialTemplates(): ?array { return $this->materialTemplates; }
+    /** @return array<int|string, mixed>|null */
     public function getPlanningTimeTemplates(): ?array { return $this->planningTimeTemplates; }
+    /** @return array<int|string, mixed>|null */
     public function getWorkLogTemplates(): ?array { return $this->workLogTemplates; }
     public function getLink(): ?string { return $this->link; }
     public function getTemplateName(): ?string { return $this->templateName; }
@@ -108,7 +122,9 @@ final class DocBeeDocumentTemplateTaskTemplateDTO extends AbstractDTO {
     public function getAlternativeLocationAddress(): ?string { return $this->alternativeLocationAddress; }
     public function getAlternativeLocationLatitude(): ?float { return $this->alternativeLocationLatitude; }
     public function getAlternativeLocationLongitude(): ?float { return $this->alternativeLocationLongitude; }
+    /** @return array<int|string, mixed>|null */
     public function getWorkers(): ?array { return $this->workers; }
+    /** @return array<int|string, mixed>|null */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function isSelectable(): ?bool { return $this->selectable; }
 }

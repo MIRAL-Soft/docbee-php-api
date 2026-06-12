@@ -20,7 +20,7 @@ final class SlaProfileSpecializationDTO extends AbstractDTO
         private ?int $priority,
         /** sla */
         private ?float $sla,
-        /** ticket status identifiers */
+        /** @var list<int>|null ticket status identifiers */
         private ?array $targetTicketStatuses,
         /** ticketCategory identifier */
         private ?int $ticketCategory,
@@ -66,6 +66,7 @@ final class SlaProfileSpecializationDTO extends AbstractDTO
     public function getName(): ?string { return $this->name; }
     public function getPriority(): ?int { return $this->priority; }
     public function getSla(): ?float { return $this->sla; }
+    /** @return list<int>|null */
     public function getTargetTicketStatuses(): ?array { return $this->targetTicketStatuses; }
     public function getTicketCategory(): ?int { return $this->ticketCategory; }
     public function getUseDefaultTargetTicketStatuses(): ?bool { return $this->useDefaultTargetTicketStatuses; }

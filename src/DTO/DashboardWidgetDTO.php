@@ -18,7 +18,10 @@ final class DashboardWidgetDTO extends AbstractDTO
         private ?bool $forcedSubscribed,
         /** name */
         private ?string $name,
-        /** map of settings */
+        /**
+         * map of settings
+         * @var array<string, mixed>|null
+         */
         private ?array $settings,
         /** type */
         private ?string $type,
@@ -29,6 +32,9 @@ final class DashboardWidgetDTO extends AbstractDTO
         private mixed $viewConfiguration
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -45,6 +51,9 @@ final class DashboardWidgetDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -63,6 +72,9 @@ final class DashboardWidgetDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getForcedSubscribed(): ?bool { return $this->forcedSubscribed; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getSettings(): ?array { return $this->settings; }
     public function getType(): ?string { return $this->type; }
     public function getUser(): ?int { return $this->user; }

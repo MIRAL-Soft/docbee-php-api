@@ -10,7 +10,7 @@ namespace miralsoft\docbee\api\DTO;
 final class SystemStatusDTO extends AbstractDTO
 {
     public function __construct(
-        /** list of jobs */
+        /** @var list<mixed>|null list of jobs */
         private ?array $jobs
     ) {}
 
@@ -29,5 +29,6 @@ final class SystemStatusDTO extends AbstractDTO
     }
 
     public function getId(): ?int { return null; }
+    /** @return list<mixed>|null */
     public function getJobs(): ?array { return $this->jobs; }
 }

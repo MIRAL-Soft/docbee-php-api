@@ -34,7 +34,10 @@ final class CostEstimationDTO extends AbstractDTO
         private readonly ?int $nextRevision,
         /** Unique identifier representing the previous revision of a costEstimation */
         private readonly ?int $previousRevision,
-        /** task identifiers */
+        /**
+         * task identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $tasks,
         /** Unique identifier representing a specific ticket */
         private readonly ?int $ticket,
@@ -58,6 +61,9 @@ final class CostEstimationDTO extends AbstractDTO
         private ?int $taskPersonInCharge
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -88,6 +94,9 @@ final class CostEstimationDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -115,6 +124,9 @@ final class CostEstimationDTO extends AbstractDTO
     public function getMode(): ?string { return $this->mode; }
     public function getNextRevision(): ?int { return $this->nextRevision; }
     public function getPreviousRevision(): ?int { return $this->previousRevision; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getTasks(): ?array { return $this->tasks; }
     public function getTicket(): ?int { return $this->ticket; }
     public function getTicketLinkType(): ?int { return $this->ticketLinkType; }

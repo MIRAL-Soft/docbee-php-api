@@ -64,9 +64,15 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
         private ?int             $remainingEstimate,
         /** planningEstimate */
         private ?int             $planningEstimate,
-        /** user identifiers */
+        /**
+         * user identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array           $workers,
-        /** customerObject identifiers */
+        /**
+         * customerObject identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array           $customerObjects,
         /** finished */
         private ?bool            $finished,
@@ -80,7 +86,10 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
         private ?string          $reviseType,
         /** reviseMsg */
         private ?string          $reviseMsg,
-        /** file identifier of images */
+        /**
+         * file identifier of images
+         * @var array<int|string, mixed>|null
+         */
         private ?array           $files,
         /** alternativeLocationAddress */
         private ?string          $alternativeLocationAddress,
@@ -96,6 +105,9 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
         private ?array           $materials,
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -145,6 +157,9 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -207,7 +222,9 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
     public function getReturnEstimate(): ?int              { return $this->returnEstimate; }
     public function getRemainingEstimate(): ?int           { return $this->remainingEstimate; }
     public function getPlanningEstimate(): ?int            { return $this->planningEstimate; }
+    /** @return array<int|string, mixed>|null */
     public function getWorkers(): ?array                   { return $this->workers; }
+    /** @return array<int|string, mixed>|null */
     public function getCustomerObjects(): ?array           { return $this->customerObjects; }
     public function isFinished(): ?bool                    { return $this->finished; }
     public function isObligingness(): ?bool                { return $this->isObligingness; }
@@ -215,6 +232,7 @@ final class DocBeeDocumentTaskDTO extends AbstractDTO
     public function getReviseValue(): ?float               { return $this->reviseValue; }
     public function getReviseType(): ?string               { return $this->reviseType; }
     public function getReviseMsg(): ?string                { return $this->reviseMsg; }
+    /** @return array<int|string, mixed>|null */
     public function getFiles(): ?array                     { return $this->files; }
     public function getAlternativeLocationAddress(): ?string    { return $this->alternativeLocationAddress; }
     public function getAlternativeLocationLatitude(): ?float    { return $this->alternativeLocationLatitude; }

@@ -121,31 +121,52 @@ final class UserResource extends AbstractResource
         );
     }
 
-    /** Get user settings for current user. */
+    /**
+     * Get user settings for current user.
+     *
+     * @return array<string, mixed>
+     */
     public function getSettings(): array
     {
         return $this->http->get('user/me/settings');
     }
 
-    /** Update user settings for current user. */
+    /**
+     * Update user settings for current user.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateSettings(array $data): array
     {
         return $this->http->put('user/me/settings', $data);
     }
 
-    /** Update profile image for current user. */
+    /**
+     * Update profile image for current user.
+     *
+     * @param array<string, mixed> $data
+     */
     public function updateProfileImage(array $data): void
     {
         $this->http->put('user/me/profileImage', $data);
     }
 
-    /** Change password for current user. */
+    /**
+     * Change password for current user.
+     *
+     * @param array<string, mixed> $data
+     */
     public function changeMyPassword(array $data): void
     {
         $this->http->post('user/me/changePassword', $data);
     }
 
-    /** Change password for a specific user (admin). */
+    /**
+     * Change password for a specific user (admin).
+     *
+     * @param array<string, mixed> $data
+     */
     public function changePassword(array $data): void
     {
         $this->http->post("{$this->endpoint}/changePassword", $data);
@@ -157,7 +178,11 @@ final class UserResource extends AbstractResource
         $this->http->put('user/me/disable2FA', []);
     }
 
-    /** Register 2FA for the currently authenticated user. */
+    /**
+     * Register 2FA for the currently authenticated user.
+     *
+     * @param array<string, mixed> $data
+     */
     public function registerMe2FA(array $data = []): void
     {
         $this->http->put('user/me/register2FA', $data);

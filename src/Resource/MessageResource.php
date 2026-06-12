@@ -13,7 +13,12 @@ final class MessageResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** Send a mail message. */
+    /**
+     * Send a mail message.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function sendMail(array $data): array
     {
         return $this->http->post('message/sendMail', $data);

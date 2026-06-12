@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\TimeRecordDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee TimeRecord records.
  *
  * @extends AbstractResource<TimeRecordDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class TimeRecordResource extends AbstractResource
 {
     use NotSearchable;
@@ -28,13 +27,21 @@ final class TimeRecordResource extends AbstractResource
         return empty($data) ? null : TimeRecordDTO::fromArray($data);
     }
 
-    /** Start a new time record. */
+    /**
+     * Start a new time record.
+     *
+     * @param array<string, mixed> $data
+     */
     public function start(array $data = []): TimeRecordDTO
     {
         return TimeRecordDTO::fromArray($this->http->post("{$this->endpoint}/start", $data));
     }
 
-    /** Stop the current time record. */
+    /**
+     * Stop the current time record.
+     *
+     * @param array<string, mixed> $data
+     */
     public function stop(array $data = []): TimeRecordDTO
     {
         return TimeRecordDTO::fromArray($this->http->put("{$this->endpoint}/stop", $data));

@@ -18,9 +18,16 @@ final class MessageTemplateResource extends AbstractResource
     protected string $dtoClass = MessageTemplateDTO::class;
     protected string $listKey  = 'messageTemplate';
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 
-    /** @throws \InvalidArgumentException when $type or $format is empty. */
+    /**
+     * @return array<string, mixed>
+     * @throws \InvalidArgumentException when $type or $format is empty.
+     */
     public function getDefault(string $type, string $format): array
     {
         if (trim($type) === '' || trim($format) === '') {

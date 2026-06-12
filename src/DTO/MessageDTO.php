@@ -26,7 +26,10 @@ final class MessageDTO extends AbstractDTO
         private readonly ?string $senderType,
         /** user identifier */
         private readonly ?int $user,
-        /** file identifiers */
+        /**
+         * file identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $attachments,
         /** content */
         private ?string $content,
@@ -78,6 +81,9 @@ final class MessageDTO extends AbstractDTO
     public function getSender(): ?string { return $this->sender; }
     public function getSenderType(): ?string { return $this->senderType; }
     public function getUser(): ?int { return $this->user; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getAttachments(): ?array { return $this->attachments; }
     public function getContent(): ?string { return $this->content; }
     public function getHidden(): ?bool { return $this->hidden; }

@@ -11,7 +11,11 @@ final class TableConfigStorageSettingResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** @throws \InvalidArgumentException when $type is empty. */
+    /**
+     * @throws \InvalidArgumentException when $type is empty.
+     *
+     * @return array<string, mixed>
+     */
     public function get(string $type): array
     {
         if (trim($type) === '') {
@@ -20,7 +24,11 @@ final class TableConfigStorageSettingResource
         return $this->http->get('tableConfigStorageSetting/' . rawurlencode($type));
     }
 
-    /** @throws \InvalidArgumentException when $type is empty. */
+    /**
+     * @throws \InvalidArgumentException when $type is empty.
+     *
+     * @return array<string, mixed>
+     */
     public function getForStorage(string $type, int $storageId): array
     {
         if (trim($type) === '') {

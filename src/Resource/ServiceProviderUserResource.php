@@ -18,7 +18,15 @@ final class ServiceProviderUserResource extends AbstractResource
     protected string $dtoClass = ServiceProviderUserDTO::class;
     protected string $listKey  = 'serviceProviderUser';
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
     public function reset2FA(int $id): void { $this->http->put("{$this->endpoint}/{$id}/reset2FA", []); }
 }

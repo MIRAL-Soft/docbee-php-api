@@ -14,7 +14,7 @@ final class TicketBoardProfileDTO extends AbstractDTO
         private readonly ?int $id,
         /** REST API Link */
         private readonly ?string $link,
-        /** ticketBoard identifiers */
+        /** @var list<int>|null ticketBoard identifiers */
         private ?array $links,
         /** name */
         private ?string $name
@@ -42,6 +42,7 @@ final class TicketBoardProfileDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<int>|null */
     public function getLinks(): ?array { return $this->links; }
     public function getName(): ?string { return $this->name; }
 }

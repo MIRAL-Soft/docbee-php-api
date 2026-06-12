@@ -17,6 +17,7 @@ final class DocBeeDocumentSiteConfigResource
         return SiteConfigDTO::fromArray($this->http->get('docBeeDocumentSiteConfig'));
     }
 
+    /** @param array<string, mixed> $data */
     public function update(array $data): SiteConfigDTO
     {
         return SiteConfigDTO::fromArray($this->http->put('docBeeDocumentSiteConfig', $data));

@@ -22,7 +22,7 @@ final class TicketDTO extends AbstractDTO
         private readonly ?int $closedStatusChange,
         /** First status change when the ticket was created */
         private readonly ?int $createdStatusChange,
-        /** docBeeDocument identifiers */
+        /** @var list<int>|null docBeeDocument identifiers */
         private readonly ?array $docBeeDocuments,
         /** Indicates whether the current user can see any docBeeDocuments attached to this ticket. */
         private readonly ?bool $hasDocBeeDocuments,
@@ -30,9 +30,9 @@ final class TicketDTO extends AbstractDTO
         private readonly ?bool $hasProtocols,
         /** Indicates whether the current user can see any links attached to this ticket. */
         private readonly ?bool $hasTicketLinks,
-        /** ticket identifiers */
+        /** @var list<int>|null ticket identifiers */
         private readonly ?array $mergedTickets,
-        /** protocol identifiers */
+        /** @var list<int>|null protocol identifiers */
         private readonly ?array $protocols,
         /** slaProfile identifier */
         private readonly ?int $slaProfile,
@@ -42,7 +42,7 @@ final class TicketDTO extends AbstractDTO
         private readonly ?string $ticketNumber,
         /** web link */
         private readonly ?string $webLink,
-        /** additional data */
+        /** @var array<string, mixed>|null additional data */
         private ?array $additionalData,
         /** billable */
         private ?bool $billable,
@@ -56,7 +56,7 @@ final class TicketDTO extends AbstractDTO
         private ?int $customerContact,
         /** customerLocation identifier */
         private ?int $customerLocation,
-        /** customerObject identifiers */
+        /** @var list<int>|null customerObject identifiers */
         private ?array $customerObjects,
         /** deadline */
         private ?string $deadline,
@@ -76,7 +76,7 @@ final class TicketDTO extends AbstractDTO
         private ?string $externalSlaDueDate,
         /** internalDescription */
         private ?string $internalDescription,
-        /** Related ticket link identifiers, only included if explicitly requested via fields parameter */
+        /** @var list<int>|null Related ticket link identifiers, only included if explicitly requested via fields parameter */
         private ?array $inwardLinks,
         /** locked */
         private ?bool $isLocked,
@@ -88,7 +88,7 @@ final class TicketDTO extends AbstractDTO
         private ?string $lowestDueDate,
         /** ticket identifier */
         private ?int $mergedToTicket,
-        /** Related ticket link identifiers, only included if explicitly requested via fields parameter */
+        /** @var list<int>|null Related ticket link identifiers, only included if explicitly requested via fields parameter */
         private ?array $outwardLinks,
         /** user or queue identifier */
         private ?int $owner,
@@ -106,7 +106,7 @@ final class TicketDTO extends AbstractDTO
         private ?int $slaRunning,
         /** start date */
         private ?string $startDate,
-        /** tag identifiers */
+        /** @var list<int>|null tag identifiers */
         private ?array $tags,
         /** ticketCategory identifier */
         private ?int $ticketCategory,
@@ -220,23 +220,30 @@ final class TicketDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getClosedStatusChange(): ?int { return $this->closedStatusChange; }
     public function getCreatedStatusChange(): ?int { return $this->createdStatusChange; }
+    /** @return list<int>|null */
     public function getDocBeeDocuments(): ?array { return $this->docBeeDocuments; }
     public function getHasDocBeeDocuments(): ?bool { return $this->hasDocBeeDocuments; }
     public function getHasProtocols(): ?bool { return $this->hasProtocols; }
     public function getHasTicketLinks(): ?bool { return $this->hasTicketLinks; }
+    /** @return list<int>|null */
     public function getMergedTickets(): ?array { return $this->mergedTickets; }
+    /** @return list<int>|null */
     public function getProtocols(): ?array { return $this->protocols; }
     public function getSlaProfile(): ?int { return $this->slaProfile; }
+    /** @return list<TicketSlaReportDTO>|null */
     public function getSlaReports(): ?array { return $this->slaReports; }
     public function getTicketNumber(): ?string { return $this->ticketNumber; }
     public function getWebLink(): ?string { return $this->webLink; }
+    /** @return array<string, mixed>|null */
     public function getAdditionalData(): ?array { return $this->additionalData; }
     public function getBillable(): ?bool { return $this->billable; }
     public function getConfidentialTag(): ?int { return $this->confidentialTag; }
+    /** @return list<CustomFieldValueDTO>|null */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    /** @return list<int>|null */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function getDeadline(): ?string { return $this->deadline; }
     public function getDepartment(): ?int { return $this->department; }
@@ -247,12 +254,14 @@ final class TicketDTO extends AbstractDTO
     public function getExternalSla(): ?int { return $this->externalSla; }
     public function getExternalSlaDueDate(): ?string { return $this->externalSlaDueDate; }
     public function getInternalDescription(): ?string { return $this->internalDescription; }
+    /** @return list<int>|null */
     public function getInwardLinks(): ?array { return $this->inwardLinks; }
     public function getIsLocked(): ?bool { return $this->isLocked; }
     public function getLockReason(): ?string { return $this->lockReason; }
     public function getLockVisibleForCustomer(): ?bool { return $this->lockVisibleForCustomer; }
     public function getLowestDueDate(): ?string { return $this->lowestDueDate; }
     public function getMergedToTicket(): ?int { return $this->mergedToTicket; }
+    /** @return list<int>|null */
     public function getOutwardLinks(): ?array { return $this->outwardLinks; }
     public function getOwner(): ?int { return $this->owner; }
     public function getPriority(): ?int { return $this->priority; }
@@ -262,6 +271,7 @@ final class TicketDTO extends AbstractDTO
     public function getSlaDueDate(): ?string { return $this->slaDueDate; }
     public function getSlaRunning(): ?int { return $this->slaRunning; }
     public function getStartDate(): ?string { return $this->startDate; }
+    /** @return list<int>|null */
     public function getTags(): ?array { return $this->tags; }
     public function getTicketCategory(): ?int { return $this->ticketCategory; }
     public function getTicketStatus(): ?int { return $this->ticketStatus; }

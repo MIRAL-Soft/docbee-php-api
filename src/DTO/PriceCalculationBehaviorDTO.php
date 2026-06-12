@@ -42,7 +42,9 @@ final class PriceCalculationBehaviorDTO extends AbstractDTO
         private ?int $time,
         /** type */
         private ?string $type,
-        /** @var array|null list of serviceTypes */
+        /**
+         * @var array<int|string, mixed>|null list of serviceTypes
+         */
         private ?array $serviceTypes,
         /** price */
         private ?int $price
@@ -112,6 +114,9 @@ final class PriceCalculationBehaviorDTO extends AbstractDTO
     public function getTill(): ?int { return $this->till; }
     public function getTime(): ?int { return $this->time; }
     public function getType(): ?string { return $this->type; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getServiceTypes(): ?array { return $this->serviceTypes; }
     public function getPrice(): ?int { return $this->price; }
 }

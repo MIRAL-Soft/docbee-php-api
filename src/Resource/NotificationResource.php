@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\NotificationDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee Notification records.
  *
  * @extends AbstractResource<NotificationDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class NotificationResource extends AbstractResource
 {
     use NotSearchable;

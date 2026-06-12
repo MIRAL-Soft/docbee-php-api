@@ -18,7 +18,10 @@ final class ErrorLogDTO extends AbstractDTO
         private ?string $code,
         /** Content of the error message */
         private ?string $content,
-        /** map of data */
+        /**
+         * map of data
+         * @var array<string, mixed>|null
+         */
         private ?array $dataMap,
         /** occurrence date */
         private ?string $date,
@@ -30,6 +33,9 @@ final class ErrorLogDTO extends AbstractDTO
         private ?bool $processed
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -46,6 +52,9 @@ final class ErrorLogDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -64,6 +73,9 @@ final class ErrorLogDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getCode(): ?string { return $this->code; }
     public function getContent(): ?string { return $this->content; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getDataMap(): ?array { return $this->dataMap; }
     public function getDate(): ?string { return $this->date; }
     public function getLevel(): ?string { return $this->level; }

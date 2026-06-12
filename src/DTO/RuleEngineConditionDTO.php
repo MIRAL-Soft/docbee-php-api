@@ -16,7 +16,9 @@ final class RuleEngineConditionDTO extends AbstractDTO
         private readonly ?string $link,
         /** comparator */
         private ?string $comparator,
-        /** data */
+        /**
+         * @var array<string, mixed>|null data
+         */
         private ?array $data,
         /** type */
         private ?string $type
@@ -47,6 +49,9 @@ final class RuleEngineConditionDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getComparator(): ?string { return $this->comparator; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getData(): ?array { return $this->data; }
     public function getType(): ?string { return $this->type; }
 }

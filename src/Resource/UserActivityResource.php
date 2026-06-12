@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\UserActivityDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee UserActivity records.
  *
  * @extends AbstractResource<UserActivityDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class UserActivityResource extends AbstractResource
 {
     use NotSearchable;

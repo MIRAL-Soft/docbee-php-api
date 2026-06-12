@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\WorkPipeDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee WorkPipe records.
  *
  * @extends AbstractResource<WorkPipeDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class WorkPipeResource extends AbstractResource
 {
     use NotSearchable;

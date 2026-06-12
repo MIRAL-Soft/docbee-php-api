@@ -17,11 +17,17 @@ final class UsageStatisticsResource
         return UsageStatisticDTO::fromArray($this->http->get('usageStatistics'));
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function update(array $data): UsageStatisticDTO
     {
         return UsageStatisticDTO::fromArray($this->http->put('usageStatistics', $data));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStatistic(): array
     {
         return $this->http->get('usageStatistics/statistic');

@@ -16,9 +16,9 @@ final class TableConfigStorageDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** field identifiers */
+        /** @var list<int>|null field identifiers */
         private readonly ?array $fields,
-        /** filter identifiers */
+        /** @var list<int>|null filter identifiers */
         private readonly ?array $filters,
         /** name */
         private ?string $name,
@@ -64,7 +64,9 @@ final class TableConfigStorageDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<int>|null */
     public function getFields(): ?array { return $this->fields; }
+    /** @return list<int>|null */
     public function getFilters(): ?array { return $this->filters; }
     public function getName(): ?string { return $this->name; }
     public function getShared(): ?bool { return $this->shared; }

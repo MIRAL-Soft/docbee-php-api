@@ -27,16 +27,25 @@ final class ProtocolGroupResource
 
     // ── Entries (all instances) ────────────────────────────────────────────────
 
+    /** @return array<string, mixed> */
     public function getEntries(int $templateGroupId): array
     {
         return $this->http->get($this->base($templateGroupId) . '/entries');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function createEntries(int $templateGroupId, array $data): array
     {
         return $this->http->post($this->base($templateGroupId) . '/entries', $data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateEntries(int $templateGroupId, array $data): array
     {
         return $this->http->put($this->base($templateGroupId) . '/entries', $data);
@@ -49,11 +58,16 @@ final class ProtocolGroupResource
 
     // ── Mapping (all instances) ────────────────────────────────────────────────
 
+    /** @return array<string, mixed> */
     public function getMapping(int $templateGroupId): array
     {
         return $this->http->get($this->base($templateGroupId) . '/mapping');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateMapping(int $templateGroupId, array $data): array
     {
         return $this->http->put($this->base($templateGroupId) . '/mapping', $data);
@@ -61,11 +75,16 @@ final class ProtocolGroupResource
 
     // ── Entries (specific group instance) ────────────────────────────────────
 
+    /** @return array<string, mixed> */
     public function getEntriesByGroupIdx(int $templateGroupId, int $groupIdx): array
     {
         return $this->http->get($this->base($templateGroupId) . "/{$groupIdx}/entries");
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateEntriesByGroupIdx(int $templateGroupId, int $groupIdx, array $data): array
     {
         return $this->http->put($this->base($templateGroupId) . "/{$groupIdx}/entries", $data);
@@ -78,11 +97,16 @@ final class ProtocolGroupResource
 
     // ── Mapping (specific group instance) ────────────────────────────────────
 
+    /** @return array<string, mixed> */
     public function getMappingByGroupIdx(int $templateGroupId, int $groupIdx): array
     {
         return $this->http->get($this->base($templateGroupId) . "/{$groupIdx}/mapping");
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateMappingByGroupIdx(int $templateGroupId, int $groupIdx, array $data): array
     {
         return $this->http->put($this->base($templateGroupId) . "/{$groupIdx}/mapping", $data);

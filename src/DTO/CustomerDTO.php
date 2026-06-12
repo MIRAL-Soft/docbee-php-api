@@ -44,6 +44,9 @@ final class CustomerDTO extends AbstractDTO
         private ?string $wildcardAddress
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -67,6 +70,9 @@ final class CustomerDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -91,6 +97,9 @@ final class CustomerDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getDefaultCustomerLocation(): ?int { return $this->defaultCustomerLocation; }
     public function getCompanyData(): ?int { return $this->companyData; }
+    /**
+     * @return list<CustomFieldValueDTO>|null
+     */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getCustomerId(): ?string { return $this->customerId; }
     public function getCustomerStatus(): ?int { return $this->customerStatus; }

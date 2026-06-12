@@ -28,7 +28,7 @@ final class TicketMessageDTO extends AbstractDTO
         private readonly ?string $senderType,
         /** user identifier */
         private readonly ?int $user,
-        /** file identifiers */
+        /** @var list<int>|null file identifiers */
         private ?array $attachments,
         /** content */
         private ?string $content,
@@ -82,6 +82,7 @@ final class TicketMessageDTO extends AbstractDTO
     public function getSender(): ?string { return $this->sender; }
     public function getSenderType(): ?string { return $this->senderType; }
     public function getUser(): ?int { return $this->user; }
+    /** @return list<int>|null */
     public function getAttachments(): ?array { return $this->attachments; }
     public function getContent(): ?string { return $this->content; }
     public function getHidden(): ?bool { return $this->hidden; }

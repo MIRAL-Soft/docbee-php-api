@@ -13,7 +13,11 @@ final class ModuleResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** Returns a list of all modules. */
+    /**
+     * Returns a list of all modules.
+     *
+     * @return array<int, mixed>
+     */
     public function list(): array
     {
         return $this->http->get('module')['module'] ?? [];
@@ -32,6 +36,7 @@ final class ModuleResource
     /**
      * Updates a module setting.
      *
+     * @param array<string, mixed> $data
      * @throws InvalidArgumentException when $moduleName is empty.
      */
     public function update(string $moduleName, array $data): ModuleDTO

@@ -17,6 +17,7 @@ final class ProtocolSiteConfigResource
         return SiteConfigDTO::fromArray($this->http->get('protocolSiteConfig'));
     }
 
+    /** @param array<string, mixed> $data */
     public function update(array $data): SiteConfigDTO
     {
         return SiteConfigDTO::fromArray($this->http->put('protocolSiteConfig', $data));

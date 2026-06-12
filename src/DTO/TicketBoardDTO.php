@@ -50,8 +50,11 @@ final class TicketBoardDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<TicketBoardColumnDTO>|null */
     public function getColumns(): ?array { return $this->columns; }
+    /** @return list<TableConfigStorageFieldDTO>|null */
     public function getFields(): ?array { return $this->fields; }
+    /** @return list<TableConfigStorageFilterDTO>|null */
     public function getFilters(): ?array { return $this->filters; }
     public function getName(): ?string { return $this->name; }
 }

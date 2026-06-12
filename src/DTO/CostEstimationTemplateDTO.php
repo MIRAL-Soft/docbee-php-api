@@ -18,7 +18,10 @@ final class CostEstimationTemplateDTO extends AbstractDTO
         private readonly ?string $link,
         /** type */
         private readonly ?string $mode,
-        /** TaskTemplate identifiers */
+        /**
+         * TaskTemplate identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $tasks,
         /** defaultBuffer */
         private ?float $defaultBuffer,
@@ -40,6 +43,9 @@ final class CostEstimationTemplateDTO extends AbstractDTO
         private ?int $ticketLinkType
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -61,6 +67,9 @@ final class CostEstimationTemplateDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -81,6 +90,9 @@ final class CostEstimationTemplateDTO extends AbstractDTO
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
     public function getMode(): ?string { return $this->mode; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getTasks(): ?array { return $this->tasks; }
     public function getDefaultBuffer(): ?float { return $this->defaultBuffer; }
     public function getDefaultServiceType(): ?int { return $this->defaultServiceType; }

@@ -88,6 +88,9 @@ final class CustomerContactDTO extends AbstractDTO
         private ?string $website,
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -118,6 +121,9 @@ final class CustomerContactDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -153,6 +159,9 @@ final class CustomerContactDTO extends AbstractDTO
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
     public function getTemporary(): ?bool { return $this->temporary; }
+    /**
+     * @return list<CustomFieldValueDTO>|null
+     */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getEmail(): ?string { return $this->email; }
     public function getFirstName(): ?string { return $this->firstName; }

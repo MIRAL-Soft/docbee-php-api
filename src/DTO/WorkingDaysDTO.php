@@ -12,9 +12,9 @@ final class WorkingDaysDTO extends AbstractDTO
     public function __construct(
         /** calendar region */
         private ?string $calendarRegion,
-        /** list of working holidays */
+        /** @var list<mixed>|null list of working holidays */
         private ?array $workingHolidays,
-        /** list of working hours */
+        /** @var list<mixed>|null list of working hours */
         private ?array $workingHours
     ) {}
 
@@ -42,6 +42,8 @@ final class WorkingDaysDTO extends AbstractDTO
 
     public function getId(): ?int { return null; }
     public function getCalendarRegion(): ?string { return $this->calendarRegion; }
+    /** @return list<mixed>|null */
     public function getWorkingHolidays(): ?array { return $this->workingHolidays; }
+    /** @return list<mixed>|null */
     public function getWorkingHours(): ?array { return $this->workingHours; }
 }

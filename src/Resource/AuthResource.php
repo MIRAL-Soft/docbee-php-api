@@ -12,7 +12,11 @@ final class AuthResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** Login and get access token. */
+    /**
+     * Login and get access token.
+     *
+     * @param array<string, mixed> $credentials
+     */
     public function login(array $credentials): LoginResultDTO
     {
         return LoginResultDTO::fromArray($this->http->post('login', $credentials));

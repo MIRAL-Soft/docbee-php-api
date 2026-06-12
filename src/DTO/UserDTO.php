@@ -14,13 +14,13 @@ final class UserDTO extends AbstractDTO
         private readonly ?int $id,
         /** REST API Link */
         private readonly ?string $link,
-        /** departmentProfile identifiers */
+        /** @var list<int>|null departmentProfile identifiers */
         private ?array $assignableDepartmentProfiles,
-        /** assignableUserProfile identifiers */
+        /** @var list<int>|null assignableUserProfile identifiers */
         private ?array $assignableUserProfiles,
         /** CalendarEnabled defines if the an external calendar connection for these user is enabled. Property only available if calendar connection is enabled in DocBee. */
         private ?bool $calendarEnabled,
-        /** confidentialTag identifiers */
+        /** @var list<int>|null confidentialTag identifiers */
         private ?array $confidentialTags,
         /** dailyClosingConfig identifier */
         private ?int $dailyClosingConfig,
@@ -28,7 +28,7 @@ final class UserDTO extends AbstractDTO
         private ?string $dailyClosingStartDate,
         /** department identifier */
         private ?int $department,
-        /** departmentProfile identifiers */
+        /** @var list<int>|null departmentProfile identifiers */
         private ?array $departmentProfiles,
         /** email */
         private ?string $email,
@@ -44,27 +44,27 @@ final class UserDTO extends AbstractDTO
         private ?string $password,
         /** permissionGroup identifier */
         private ?int $permissionGroup,
-        /** presetProfile identifiers */
+        /** @var list<int>|null presetProfile identifiers */
         private ?array $presetProfiles,
         /** profile image file identifier */
         private ?int $profileImage,
-        /** protocolTemplateProfile identifiers */
+        /** @var list<int>|null protocolTemplateProfile identifiers */
         private ?array $protocolTemplateProfiles,
-        /** serviceTypeProfile identifiers */
+        /** @var list<int>|null serviceTypeProfile identifiers */
         private ?array $serviceTypeProfiles,
         /** shorthandName */
         private ?string $shorthandName,
-        /** skill identifiers */
+        /** @var list<int>|null skill identifiers */
         private ?array $skills,
         /** is the user a system user (not selectable) */
         private ?bool $systemUser,
         /** telephone */
         private ?string $telephone,
-        /** ticketBoardProfile identifiers */
+        /** @var list<int>|null ticketBoardProfile identifiers */
         private ?array $ticketBoardProfiles,
         /** use2FA */
         private ?bool $use2FA,
-        /** userProfile identifiers */
+        /** @var list<int>|null userProfile identifiers */
         private ?array $userProfiles,
         /** username */
         private ?string $username,
@@ -146,13 +146,17 @@ final class UserDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
+    /** @return list<int>|null */
     public function getAssignableDepartmentProfiles(): ?array { return $this->assignableDepartmentProfiles; }
+    /** @return list<int>|null */
     public function getAssignableUserProfiles(): ?array { return $this->assignableUserProfiles; }
     public function getCalendarEnabled(): ?bool { return $this->calendarEnabled; }
+    /** @return list<int>|null */
     public function getConfidentialTags(): ?array { return $this->confidentialTags; }
     public function getDailyClosingConfig(): ?int { return $this->dailyClosingConfig; }
     public function getDailyClosingStartDate(): ?string { return $this->dailyClosingStartDate; }
     public function getDepartment(): ?int { return $this->department; }
+    /** @return list<int>|null */
     public function getDepartmentProfiles(): ?array { return $this->departmentProfiles; }
     public function getEmail(): ?string { return $this->email; }
     public function getEnabled(): ?bool { return $this->enabled; }
@@ -161,16 +165,22 @@ final class UserDTO extends AbstractDTO
     public function getName(): ?string { return $this->name; }
     public function getPassword(): ?string { return $this->password; }
     public function getPermissionGroup(): ?int { return $this->permissionGroup; }
+    /** @return list<int>|null */
     public function getPresetProfiles(): ?array { return $this->presetProfiles; }
     public function getProfileImage(): ?int { return $this->profileImage; }
+    /** @return list<int>|null */
     public function getProtocolTemplateProfiles(): ?array { return $this->protocolTemplateProfiles; }
+    /** @return list<int>|null */
     public function getServiceTypeProfiles(): ?array { return $this->serviceTypeProfiles; }
     public function getShorthandName(): ?string { return $this->shorthandName; }
+    /** @return list<int>|null */
     public function getSkills(): ?array { return $this->skills; }
     public function getSystemUser(): ?bool { return $this->systemUser; }
     public function getTelephone(): ?string { return $this->telephone; }
+    /** @return list<int>|null */
     public function getTicketBoardProfiles(): ?array { return $this->ticketBoardProfiles; }
     public function getUse2FA(): ?bool { return $this->use2FA; }
+    /** @return list<int>|null */
     public function getUserProfiles(): ?array { return $this->userProfiles; }
     public function getUsername(): ?string { return $this->username; }
     public function getWithTimeRecord(): ?bool { return $this->withTimeRecord; }

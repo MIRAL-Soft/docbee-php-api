@@ -46,13 +46,19 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private readonly ?string $invoiceNumber,
         /** pre finished */
         private readonly ?bool $preFinished,
-        /** protocol identifiers */
+        /**
+         * protocol identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $protocols,
         /** released date */
         private readonly ?string $releasedDate,
         /** serverModified date */
         private readonly ?string $serverModified,
-        /** task identifiers */
+        /**
+         * task identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $tasks,
         /** total internal price */
         private readonly ?float $totalInternalPrice,
@@ -88,7 +94,10 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private readonly ?float $totalTravelLogsPrice,
         /** total travel logs time */
         private readonly ?int $totalTravelLogsTime,
-        /** travelLog identifiers */
+        /**
+         * travelLog identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $travelLogs,
         /** web link */
         private readonly ?string $webLink,
@@ -110,7 +119,10 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private ?string $erpReferenceNumber,
         /** externalReferenceNumber */
         private ?string $externalReferenceNumber,
-        /** file identifiers */
+        /**
+         * file identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $infoFiles,
         /** needFinishPin */
         private ?bool $needFinishPin,
@@ -140,6 +152,9 @@ final class DocBeeDocumentDTO extends AbstractDTO
         private ?array $tags = null
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -225,6 +240,9 @@ final class DocBeeDocumentDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -273,9 +291,15 @@ final class DocBeeDocumentDTO extends AbstractDTO
     public function getFinishedDate(): ?string { return $this->finishedDate; }
     public function getInvoiceNumber(): ?string { return $this->invoiceNumber; }
     public function getPreFinished(): ?bool { return $this->preFinished; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getProtocols(): ?array { return $this->protocols; }
     public function getReleasedDate(): ?string { return $this->releasedDate; }
     public function getServerModified(): ?string { return $this->serverModified; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getTasks(): ?array { return $this->tasks; }
     public function getTotalInternalPrice(): ?float { return $this->totalInternalPrice; }
     public function getTotalInvoicePrice(): ?float { return $this->totalInvoicePrice; }
@@ -294,17 +318,26 @@ final class DocBeeDocumentDTO extends AbstractDTO
     public function getTotalTravelLogsInvoiceTime(): ?int { return $this->totalTravelLogsInvoiceTime; }
     public function getTotalTravelLogsPrice(): ?float { return $this->totalTravelLogsPrice; }
     public function getTotalTravelLogsTime(): ?int { return $this->totalTravelLogsTime; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getTravelLogs(): ?array { return $this->travelLogs; }
     public function getWebLink(): ?string { return $this->webLink; }
     public function getBillable(): ?bool { return $this->billable; }
     public function getCompletedSuccessfully(): ?bool { return $this->completedSuccessfully; }
     public function getConfidentialTag(): ?int { return $this->confidentialTag; }
+    /**
+     * @return array<int, CustomFieldValueDTO>|null
+     */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
     public function getErpReferenceNumber(): ?string { return $this->erpReferenceNumber; }
     public function getExternalReferenceNumber(): ?string { return $this->externalReferenceNumber; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getInfoFiles(): ?array { return $this->infoFiles; }
     public function getNeedFinishPin(): ?bool { return $this->needFinishPin; }
     public function getNeedSignature(): ?bool { return $this->needSignature; }
@@ -316,6 +349,9 @@ final class DocBeeDocumentDTO extends AbstractDTO
     public function getReferenceNumber(): ?string { return $this->referenceNumber; }
     public function getSendMessage(): ?bool { return $this->sendMessage; }
     public function getTicket(): ?int { return $this->ticket; }
+    /**
+     * @return list<TravelLogDTO>|null
+     */
     public function getTravelLog(): ?array { return $this->travelLog; }
     public function getType(): ?bool { return $this->type; }
 

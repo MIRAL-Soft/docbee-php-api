@@ -18,6 +18,7 @@ final class MandantSettingsResource
         return MandantSettingsDTO::fromArray($this->http->get('mandantSettings'));
     }
 
+    /** @param array<string, mixed> $data */
     public function update(array $data): MandantSettingsDTO
     {
         return MandantSettingsDTO::fromArray($this->http->put('mandantSettings', $data));
@@ -28,6 +29,7 @@ final class MandantSettingsResource
         return WorkingDaysDTO::fromArray($this->http->get('mandantSettings/workingDays'));
     }
 
+    /** @param array<string, mixed> $data */
     public function updateWorkingDays(array $data): WorkingDaysDTO
     {
         return WorkingDaysDTO::fromArray($this->http->put('mandantSettings/workingDays', $data));

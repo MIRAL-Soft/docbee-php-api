@@ -20,11 +20,20 @@ final class MapViewDTO extends AbstractDTO
         private ?string $type,
         /** is favourite flag */
         private ?bool $isFavorit,
-        /** fields configuration */
+        /**
+         * fields configuration
+         * @var array<string, mixed>|null
+         */
         private ?array $fields,
-        /** filters configuration */
+        /**
+         * filters configuration
+         * @var array<string, mixed>|null
+         */
         private ?array $filters,
-        /** limit options configuration */
+        /**
+         * limit options configuration
+         * @var array<string, mixed>|null
+         */
         private ?array $limitOptions
     ) {}
 
@@ -61,7 +70,16 @@ final class MapViewDTO extends AbstractDTO
     public function getName(): ?string { return $this->name; }
     public function getType(): ?string { return $this->type; }
     public function isFavorit(): ?bool { return $this->isFavorit; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getFields(): ?array { return $this->fields; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getFilters(): ?array { return $this->filters; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getLimitOptions(): ?array { return $this->limitOptions; }
 }

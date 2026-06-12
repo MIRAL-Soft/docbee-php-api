@@ -120,19 +120,33 @@ final class CustomerResource extends AbstractResource
         return $this->list(QueryBuilder::new()->filterEq('customerStatus', $customerStatusId));
     }
 
-    /** Get all custom fields for customers. */
+    /**
+     * Get all custom fields for customers.
+     *
+     * @return array<string, mixed>
+     */
     public function getCustomFields(): array
     {
         return $this->http->get("{$this->endpoint}/customFields");
     }
 
-    /** Update custom field configuration. */
+    /**
+     * Update custom field configuration.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(array $data): array
     {
         return $this->http->put("{$this->endpoint}/customFields", $data);
     }
 
-    /** Guess/match customers. */
+    /**
+     * Guess/match customers.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(array $data): array
     {
         return $this->http->post("{$this->endpoint}/guess", $data);
@@ -144,7 +158,11 @@ final class CustomerResource extends AbstractResource
         return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}");
     }
 
-    /** Export specific customers (by IDs) for the given export profile. Returns raw file bytes (PDF/CSV). */
+    /**
+     * Export specific customers (by IDs) for the given export profile. Returns raw file bytes (PDF/CSV).
+     *
+     * @param int[] $ids
+     */
     public function exportByIds(int $exportProfileId, array $ids): string
     {
         return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);

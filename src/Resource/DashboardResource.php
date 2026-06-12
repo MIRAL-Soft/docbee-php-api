@@ -24,7 +24,11 @@ final class DashboardResource extends AbstractResource
         return DashboardDTO::fromArray($this->http->get("{$this->endpoint}/default"));
     }
 
-    /** Returns available widget types. */
+    /**
+     * Returns available widget types.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function getWidgetTypes(): array
     {
         return $this->http->get("{$this->endpoint}/widgetType")['dashboardWidgetType'] ?? [];

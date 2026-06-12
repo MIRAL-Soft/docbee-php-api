@@ -7,13 +7,12 @@ namespace miralsoft\docbee\api\Resource;
 use miralsoft\docbee\api\DTO\CustomColorDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 /**
  * Provides access to Docbee CustomColor records.
  *
  * @extends AbstractResource<CustomColorDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class CustomColorResource extends AbstractResource
 {
     use NotSearchable;

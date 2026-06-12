@@ -18,7 +18,11 @@ final class TimerResource extends AbstractResource
     protected string $dtoClass = TimerDTO::class;
     protected string $listKey  = 'timer';
 
-    /** Start a new timer. */
+    /**
+     * Start a new timer.
+     *
+     * @param array<string, mixed> $data
+     */
     public function start(array $data = []): TimerDTO
     {
         return TimerDTO::fromArray($this->http->post("{$this->endpoint}/start", $data));

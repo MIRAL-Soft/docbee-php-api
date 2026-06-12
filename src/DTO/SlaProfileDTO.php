@@ -20,11 +20,11 @@ final class SlaProfileDTO extends AbstractDTO
         private ?string $scope,
         /** setDueDate */
         private ?bool $setDueDate,
-        /** specializations */
+        /** @var list<mixed>|null specializations */
         private ?array $specializations,
-        /** ticket status identifiers */
+        /** @var list<int>|null ticket status identifiers */
         private ?array $targetTicketStatuses,
-        /** workingHours */
+        /** @var list<mixed>|null workingHours */
         private ?array $workingHours
     ) {}
 
@@ -61,7 +61,10 @@ final class SlaProfileDTO extends AbstractDTO
     public function getDefaultSla(): ?int { return $this->defaultSla; }
     public function getScope(): ?string { return $this->scope; }
     public function getSetDueDate(): ?bool { return $this->setDueDate; }
+    /** @return list<mixed>|null */
     public function getSpecializations(): ?array { return $this->specializations; }
+    /** @return list<int>|null */
     public function getTargetTicketStatuses(): ?array { return $this->targetTicketStatuses; }
+    /** @return list<mixed>|null */
     public function getWorkingHours(): ?array { return $this->workingHours; }
 }

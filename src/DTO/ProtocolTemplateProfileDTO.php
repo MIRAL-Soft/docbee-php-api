@@ -14,7 +14,9 @@ final class ProtocolTemplateProfileDTO extends AbstractDTO
         private readonly ?int $id,
         /** name */
         private ?string $name,
-        /** @var array|null list of protocolTemplates */
+        /**
+         * @var array<int|string, mixed>|null list of protocolTemplates
+         */
         private ?array $protocolTemplates
     ) {}
 
@@ -39,5 +41,8 @@ final class ProtocolTemplateProfileDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getProtocolTemplates(): ?array { return $this->protocolTemplates; }
 }

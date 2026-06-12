@@ -7,13 +7,12 @@ namespace miralsoft\docbee\api\Resource;
 use miralsoft\docbee\api\DTO\CompanyDataDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 /**
  * Provides access to Docbee CompanyData records.
  *
  * @extends AbstractResource<CompanyDataDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class CompanyDataResource extends AbstractResource
 {
     use NotSearchable;

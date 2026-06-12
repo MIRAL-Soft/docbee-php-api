@@ -16,9 +16,13 @@ final class ReportElementDTO extends AbstractDTO
         private readonly ?string $link,
         /** name */
         private ?string $name,
-        /** @var array|null settings */
+        /**
+         * @var array<string, mixed>|null settings
+         */
         private ?array $settings,
-        /** @var array|null viewConfiguration */
+        /**
+         * @var array<string, mixed>|null viewConfiguration
+         */
         private ?array $viewConfiguration
     ) {}
 
@@ -47,6 +51,12 @@ final class ReportElementDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getSettings(): ?array { return $this->settings; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getViewConfiguration(): ?array { return $this->viewConfiguration; }
 }

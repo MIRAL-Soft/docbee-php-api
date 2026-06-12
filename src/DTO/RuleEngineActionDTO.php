@@ -16,16 +16,25 @@ final class RuleEngineActionDTO extends AbstractDTO
         private readonly ?string $link,
         /** active */
         private ?bool $active,
-        /** conditions */
+        /**
+         * conditions
+         * @var array<int|string, mixed>|null
+         */
         private ?array $conditions,
         /** name */
         private ?string $description,
         /** name */
         private ?string $name,
-        /** reactions */
+        /**
+         * reactions
+         * @var array<int|string, mixed>|null
+         */
         private ?array $reactions,
         private mixed $recurrence,
-        /** settings */
+        /**
+         * settings
+         * @var array<string, mixed>|null
+         */
         private ?array $settings,
         /** trigger */
         private ?string $trigger
@@ -66,11 +75,20 @@ final class RuleEngineActionDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function isActive(): ?bool { return $this->active; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getConditions(): ?array { return $this->conditions; }
     public function getDescription(): ?string { return $this->description; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getReactions(): ?array { return $this->reactions; }
     public function getRecurrence(): mixed { return $this->recurrence; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getSettings(): ?array { return $this->settings; }
     public function getTrigger(): ?string { return $this->trigger; }
 }

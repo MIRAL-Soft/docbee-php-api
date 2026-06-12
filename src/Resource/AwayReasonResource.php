@@ -7,13 +7,12 @@ namespace miralsoft\docbee\api\Resource;
 use miralsoft\docbee\api\DTO\AwayReasonDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
 
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 /**
  * Provides access to Docbee AwayReason records.
  *
  * @extends AbstractResource<AwayReasonDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class AwayReasonResource extends AbstractResource
 {
     use NotSearchable;

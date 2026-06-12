@@ -12,7 +12,7 @@ final class SiteConfigDTO extends AbstractDTO
     public function __construct(
         /** REST API Link */
         private readonly ?string $link,
-        /** configuration data */
+        /** @var array<string, mixed>|null configuration data */
         private ?array $config,
         /** forced flag (UserSiteConfig extension, readOnly) */
         private readonly ?bool $forced = null,
@@ -38,6 +38,7 @@ final class SiteConfigDTO extends AbstractDTO
 
     public function getId(): ?int { return null; }
     public function getLink(): ?string { return $this->link; }
+    /** @return array<string, mixed>|null */
     public function getConfig(): ?array { return $this->config; }
     public function getForcedConfig(): ?bool { return $this->forced; }
 }

@@ -14,7 +14,7 @@ final class WorkPipeDTO extends AbstractDTO
         private readonly ?int $id,
         /** REST API Link */
         private readonly ?string $link,
-        /** json object */
+        /** @var array<string, mixed>|null json object */
         private ?array $data,
         /** work pipe item type */
         private ?string $type
@@ -42,6 +42,7 @@ final class WorkPipeDTO extends AbstractDTO
 
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
+    /** @return array<string, mixed>|null */
     public function getData(): ?array { return $this->data; }
     public function getType(): ?string { return $this->type; }
 }

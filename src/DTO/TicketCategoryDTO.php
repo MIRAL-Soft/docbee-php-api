@@ -18,7 +18,7 @@ final class TicketCategoryDTO extends AbstractDTO
         private readonly ?string $link,
         /** name */
         private ?string $name,
-        /** protocolTemplateProfile identifiers */
+        /** @var list<int>|null protocolTemplateProfile identifiers */
         private ?array $protocolTemplateProfiles
     ) {}
 
@@ -47,5 +47,6 @@ final class TicketCategoryDTO extends AbstractDTO
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
     public function getName(): ?string { return $this->name; }
+    /** @return list<int>|null */
     public function getProtocolTemplateProfiles(): ?array { return $this->protocolTemplateProfiles; }
 }

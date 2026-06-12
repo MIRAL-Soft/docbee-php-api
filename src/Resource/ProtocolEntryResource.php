@@ -35,7 +35,11 @@ final class ProtocolEntryResource extends AbstractResource
         );
     }
 
-    /** Update a protocol entry by its entry mapping ID. */
+    /**
+     * Update a protocol entry by its entry mapping ID.
+     *
+     * @param array<string, mixed> $data
+     */
     public function updateByEntryMapping(int $entryMappingId, array $data): ProtocolEntryDTO
     {
         return ProtocolEntryDTO::fromArray(
@@ -51,7 +55,11 @@ final class ProtocolEntryResource extends AbstractResource
         );
     }
 
-    /** Update a protocol entry by entry mapping ID and group index (for multi-groups). */
+    /**
+     * Update a protocol entry by entry mapping ID and group index (for multi-groups).
+     *
+     * @param array<string, mixed> $data
+     */
     public function updateByEntryMappingAndGroupIdx(int $entryMappingId, int $groupIdx, array $data): ProtocolEntryDTO
     {
         return ProtocolEntryDTO::fromArray(
@@ -83,6 +91,7 @@ final class ProtocolEntryResource extends AbstractResource
      * The name is URL-encoded — this is a WRITE operation; an unencoded name
      * could redirect the PUT to a different endpoint entirely.
      *
+     * @param array<string, mixed> $data
      * @throws \InvalidArgumentException when $name is empty.
      */
     public function updateByPlaceholderName(string $name, array $data): ProtocolEntryDTO

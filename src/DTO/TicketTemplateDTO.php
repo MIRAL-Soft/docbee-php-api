@@ -22,7 +22,7 @@ final class TicketTemplateDTO extends AbstractDTO
         private ?int $customerContact,
         /** customerLocation identifier */
         private ?int $customerLocation,
-        /** customerObject identifiers */
+        /** @var list<int>|null customerObject identifiers */
         private ?array $customerObjects,
         /** customerSelectable */
         private ?bool $customerSelectable,
@@ -40,7 +40,7 @@ final class TicketTemplateDTO extends AbstractDTO
         private ?int $owner,
         /** priority identifier */
         private ?int $priority,
-        /** tag identifiers */
+        /** @var list<int>|null tag identifiers */
         private ?array $tags,
         /** ticketCategory identifier */
         private ?int $ticketCategory,
@@ -101,6 +101,7 @@ final class TicketTemplateDTO extends AbstractDTO
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    /** @return list<int>|null */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function getCustomerSelectable(): ?bool { return $this->customerSelectable; }
     public function getDeadline(): ?int { return $this->deadline; }
@@ -110,6 +111,7 @@ final class TicketTemplateDTO extends AbstractDTO
     public function getName(): ?string { return $this->name; }
     public function getOwner(): ?int { return $this->owner; }
     public function getPriority(): ?int { return $this->priority; }
+    /** @return list<int>|null */
     public function getTags(): ?array { return $this->tags; }
     public function getTicketCategory(): ?int { return $this->ticketCategory; }
     public function getTicketStatus(): ?int { return $this->ticketStatus; }

@@ -24,7 +24,10 @@ final class MaterialDTO extends AbstractDTO
         private ?string          $name,
         /** Serial number. Mandatory if materialItem hasSerialNumber is true & optional without materialItem */
         private ?string          $serial,
-        /** additional data */
+        /**
+         * additional data
+         * @var array<string, mixed>|null
+         */
         private ?array           $additionalData,
         /** storage location */
         private ?string          $storageLocation,
@@ -66,6 +69,9 @@ final class MaterialDTO extends AbstractDTO
     public function getMaterialItem(): ?int    { return $this->materialItem; }
     public function getName(): ?string         { return $this->name; }
     public function getSerial(): ?string       { return $this->serial; }
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getAdditionalData(): ?array { return $this->additionalData; }
     public function getStorageLocation(): ?string { return $this->storageLocation; }
 }

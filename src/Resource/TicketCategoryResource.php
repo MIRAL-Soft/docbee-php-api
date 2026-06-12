@@ -18,6 +18,14 @@ final class TicketCategoryResource extends AbstractResource
     protected string $dtoClass = TicketCategoryDTO::class;
     protected string $listKey  = 'ticketCategory';
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCustomFields(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/customFields"); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(int $id, array $data): array { return $this->http->put("{$this->endpoint}/{$id}/customFields", $data); }
 }

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\MapViewDTO;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee protocol map view records.
  *
  * @extends AbstractResource<MapViewDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class ProtocolMapViewResource extends AbstractResource
 {
     use NotSearchable;

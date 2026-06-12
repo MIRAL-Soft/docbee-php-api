@@ -24,11 +24,17 @@ final class ProtocolTemplateActionDTO extends AbstractDTO
         private readonly ?int $conditionCollection,
         /** name */
         private ?string $name,
-        /** @var array|null list of conditions */
+        /**
+         * @var array<int|string, mixed>|null list of conditions
+         */
         private ?array $conditions,
-        /** @var array|null list of reactions */
+        /**
+         * @var array<int|string, mixed>|null list of reactions
+         */
         private ?array $reactions,
-        /** @var array|null list of conditionCollections */
+        /**
+         * @var array<int|string, mixed>|null list of conditionCollections
+         */
         private ?array $conditionCollections
     ) {}
 
@@ -67,7 +73,16 @@ final class ProtocolTemplateActionDTO extends AbstractDTO
     public function getGroupContainer(): ?int { return $this->groupContainer; }
     public function getConditionCollection(): ?int { return $this->conditionCollection; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getConditions(): ?array { return $this->conditions; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getReactions(): ?array { return $this->reactions; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getConditionCollections(): ?array { return $this->conditionCollections; }
 }

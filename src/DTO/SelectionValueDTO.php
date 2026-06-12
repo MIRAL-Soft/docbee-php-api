@@ -22,7 +22,7 @@ final class SelectionValueDTO extends AbstractDTO
         private readonly ?string $details,
         /** @var CustomFieldValueDTO[]|null list of customFieldValues */
         private ?array $customFields,
-        /** file identifiers */
+        /** @var list<int>|null file identifiers */
         private ?array $filterNames,
         /** name */
         private ?string $name,
@@ -62,7 +62,9 @@ final class SelectionValueDTO extends AbstractDTO
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
     public function getDetails(): ?string { return $this->details; }
+    /** @return list<CustomFieldValueDTO>|null */
     public function getCustomFields(): ?array { return $this->customFields; }
+    /** @return list<int>|null */
     public function getFilterNames(): ?array { return $this->filterNames; }
     public function getName(): ?string { return $this->name; }
     public function getScanCode(): ?string { return $this->scanCode; }

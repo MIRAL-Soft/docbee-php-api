@@ -11,7 +11,11 @@ final class MobileNumberResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** Returns a list of mobile numbers. */
+    /**
+     * Returns a list of mobile numbers.
+     *
+     * @return array<int, mixed>
+     */
     public function list(): array
     {
         return $this->http->get('mobileNumber/list')['mobileNumber'] ?? [];

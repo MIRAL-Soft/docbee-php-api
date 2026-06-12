@@ -257,14 +257,18 @@ final class HttpClient implements HttpClientInterface
 
         try {
             return $limiter->execute($callable, $retryServerErrors);
-        } catch (ConnectException $e) {
+            // PHPStan cannot see through the $callable closure that Guzzle throws these,
+            // so it reports the catches as dead — they are not. Guzzle raises
+            // ConnectException on network failure and RequestException on transport
+            // errors at runtime, even with http_errors disabled.
+        } catch (ConnectException $e) { // @phpstan-ignore catch.neverThrown
             // Do not include $e->getMessage() directly — it can contain the full URL
             // (including path segments that may reveal internal tenant/token info).
             throw new DocbeeApiException(
                 message:  'Connection to Docbee API failed. Check network connectivity and tenant configuration.',
                 previous: $e,
             );
-        } catch (RequestException $e) {
+        } catch (RequestException $e) { // @phpstan-ignore catch.neverThrown
             throw new DocbeeApiException(
                 message:  'HTTP request to Docbee API failed.',
                 previous: $e,

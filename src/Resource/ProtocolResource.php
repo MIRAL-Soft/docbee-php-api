@@ -31,13 +31,21 @@ final class ProtocolResource extends AbstractResource
         return ProtocolDTO::fromArray($this->http->get("{$this->endpoint}/findByNumber/" . rawurlencode($number)));
     }
 
-    /** Instantly finish a protocol. */
+    /**
+     * Instantly finish a protocol.
+     *
+     * @param array<string, mixed> $data
+     */
     public function instantFinish(array $data): ProtocolDTO
     {
         return ProtocolDTO::fromArray($this->http->post("{$this->endpoint}/instantFinish", $data));
     }
 
-    /** Create protocol from predecessor. */
+    /**
+     * Create protocol from predecessor.
+     *
+     * @param array<string, mixed> $data
+     */
     public function createFromPredecessor(int $predecessorId, array $data = []): ProtocolDTO
     {
         return ProtocolDTO::fromArray($this->http->post("{$this->endpoint}/createFromPredecessor/{$predecessorId}", $data));
@@ -49,13 +57,21 @@ final class ProtocolResource extends AbstractResource
         return ProtocolDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", []));
     }
 
-    /** Finish a protocol. */
+    /**
+     * Finish a protocol.
+     *
+     * @param array<string, mixed> $data
+     */
     public function finish(int $id, array $data = []): ProtocolDTO
     {
         return ProtocolDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/finish", $data));
     }
 
-    /** Cancel a protocol. */
+    /**
+     * Cancel a protocol.
+     *
+     * @param array<string, mixed> $data
+     */
     public function cancel(int $id, array $data = []): ProtocolDTO
     {
         return ProtocolDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/cancel", $data));
@@ -87,7 +103,11 @@ final class ProtocolResource extends AbstractResource
         return $this->http->getRaw("{$this->endpoint}/{$id}/preview");
     }
 
-    /** Instant finish for a protocol by ID. */
+    /**
+     * Instant finish for a protocol by ID.
+     *
+     * @param array<string, mixed> $data
+     */
     public function instantFinishById(int $id, array $data = []): ProtocolDTO
     {
         return ProtocolDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/instantFinish", $data));
@@ -99,7 +119,11 @@ final class ProtocolResource extends AbstractResource
         return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}");
     }
 
-    /** Export specific protocols (by IDs) for the given export profile. Returns raw file bytes (PDF/CSV). */
+    /**
+     * Export specific protocols (by IDs) for the given export profile. Returns raw file bytes (PDF/CSV).
+     *
+     * @param int[] $ids
+     */
     public function exportByIds(int $exportProfileId, array $ids): string
     {
         return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids);

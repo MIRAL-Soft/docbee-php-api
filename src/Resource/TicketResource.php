@@ -283,7 +283,15 @@ final class TicketResource extends AbstractResource
         return $this->cursor(QueryBuilder::new()->filterNeq('ticketStatus', $closedStatusId));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
     /**
      * Creates a new ticket from a template.
@@ -292,7 +300,7 @@ final class TicketResource extends AbstractResource
      * Alternatively pass `['templateName' => 'My Template']` in `$data`.
      *
      * @param int   $templateId Docbee ticket template ID.
-     * @param array $data       Additional fields merged into the request body.
+     * @param array<string, mixed> $data       Additional fields merged into the request body.
      * @throws \miralsoft\docbee\api\Exception\DocbeeApiException
      */
     public function fromTemplate(int $templateId, array $data = []): TicketDTO
@@ -312,15 +320,51 @@ final class TicketResource extends AbstractResource
     public function clone(int $id): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/clone", [])); }
     public function merge(int $id, int $sourceTicketId): TicketDTO { return TicketDTO::fromArray($this->http->put("{$this->endpoint}/{$id}/merge/{$sourceTicketId}", [])); }
     public function isMerged(int $id): bool { $r = $this->http->get("{$this->endpoint}/{$id}/isMerged"); return (bool)($r['isMerged'] ?? false); }
+    /**
+     * @return array<string, mixed>
+     */
     public function getStatusChange(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/statusChange"); }
     public function subscribe(int $id): void { $this->http->put("{$this->endpoint}/{$id}/subscribe", []); }
     public function unsubscribe(int $id): void { $this->http->put("{$this->endpoint}/{$id}/unsubscribe", []); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function poke(int $id, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/poke", $data); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function reply(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/reply/{$messageId}", $data); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function forward(int $id, int $messageId, array $data): array { return $this->http->post("{$this->endpoint}/{$id}/forward/{$messageId}", $data); }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function getMessageData(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/messageData"); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function finishExternalSla(int $id, array $data = []): array { return $this->http->put("{$this->endpoint}/{$id}/finishExternalSla", $data); }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function executeAction(int $id, int $actionId, array $data = []): array { return $this->http->post("{$this->endpoint}/{$id}/action/{$actionId}/execute", $data); }
     public function export(int $exportProfileId): string { return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}"); }
+
+    /**
+     * @param int[] $ids
+     */
     public function exportByIds(int $exportProfileId, array $ids): string { return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
 }

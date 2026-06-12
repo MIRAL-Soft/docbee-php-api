@@ -18,8 +18,17 @@ final class ObjectCategoryResource extends AbstractResource
     protected string $dtoClass = ObjectCategoryDTO::class;
     protected string $listKey  = 'objectCategory';
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 
+    /** @return array<string, mixed> */
     public function getCustomFields(int $id): array           { return $this->http->get("{$this->endpoint}/{$id}/customFields"); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(int $id, array $data): array { return $this->http->put("{$this->endpoint}/{$id}/customFields", $data); }
 }

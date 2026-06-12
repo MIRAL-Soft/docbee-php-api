@@ -66,15 +66,26 @@ final class DocumentTemplateResource extends AbstractResource
         );
     }
 
+    /** @return array<string, mixed> */
     public function clone(int $id): array { return $this->http->put("{$this->endpoint}/{$id}/clone", []); }
+    /** @return array<string, mixed> */
     public function createPayloadForDocBeeDocument(int $id): array { return $this->http->get("{$this->endpoint}/{$id}/createPayloadForDocBeeDocument"); }
 
     // ── Custom field assignment ───────────────────────────────────────────────
 
-    /** Returns the global list of custom-field IDs assigned to document templates. */
+    /**
+     * Returns the global list of custom-field IDs assigned to document templates.
+     *
+     * @return array<string, mixed>
+     */
     public function getCustomFields(): array { return $this->http->get("{$this->endpoint}/customFields"); }
 
-    /** Updates the global list of custom-field IDs assigned to document templates. */
+    /**
+     * Updates the global list of custom-field IDs assigned to document templates.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function updateCustomFields(array $data): array { return $this->http->put("{$this->endpoint}/customFields", $data); }
 
     // ── Custom field value helpers ────────────────────────────────────────────

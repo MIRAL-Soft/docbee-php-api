@@ -38,6 +38,9 @@ final class CustomFieldDTO extends AbstractDTO
         private ?bool $advancedPermission,
         /** deactivated */
         private ?bool $deactivated,
+        /**
+         * @var array<int|string, mixed>|null
+         */
         private ?array $editPermissionUserProfiles,
         /** is important */
         private ?bool $important,
@@ -47,11 +50,17 @@ final class CustomFieldDTO extends AbstractDTO
         private ?string $name,
         /** is searchable */
         private ?bool $searchable,
+        /**
+         * @var array<int|string, mixed>|null
+         */
         private ?array $showPermissionUserProfiles,
         /** visible for customer */
         private ?bool $visibleForCustomer
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -80,6 +89,9 @@ final class CustomFieldDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -112,11 +124,17 @@ final class CustomFieldDTO extends AbstractDTO
     public function getType(): ?string { return $this->type; }
     public function getAdvancedPermission(): ?bool { return $this->advancedPermission; }
     public function isDeactivated(): ?bool { return $this->deactivated; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getEditPermissionUserProfiles(): ?array { return $this->editPermissionUserProfiles; }
     public function getImportant(): ?bool { return $this->important; }
     public function getIsCustomerInfoData(): ?bool { return $this->isCustomerInfoData; }
     public function getName(): ?string { return $this->name; }
     public function getSearchable(): ?bool { return $this->searchable; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getShowPermissionUserProfiles(): ?array { return $this->showPermissionUserProfiles; }
     public function getVisibleForCustomer(): ?bool { return $this->visibleForCustomer; }
 }

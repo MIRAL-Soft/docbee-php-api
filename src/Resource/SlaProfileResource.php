@@ -6,14 +6,13 @@ namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\SlaProfileDTO;
 use miralsoft\docbee\api\Query\QueryBuilder;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee SlaProfile records.
  *
  * @extends AbstractResource<SlaProfileDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class SlaProfileResource extends AbstractResource
 {
     use NotSearchable;

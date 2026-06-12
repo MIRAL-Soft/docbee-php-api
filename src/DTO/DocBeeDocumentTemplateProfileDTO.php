@@ -16,10 +16,16 @@ final class DocBeeDocumentTemplateProfileDTO extends AbstractDTO
         private readonly ?string $link,
         /** name */
         private ?string $name,
-        /** @var array|null list of docBeeDocumentTemplates */
+        /**
+         * list of docBeeDocumentTemplates
+         * @var array<int|string, mixed>|null
+         */
         private ?array $docBeeDocumentTemplates
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -31,6 +37,9 @@ final class DocBeeDocumentTemplateProfileDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -43,5 +52,8 @@ final class DocBeeDocumentTemplateProfileDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getLink(): ?string { return $this->link; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getDocBeeDocumentTemplates(): ?array { return $this->docBeeDocumentTemplates; }
 }

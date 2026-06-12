@@ -22,7 +22,9 @@ final class RangePlanningTemplateDTO extends AbstractDTO
         private ?int $personInCharge,
         /** mode */
         private ?string $mode,
-        /** @var array|null list of items */
+        /**
+         * @var array<int|string, mixed>|null list of items
+         */
         private ?array $items
     ) {}
 
@@ -58,5 +60,8 @@ final class RangePlanningTemplateDTO extends AbstractDTO
     public function getRangePlanningName(): ?string { return $this->rangePlanningName; }
     public function getPersonInCharge(): ?int { return $this->personInCharge; }
     public function getMode(): ?string { return $this->mode; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getItems(): ?array { return $this->items; }
 }

@@ -17,5 +17,9 @@ final class ObserverResource extends AbstractResource
     protected string $dtoClass = ObserverDTO::class;
     protected string $listKey  = 'observer';
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
 }

@@ -16,7 +16,10 @@ final class CostEstimationTaskTemplateDTO extends AbstractDTO
         private readonly ?string $modified,
         /** REST API Link */
         private readonly ?string $link,
-        /** subTaskTemplate identifiers */
+        /**
+         * subTaskTemplate identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $subTasks,
         /** buffer (100.0 means 100 %). If not provided the defaultBuffer of costEstimationTemplate is used */
         private ?float $buffer,
@@ -32,6 +35,9 @@ final class CostEstimationTaskTemplateDTO extends AbstractDTO
         private ?int $ticketCategory
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -49,6 +55,9 @@ final class CostEstimationTaskTemplateDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -65,6 +74,9 @@ final class CostEstimationTaskTemplateDTO extends AbstractDTO
     public function getId(): ?int { return $this->id; }
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getSubTasks(): ?array { return $this->subTasks; }
     public function getBuffer(): ?float { return $this->buffer; }
     public function getDescription(): ?string { return $this->description; }

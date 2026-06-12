@@ -36,6 +36,9 @@ final class CustomerLocationDTO extends AbstractDTO
         private ?string $zipcode
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -55,6 +58,9 @@ final class CustomerLocationDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -79,6 +85,9 @@ final class CustomerLocationDTO extends AbstractDTO
     public function getCustomer(): ?int { return $this->customer; }
     public function getTemporary(): ?bool { return $this->temporary; }
     public function getCity(): ?string { return $this->city; }
+    /**
+     * @return list<CustomFieldValueDTO>|null
+     */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getName(): ?string { return $this->name; }
     public function getStreet(): ?string { return $this->street; }

@@ -22,7 +22,7 @@ final class TicketBoardColumnDTO extends AbstractDTO
         private ?int $customField,
         /** name */
         private ?string $name,
-        /** ticketStatus identifiers */
+        /** @var list<int>|null ticketStatus identifiers */
         private ?array $ticketStatuses
     ) {}
 
@@ -57,5 +57,6 @@ final class TicketBoardColumnDTO extends AbstractDTO
     public function getAdditionalInfo(): ?string { return $this->additionalInfo; }
     public function getCustomField(): ?int { return $this->customField; }
     public function getName(): ?string { return $this->name; }
+    /** @return list<int>|null */
     public function getTicketStatuses(): ?array { return $this->ticketStatuses; }
 }

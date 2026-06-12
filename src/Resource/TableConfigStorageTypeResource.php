@@ -11,7 +11,11 @@ final class TableConfigStorageTypeResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** @throws \InvalidArgumentException when $type is empty. */
+    /**
+     * @throws \InvalidArgumentException when $type is empty.
+     *
+     * @return array<string, mixed>
+     */
     public function get(string $type): array
     {
         if (trim($type) === '') {

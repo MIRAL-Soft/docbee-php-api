@@ -32,13 +32,22 @@ final class ProtocolEntryDTO extends AbstractDTO
         private ?float $doubleValue,
         /** element identifier */
         private ?int $element,
-        /** file identifiers */
+        /**
+         * file identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $files,
         /** longValue */
         private ?int $longValue,
-        /** observer identifiers */
+        /**
+         * observer identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $observers,
-        /** selectionValue identifiers */
+        /**
+         * selectionValue identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $selectionValues,
         /** text */
         private ?string $text
@@ -94,9 +103,18 @@ final class ProtocolEntryDTO extends AbstractDTO
     public function getDate(): ?string { return $this->date; }
     public function getDoubleValue(): ?float { return $this->doubleValue; }
     public function getElement(): ?int { return $this->element; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getFiles(): ?array { return $this->files; }
     public function getLongValue(): ?int { return $this->longValue; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getObservers(): ?array { return $this->observers; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getSelectionValues(): ?array { return $this->selectionValues; }
     public function getText(): ?string { return $this->text; }
 }

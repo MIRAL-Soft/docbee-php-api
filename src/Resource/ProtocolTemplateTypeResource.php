@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace miralsoft\docbee\api\Resource;
 
 use miralsoft\docbee\api\DTO\ProtocolTemplateTypeDTO;
+use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
 
 /**
  * Provides access to Docbee ProtocolTemplateType records.
  *
  * @extends AbstractResource<ProtocolTemplateTypeDTO>
  */
-use miralsoft\docbee\api\Resource\Concerns\NotSearchable;
-
 final class ProtocolTemplateTypeResource extends AbstractResource
 {
     use NotSearchable;
@@ -20,5 +19,6 @@ final class ProtocolTemplateTypeResource extends AbstractResource
     protected string $dtoClass = ProtocolTemplateTypeDTO::class;
     protected string $listKey  = 'protocolTemplateType';
 
+    /** @return array<string, mixed> */
     public function getNavigationItems(): array { return $this->http->get("{$this->endpoint}/navigationItems"); }
 }

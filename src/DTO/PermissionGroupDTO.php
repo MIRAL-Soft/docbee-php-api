@@ -20,15 +20,24 @@ final class PermissionGroupDTO extends AbstractDTO
         private readonly ?string $type,
         /** enabled */
         private ?bool $enabled,
-        /** Shared tableConfigStorage identifiers, which every user with this permissionGroup gets subscribed to and shown as favorit */
+        /**
+         * Shared tableConfigStorage identifiers, which every user with this permissionGroup gets subscribed to and shown as favorit
+         * @var array<int|string, mixed>|null
+         */
         private ?array $favoritTableConfigStorages,
         /** If 'true' all users 'use2FA' are forced set to 'true' and can not be changed */
         private ?bool $force2FA,
         /** name */
         private ?string $name,
-        /** list of roles */
+        /**
+         * list of roles
+         * @var array<int|string, mixed>|null
+         */
         private ?array $roles,
-        /** Shared tableConfigStorage identifiers, which every user with this permissionGroup gets subscribed to */
+        /**
+         * Shared tableConfigStorage identifiers, which every user with this permissionGroup gets subscribed to
+         * @var array<int|string, mixed>|null
+         */
         private ?array $tableConfigStorages
     ) {}
 
@@ -67,9 +76,18 @@ final class PermissionGroupDTO extends AbstractDTO
     public function getLink(): ?string { return $this->link; }
     public function getType(): ?string { return $this->type; }
     public function getEnabled(): ?bool { return $this->enabled; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getFavoritTableConfigStorages(): ?array { return $this->favoritTableConfigStorages; }
     public function getForce2FA(): ?bool { return $this->force2FA; }
     public function getName(): ?string { return $this->name; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getRoles(): ?array { return $this->roles; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getTableConfigStorages(): ?array { return $this->tableConfigStorages; }
 }

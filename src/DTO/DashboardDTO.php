@@ -26,6 +26,9 @@ final class DashboardDTO extends AbstractDTO
         private ?array $widgets
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -40,6 +43,9 @@ final class DashboardDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -58,5 +64,8 @@ final class DashboardDTO extends AbstractDTO
     public function getName(): ?string { return $this->name; }
     public function getShared(): ?bool { return $this->shared; }
     public function getUser(): ?int { return $this->user; }
+    /**
+     * @return list<DashboardWidgetDTO>|null
+     */
     public function getWidgets(): ?array { return $this->widgets; }
 }

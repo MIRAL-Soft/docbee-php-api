@@ -64,6 +64,9 @@ final class CustomerObjectDTO extends AbstractDTO
         private ?string $scanCode
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -97,6 +100,9 @@ final class CustomerObjectDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -131,6 +137,9 @@ final class CustomerObjectDTO extends AbstractDTO
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
     public function getAcquisitionDate(): ?string { return $this->acquisitionDate; }
+    /**
+     * @return list<CustomFieldValueDTO>|null
+     */
     public function getCustomFields(): ?array { return $this->customFields; }
     public function getDetails(): ?string { return $this->details; }
     public function getExtendedName(): ?string { return $this->extendedName; }

@@ -28,7 +28,10 @@ final class ProtocolDocumentTemplateDTO extends AbstractDTO
         private ?int $customerContact,
         /** location identifier */
         private ?int $customerLocation,
-        /** customerObject identifiers */
+        /**
+         * customerObject identifiers
+         * @var array<int|string, mixed>|null
+         */
         private ?array $customerObjects,
         /** time added to the creation date of the protocol to determine the final due date */
         private ?int $dueDate,
@@ -82,6 +85,9 @@ final class ProtocolDocumentTemplateDTO extends AbstractDTO
     public function getCustomer(): ?int { return $this->customer; }
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getCustomerLocation(): ?int { return $this->customerLocation; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getCustomerObjects(): ?array { return $this->customerObjects; }
     public function getDueDate(): ?int { return $this->dueDate; }
     public function getPersonInCharge(): ?int { return $this->personInCharge; }

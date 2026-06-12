@@ -18,7 +18,10 @@ final class CostEstimationTaskDTO extends AbstractDTO
         private readonly ?string $link,
         /** Unique identifier representing a specific docBeeDocument */
         private readonly ?int $docBeeDocument,
-        /** sub task identifiers */
+        /**
+         * sub task identifiers
+         * @var array<int|string, mixed>|null
+         */
         private readonly ?array $subTasks,
         /** Unique identifier representing a specific ticket */
         private readonly ?int $ticket,
@@ -36,6 +39,9 @@ final class CostEstimationTaskDTO extends AbstractDTO
         private ?int $ticketCategory
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     #[\Override]
     public static function fromArray(array $data): static
     {
@@ -55,6 +61,9 @@ final class CostEstimationTaskDTO extends AbstractDTO
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[\Override]
     public function toArray(): array
     {
@@ -72,6 +81,9 @@ final class CostEstimationTaskDTO extends AbstractDTO
     public function getModified(): ?string { return $this->modified; }
     public function getLink(): ?string { return $this->link; }
     public function getDocBeeDocument(): ?int { return $this->docBeeDocument; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getSubTasks(): ?array { return $this->subTasks; }
     public function getTicket(): ?int { return $this->ticket; }
     public function getBuffer(): ?float { return $this->buffer; }

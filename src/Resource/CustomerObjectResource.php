@@ -18,7 +18,15 @@ final class CustomerObjectResource extends AbstractResource
     protected string $dtoClass = CustomerObjectDTO::class;
     protected string $listKey  = 'customerObject';
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function guess(array $data): array { return $this->http->post("{$this->endpoint}/guess", $data); }
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     public function move(int $id, array $data): array { return $this->http->put("{$this->endpoint}/{$id}/move", $data); }
     /**
      * Finds a customer object by its scan code (barcode/QR).
@@ -26,6 +34,7 @@ final class CustomerObjectResource extends AbstractResource
      * The scan code is URL-encoded — scan codes come from physical labels and
      * must never be able to alter the request path or query.
      *
+     * @return array<string, mixed>
      * @throws \InvalidArgumentException when $scanCode is empty.
      */
     public function findByScanCode(string $scanCode): array
@@ -36,5 +45,6 @@ final class CustomerObjectResource extends AbstractResource
         return $this->http->get("{$this->endpoint}/findByScanCode/" . rawurlencode($scanCode));
     }
     public function export(int $exportProfileId): string { return $this->http->getRaw("{$this->endpoint}/export/{$exportProfileId}"); }
+    /** @param int[] $ids */
     public function exportByIds(int $exportProfileId, array $ids): string { return $this->postExportByIds("{$this->endpoint}/exportByIds/{$exportProfileId}", $ids); }
 }

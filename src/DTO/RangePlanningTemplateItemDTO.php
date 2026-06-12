@@ -24,7 +24,9 @@ final class RangePlanningTemplateItemDTO extends AbstractDTO
         private ?int $personInCharge,
         /** requestedTime */
         private ?int $requestedTime,
-        /** @var array|null list of elements */
+        /**
+         * @var array<int|string, mixed>|null list of elements
+         */
         private ?array $elements
     ) {}
 
@@ -63,5 +65,8 @@ final class RangePlanningTemplateItemDTO extends AbstractDTO
     public function getCustomerContact(): ?int { return $this->customerContact; }
     public function getPersonInCharge(): ?int { return $this->personInCharge; }
     public function getRequestedTime(): ?int { return $this->requestedTime; }
+    /**
+     * @return array<int|string, mixed>|null
+     */
     public function getElements(): ?array { return $this->elements; }
 }

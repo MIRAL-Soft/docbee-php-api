@@ -11,7 +11,11 @@ final class EmailAddressResource
 {
     public function __construct(private readonly HttpClientInterface $http) {}
 
-    /** Returns a list of email addresses. */
+    /**
+     * Returns a list of email addresses.
+     *
+     * @return list<array<string, mixed>>
+     */
     public function list(): array
     {
         return $this->http->get('emailAddress/list')['emailAddress'] ?? [];
